@@ -318,6 +318,11 @@ export const UserAddNewAddress = async (payload) => {
   return await api.post(Endpoints.User.USERADDNEWADDRESS, payload)
 }
 
+// get all addresses
+export const UserGetAllAddresses = async () => {
+  return await api.get(Endpoints.User.USERGETALLADDRESSES);
+};
+
 // update address
 export const UserUpdateAddress = async (addressId, payload) => {
   return await api.put(Endpoints.User.USERUPDATEADDRESS(addressId), payload)

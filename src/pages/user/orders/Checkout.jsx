@@ -86,7 +86,7 @@ const Checkout = () => {
             await dispatch(userdeletecart());
 
             toast.success("✅ Order placed successfully!");
-            navigate("/ordersuccess", {
+            navigate("/order-success", {
                 state: {
                     orderId: result._id,
                     orderDetails: result,

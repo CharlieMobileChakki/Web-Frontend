@@ -54,7 +54,7 @@ const MyOrders = () => {
                                                 : "text-orange-500"
                                             }`}
                                     >
-                                        {/* {order.status || "In Transit"} */}
+                                        {order.status || "In Transit"}
                                     </p>
                                     <button
                                         onClick={() => navigate(`/orders/${order._id}`)}

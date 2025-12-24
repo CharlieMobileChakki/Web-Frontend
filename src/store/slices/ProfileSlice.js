@@ -6,9 +6,24 @@ import {
   UserAddNewAddress,
   UserUpdateAddress,
   UserDeleteAddress,
+  UserGetAllAddresses, // ✅ Import new service
 } from "../../services/NetworkServices";
 import { updateUser } from "../slices/AuthSlice";
 import { setGetLocalData } from "../../services/LocalStorageHelper";
+
+// Helper to fetch full profile with addresses
+const fetchFullProfile = async () => {
+  const [profileRes, addressesRes] = await Promise.all([
+    UserGetMyProfile(),
+    UserGetAllAddresses()
+  ]);
+  const profile = profileRes?.data?.data;
+  const addresses = addressesRes?.data?.data; // Array of addresses
+  if (profile) {
+    profile.addresses = addresses || [];
+  }
+  return profile;
+};
 
 // ==========================
 // ✅ 1. Get user profile
@@ -17,8 +32,8 @@ export const userGetProfile = createAsyncThunk(
   "profile/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await UserGetMyProfile();
-      return response.data.data;
+      const fullProfile = await fetchFullProfile();
+      return fullProfile;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to fetch profile"
@@ -35,15 +50,19 @@ export const userUpdateProfile = createAsyncThunk(
   async (formData, { dispatch, rejectWithValue }) => {
     try {
       const res = await UserUpdateProfile(formData);
-      const updatedUser = res?.data?.data;
+      // The update profile API might not return addresses, so we re-fetch essential info or just update fields
+      // But safer to just refetch everything to be in sync or merge existing addresses? 
+      // Let's assume UpdateProfile returns user object. 
+      // To be safe, let's fetch full profile again to sync AuthSlice perfectly.
+      const fullProfile = await fetchFullProfile();
 
-      if (updatedUser) {
+      if (fullProfile) {
         // 🔥 Update both Auth & localStorage
-        dispatch(updateUser(updatedUser));
-        setGetLocalData("user", updatedUser);
+        dispatch(updateUser(fullProfile));
+        setGetLocalData("user", fullProfile);
       }
 
-      return updatedUser;
+      return fullProfile;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to update profile"
@@ -62,13 +81,12 @@ export const userAddAddress = createAsyncThunk(
       const res = await UserAddNewAddress(payload);
       const newAddress = res?.data?.data;
 
-      // 🧠 After adding, re-fetch updated profile to keep synced
-      const updatedProfile = await UserGetMyProfile();
-      const updatedUser = updatedProfile?.data?.data;
+      // 🧠 Re-fetch complete profile (user + addresses) to keep AuthSlice synced
+      const fullProfile = await fetchFullProfile();
 
-      if (updatedUser) {
-        setGetLocalData("user", updatedUser);
-        dispatch(updateUser(updatedUser));
+      if (fullProfile) {
+        setGetLocalData("user", fullProfile);
+        dispatch(updateUser(fullProfile));
       }
 
       return newAddress;
@@ -91,12 +109,11 @@ export const userUpdateAddress = createAsyncThunk(
       const updatedAddress = res?.data?.data;
 
       // 🧠 Refresh profile to sync everything
-      const updatedProfile = await UserGetMyProfile();
-      const updatedUser = updatedProfile?.data?.data;
+      const fullProfile = await fetchFullProfile();
 
-      if (updatedUser) {
-        setGetLocalData("user", updatedUser);
-        dispatch(updateUser(updatedUser));
+      if (fullProfile) {
+        setGetLocalData("user", fullProfile);
+        dispatch(updateUser(fullProfile));
       }
 
       return updatedAddress;
@@ -118,12 +135,11 @@ export const userDeleteAddress = createAsyncThunk(
       await UserDeleteAddress(addressId);
 
       // 🧠 Refresh profile again after deletion
-      const updatedProfile = await UserGetMyProfile();
-      const updatedUser = updatedProfile?.data?.data;
+      const fullProfile = await fetchFullProfile();
 
-      if (updatedUser) {
-        setGetLocalData("user", updatedUser);
-        dispatch(updateUser(updatedUser));
+      if (fullProfile) {
+        setGetLocalData("user", fullProfile);
+        dispatch(updateUser(fullProfile));
       }
 
       return addressId;

@@ -16,38 +16,18 @@ const ViewCart = () => {
     const navigate = useNavigate();
     const { cart, loading, error } = useSelector((state) => state.cart);
 
+    // ✅ Define missing selectors
+    const userProfile = useSelector((state) => state.profile.data);
+    const authUser = useSelector((state) => state.auth.user);
+
+    // ✅ Restore state
     const [selectedItems, setSelectedItems] = useState([]);
-    const [userAddress, setUserAddress] = useState(null);
-    const [user, setUser] = useState(null);
 
-    // useEffect(() => {
-    //     dispatch(usergetcart());
-    //     const storedUser = JSON.parse(localStorage.getItem("user"));
-    //     if (storedUser) {
-    //         setUser(storedUser);
-    //         const defaultAddress = storedUser.addresses?.find((a) => a.isDefault);
-    //         setUserAddress({ ...defaultAddress, name: storedUser.name });
-    //     }
-    // }, [dispatch]);
+    // Prefer profile data (fresher) over auth data
+    const currentUser = userProfile || authUser;
 
-
-    useEffect(() => {
-        dispatch(usergetcart());
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-
-        if (storedUser) {
-            setUser(storedUser);
-
-            // ✅ Pick default or first address
-            const defaultAddress =
-                storedUser.addresses?.find((a) => a.isDefault) ||
-                storedUser.addresses?.[0];
-
-            if (defaultAddress) {
-                setUserAddress({ ...defaultAddress, name: storedUser.name });
-            }
-        }
-    }, [dispatch]);
+    // Derive address from current user state
+    const userAddress = currentUser?.addresses?.find((a) => a.isDefault) || currentUser?.addresses?.[0];
 
     useEffect(() => {
         // ✅ Select all items only when cart is first loaded
@@ -100,10 +80,11 @@ const ViewCart = () => {
             return;
         }
 
-        if (!userAddress) {
-            toast.error("Please add a delivery address.");
-            return;
-        }
+        // ⛔ Removed blocking address check to allow adding address at Checkout
+        // if (!userAddress) {
+        //     toast.error("Please add a delivery address.");
+        //     return;
+        // }
 
         const totalAmount = selectedCartItems.reduce(
             (sum, item) => sum + (item.sellingPrice || item.product?.sellingPrice || 0) * item.quantity,
@@ -113,7 +94,7 @@ const ViewCart = () => {
         navigate("/checkout", {
             state: {
                 selectedCartItems,
-                userAddress,
+                userAddress, // Pass derived address (can be null)
                 totalAmount,
             },
         });

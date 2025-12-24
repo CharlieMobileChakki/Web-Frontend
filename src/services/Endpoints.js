@@ -90,6 +90,7 @@ const Endpoints = {
           USERDELETECART: 'api/cart',
 
 
+
           // order product
           USERORDER: '/api/orders', // post
           USERGETORDER: '/api/orders', // get
@@ -111,9 +112,10 @@ const Endpoints = {
           // profile 
           USERGETMYPROFILE: '/api/user/profile', // get my profile
           USERUPDATEMYPROFILE: '/api/user/profile', // update profile
-          USERADDNEWADDRESS: '/api/user/profile/address', // add new address
-          USERUPDATEADDRESS: (addressId) => `/api/user/profile/address/${addressId}`, // update address
-          USERDELETEADDRESS: (addressId) => `/api/user/profile/address/${addressId}`, // delete address
+          USERADDNEWADDRESS: '/api/address/addresses', // add new address
+          USERGETALLADDRESSES: '/api/address/addresses', // get all addresses (NEW)
+          USERUPDATEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // update address
+          USERDELETEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // delete address
      }
 
 }
