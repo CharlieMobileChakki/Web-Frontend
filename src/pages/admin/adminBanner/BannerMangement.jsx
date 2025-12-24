@@ -1,0 +1,98 @@
+import React, { useEffect, useState } from "react";
+import BannerTable from "./BannerTable";
+import BannerFormModal from "./BannerFormModal";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  adminGetAllBanners,
+  adminCreateBanner,
+  adminUpdateBanner,
+  adminDeleteBanner,
+} from "../../../store/slices/adminSlice/AdminBannerSlice";
+import SidebarTitle from "../../../components/admin/SidebarTitle";
+
+const BannerManagement = () => {
+  const dispatch = useDispatch();
+  const { banners, loading, error } = useSelector((state) => state.adminBanner);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
+
+  useEffect(() => {
+    dispatch(adminGetAllBanners());
+  }, [dispatch]);
+
+  const handleSave = (data) => {
+    if (editData) {
+      dispatch(adminUpdateBanner({ id: editData._id, body: data }));
+    } else {
+      dispatch(adminCreateBanner(data));
+    }
+
+    setIsModalOpen(false);
+    setEditData(null);
+  };
+
+  const handleEdit = (banner) => {
+    setEditData(banner);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    dispatch(adminDeleteBanner(id));
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <SidebarTitle />
+
+        <button
+          onClick={() => {
+            setEditData(null);
+            setIsModalOpen(true);
+          }}
+          className="px-4 py-2 bg-green-700 cursor-pointer text-white rounded hover:bg-green-800 transition"
+        >
+          + Add Banner
+        </button>
+      </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-700"></div>
+          <p className="mt-2 text-gray-600">Loading banners...</p>
+        </div>
+      )}
+
+      {/* Banner Grid */}
+      {!loading && (
+        <BannerTable
+          banners={banners}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {/* Banner Form Modal */}
+      <BannerFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditData(null);
+        }}
+        onSave={handleSave}
+        editData={editData}
+      />
+    </div>
+  );
+};
+
+export default BannerManagement;
