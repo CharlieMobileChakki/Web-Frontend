@@ -6,19 +6,19 @@ import {
   UserAddNewAddress,
   UserUpdateAddress,
   UserDeleteAddress,
-  UserGetAllAddresses, // ✅ Import new service
+  UserGetAllAddresses,
 } from "../../services/NetworkServices";
 import { updateUser } from "../slices/AuthSlice";
 import { setGetLocalData } from "../../services/LocalStorageHelper";
 
-// Helper to fetch full profile with addresses
+// Helper to fetch full profile with addresses from separate API
 const fetchFullProfile = async () => {
   const [profileRes, addressesRes] = await Promise.all([
     UserGetMyProfile(),
     UserGetAllAddresses()
   ]);
   const profile = profileRes?.data?.data;
-  const addresses = addressesRes?.data?.data; // Array of addresses
+  const addresses = addressesRes?.data?.data; // Array of addresses from separate API
   if (profile) {
     profile.addresses = addresses || [];
   }
@@ -79,9 +79,10 @@ export const userAddAddress = createAsyncThunk(
   async (payload, { dispatch, rejectWithValue }) => {
     try {
       const res = await UserAddNewAddress(payload);
+      // Separate address API returns { success, message, data: {...addressObject} }
       const newAddress = res?.data?.data;
 
-      // 🧠 Re-fetch complete profile (user + addresses) to keep AuthSlice synced
+      // Re-fetch complete profile to sync everything
       const fullProfile = await fetchFullProfile();
 
       if (fullProfile) {
@@ -106,9 +107,10 @@ export const userUpdateAddress = createAsyncThunk(
   async ({ addressId, payload }, { dispatch, rejectWithValue }) => {
     try {
       const res = await UserUpdateAddress(addressId, payload);
+      // Separate address API returns { success, message, data: {...updatedAddress} }
       const updatedAddress = res?.data?.data;
 
-      // 🧠 Refresh profile to sync everything
+      // Re-fetch profile to sync everything
       const fullProfile = await fetchFullProfile();
 
       if (fullProfile) {
@@ -133,8 +135,9 @@ export const userDeleteAddress = createAsyncThunk(
   async (addressId, { dispatch, rejectWithValue }) => {
     try {
       await UserDeleteAddress(addressId);
+      // API returns { message, success, error }
 
-      // 🧠 Refresh profile again after deletion
+      // Re-fetch profile to get updated user data
       const fullProfile = await fetchFullProfile();
 
       if (fullProfile) {
@@ -187,19 +190,20 @@ const profileSlice = createSlice({
 
       // ✅ Add Address
       .addCase(userAddAddress.fulfilled, (state, action) => {
-        if (state.data?.addresses) {
+        // action.payload is the new address object
+        if (state.data?.addresses && action.payload) {
           state.data.addresses.push(action.payload);
-        } else {
-          state.data.addresses = [action.payload];
         }
       })
 
       // ✅ Update Address
       .addCase(userUpdateAddress.fulfilled, (state, action) => {
-        if (state.data?.addresses) {
-          state.data.addresses = state.data.addresses.map((addr) =>
-            addr._id === action.payload._id ? action.payload : addr
-          );
+        // action.payload is the updated address object
+        if (state.data?.addresses && action.payload) {
+          const index = state.data.addresses.findIndex(addr => addr._id === action.payload._id);
+          if (index !== -1) {
+            state.data.addresses[index] = action.payload;
+          }
         }
       })
 

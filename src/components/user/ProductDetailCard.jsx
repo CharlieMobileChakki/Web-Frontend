@@ -102,7 +102,15 @@ const ProductDetailCard = ({
                     name: storedUser?.name,
                 };
 
-                const totalAmount = addedItem.product.sellingPrice * addedItem.quantity;
+                // ✅ Safe price extraction with fallbacks to prevent NaN
+                const itemPrice = addedItem.sellingPrice ||
+                    addedItem.product?.sellingPrice ||
+                    addedItem.price ||
+                    0;
+
+                const totalAmount = itemPrice * (addedItem.quantity || 1);
+
+                console.log("🛒 Buy Now - Item Price:", itemPrice, "Quantity:", addedItem.quantity, "Total:", totalAmount);
 
                 navigate("/checkout", {
                     state: {

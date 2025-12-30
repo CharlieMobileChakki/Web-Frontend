@@ -22,7 +22,7 @@ const UserTable = ({ users }) => {
 
     return (
         <div className="w-full overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="min-w-full sm:min-w-[800px] lg:min-w-[1000px] border-collapse">
+            <table className="w-full min-w-[1000px] border-collapse">
                 <thead>
                     <tr className="bg-gray-100 text-left text-xs sm:text-sm">
                         <th className="p-1 sm:p-2 border">Name</th>
@@ -47,8 +47,8 @@ const UserTable = ({ users }) => {
 
                             <td className="p-1 sm:p-2 border hidden md:table-cell">
                                 <span className={`px-2 py-1 rounded text-xs ${user.role === 'admin'
-                                        ? 'bg-red-100 text-red-700'
-                                        : 'bg-blue-100 text-blue-700'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-blue-100 text-blue-700'
                                     }`}>
                                     {user.role}
                                 </span>

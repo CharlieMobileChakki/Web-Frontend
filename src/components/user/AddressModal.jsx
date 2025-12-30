@@ -83,14 +83,25 @@ const AddressModal = ({ onSelect }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 🧠 Construct formatted address if not present
+        // Construct formatted address
         const fullAddress = `${formData.street}, ${formData.landmark ? formData.landmark + ", " : ""}${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`;
 
+        // Payload matching the new address API specification
         const payload = {
-            ...formData,
+            label: formData.label || "Home",
+            name: formData.name,
+            phone: formData.phone,
+            street: formData.street,
+            landmark: formData.landmark || "",
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            country: formData.country,
+            lat: formData.lat || 26.9124, // Default coordinates or from user location
+            lng: formData.lng || 75.7873,
+            googlePlaceId: formData.googlePlaceId || "",
             formattedAddress: fullAddress,
-            lat: 26.9124, // Default (Jaipur) or 0 if optional, sending valid float just in case
-            lng: 75.7873
+            isDefault: formData.isDefault
         };
 
         try {

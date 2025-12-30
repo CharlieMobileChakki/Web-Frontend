@@ -25,8 +25,12 @@ const Endpoints = {
           // ================= ADMIN USERS =================
           ADMIN_GET_ALL_USERS: '/api/admin/users/all-users',            // GET all users
 
-          // ================= ADMIN CONTACT =================
-          ADMIN_GET_ALL_CONTACTS: '/api/admin/contact',                 // GET all contact submissions
+          // ================= ADMIN CONTACT MANAGEMENT =================
+          ADMIN_GET_ALL_CONTACTS: '/api/admin/contact',                 // GET all contact submissions (with pagination)
+          ADMIN_GET_CONTACT_STATS: '/api/admin/contact/stats',          // GET contact dashboard stats
+          ADMIN_GET_SINGLE_CONTACT: (id) => `/api/admin/contact/${id}`, // GET single contact query
+          ADMIN_UPDATE_CONTACT_STATUS: (id) => `/api/admin/contact/${id}`, // PATCH update contact status
+          ADMIN_DELETE_CONTACT: (id) => `/api/admin/contact/${id}`,     // DELETE contact query
 
           // ================= ADMIN ORDERS =================
           ADMIN_GET_ALL_ORDERS: '/api/admin/orders/getAllOrders',          // GET all orders
@@ -95,6 +99,7 @@ const Endpoints = {
           USERORDER: '/api/orders', // post
           USERGETORDER: '/api/orders', // get
           USERORDERBYID: (id) => `/api/orders/${id}`, //GET
+          USERCANCELORDER: (id) => `/api/orders/${id}/cancel`, // PUT cancel order
 
 
           // wishlist apis
@@ -111,11 +116,13 @@ const Endpoints = {
 
           // profile 
           USERGETMYPROFILE: '/api/user/profile', // get my profile
-          USERUPDATEMYPROFILE: '/api/user/profile', // update profile
-          USERADDNEWADDRESS: '/api/address/addresses', // add new address
-          USERGETALLADDRESSES: '/api/address/addresses', // get all addresses (NEW)
-          USERUPDATEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // update address
-          USERDELETEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // delete address
+          USERUPDATEMYPROFILE: '/api/user/profile', // update profile (supports name only)
+
+          // ================= ADDRESS MANAGEMENT (SEPARATE API) =================
+          USERADDNEWADDRESS: '/api/address/addresses', // POST - add new address
+          USERGETALLADDRESSES: '/api/address/addresses', // GET - get all addresses
+          USERUPDATEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // PUT - update address
+          USERDELETEADDRESS: (addressId) => `/api/address/addresses/${addressId}`, // DELETE - delete address
      }
 
 }

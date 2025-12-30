@@ -2,8 +2,8 @@ import React from "react";
 
 const CategoryTable = ({ categories, onEdit, onDelete }) => {
     return (
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg p-4">
-            <table className="w-full text-left border-collapse">
+        <div className="w-full overflow-x-auto bg-white shadow-md rounded-lg p-4">
+            <table className="w-full min-w-[1000px] text-left border-collapse">
                 <thead>
                     <tr className="bg-gray-100 text-gray-700">
                         <th className="p-3">Image</th>

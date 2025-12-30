@@ -43,6 +43,11 @@ const ProductHome = () => {
     return Number(average.toFixed(1)); // 1 decimal, e.g., 4.4
   };
 
+  const getReviewCount = (productId) => {
+    const productReviews = reviewsByProduct[productId] || [];
+    return productReviews.length;
+  };
+
 
 
   return (
@@ -94,6 +99,7 @@ const ProductHome = () => {
           ) : (
             visibleProducts.map((item) => {
               const avgRating = getAverageRating(item._id);
+              const reviewCount = getReviewCount(item._id);
 
               // Get pricing from first variant
               const firstVariant = item.variants?.[0];
@@ -109,9 +115,10 @@ const ProductHome = () => {
                   description={item.name}
                   quantity={firstVariant?.weight || item.quantity || "1 kg"} // Pass weight/quantity
                   rating={avgRating}
+                  reviewCount={reviewCount}
                   sellingPrice={sellingPrice}
                   actualPrice={actualPrice}
-                  variantId={firstVariant?._id} // \u2705 Pass variantId
+                  variantId={firstVariant?._id} // ✅ Pass variantId
                 />
               );
             })

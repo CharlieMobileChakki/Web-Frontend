@@ -68,11 +68,35 @@ export const AdminGetAllUsers = async () => {
   return await api.get(Endpoints.Admin.ADMIN_GET_ALL_USERS);
 };
 
-// ================= ADMIN CONTACT =================
+// ================= ADMIN CONTACT MANAGEMENT =================
 
-// GET ALL CONTACTS
-export const AdminGetAllContacts = async () => {
-  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_CONTACTS);
+// GET ALL CONTACTS (with pagination and filters)
+export const AdminGetAllContacts = async (params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const url = queryParams
+    ? `${Endpoints.Admin.ADMIN_GET_ALL_CONTACTS}?${queryParams}`
+    : Endpoints.Admin.ADMIN_GET_ALL_CONTACTS;
+  return await api.get(url);
+};
+
+// GET CONTACT STATS
+export const AdminGetContactStats = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_CONTACT_STATS);
+};
+
+// GET SINGLE CONTACT
+export const AdminGetSingleContact = async (id) => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_SINGLE_CONTACT(id));
+};
+
+// UPDATE CONTACT STATUS
+export const AdminUpdateContactStatus = async (id, data) => {
+  return await api.patch(Endpoints.Admin.ADMIN_UPDATE_CONTACT_STATUS(id), data);
+};
+
+// DELETE CONTACT
+export const AdminDeleteContact = async (id) => {
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_CONTACT(id));
 };
 
 // ================= ADMIN ORDERS =================
@@ -261,6 +285,11 @@ export const UserOrderById = async (id) => {
   return await api.get(Endpoints.User.USERORDERBYID(id))
 }
 
+// cancel order
+export const UserCancelOrder = async (id) => {
+  return await api.put(Endpoints.User.USERCANCELORDER(id))
+}
+
 
 // Add Item to Wishlist 
 export const UserAddWishlist = async (data) => {
@@ -327,7 +356,6 @@ export const UserGetAllAddresses = async () => {
 export const UserUpdateAddress = async (addressId, payload) => {
   return await api.put(Endpoints.User.USERUPDATEADDRESS(addressId), payload)
 }
-
 
 // delete address 
 export const UserDeleteAddress = async (addressId) => {

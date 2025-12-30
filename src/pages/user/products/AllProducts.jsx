@@ -35,6 +35,11 @@ const AllProducts = () => {
         return Number(average.toFixed(1)); // 1 decimal, e.g., 4.4
     };
 
+    const getReviewCount = (productId) => {
+        const productReviews = reviewsByProduct[productId] || [];
+        return productReviews.length;
+    };
+
     return (
         <>
             {loading && <p>Loading...</p>}
@@ -48,33 +53,40 @@ const AllProducts = () => {
             />
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 p-6">
-                {products?.length > 0 ? (
-                    products.map((item) => {
-                        const avgRating = getAverageRating(item._id);
+            <div className="">
+                <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 py-20 px-6">
 
-                        // Get pricing from first variant or show range
-                        const firstVariant = item.variants?.[0];
-                        const sellingPrice = firstVariant?.sellingPrice || 0;
-                        const actualPrice = firstVariant?.price || 0;
-                        const imgUrl = item.images?.[0] || firstVariant?.images?.[0] || "https://via.placeholder.com/150";
 
-                        return (
-                            <Product
-                                key={item._id}
-                                id={item._id}
-                                imgUrl={imgUrl}
-                                name={item.name}
-                                description={item.name}
-                                sellingPrice={sellingPrice}
-                                actualPrice={actualPrice}
-                                rating={avgRating}
-                            />
-                        );
-                    })
-                ) : (
-                    !loading && <p>No products found</p>
-                )}
+                    {products?.length > 0 ? (
+                        products.map((item) => {
+                            const avgRating = getAverageRating(item._id);
+                            const reviewCount = getReviewCount(item._id);
+
+                            // Get pricing from first variant or show range
+                            const firstVariant = item.variants?.[0];
+                            const sellingPrice = firstVariant?.sellingPrice || 0;
+                            const actualPrice = firstVariant?.price || 0;
+                            const imgUrl = item.images?.[0] || firstVariant?.images?.[0] || "https://via.placeholder.com/150";
+
+                            return (
+                                <Product
+                                    key={item._id}
+                                    id={item._id}
+                                    imgUrl={imgUrl}
+                                    name={item.name}
+                                    description={item.name}
+                                    sellingPrice={sellingPrice}
+                                    actualPrice={actualPrice}
+                                    rating={avgRating}
+                                    reviewCount={reviewCount}
+                                />
+                            );
+                        })
+                    ) : (
+                        !loading && <p>No products found</p>
+                    )}
+                </div>
+
             </div>
         </>
     );

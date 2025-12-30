@@ -80,7 +80,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
 
     return (
         <div className="w-full overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="w-full sm:min-w-[800px] lg:min-w-[1000px] border-collapse h-max-content">
+            <table className="w-full min-w-[1000px] border-collapse h-max-content">
                 <thead>
                     <tr className="bg-gray-100 text-left text-xs sm:text-sm">
                         <th className="p-1 sm:p-2 border">Image</th>

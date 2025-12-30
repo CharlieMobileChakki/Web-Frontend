@@ -7,166 +7,218 @@ import Slider3 from "../../../assets/banner/hero-services-img2.webp";
 import Slider4 from "../../../assets/banner/hero-services-img3.webp";
 import Bg from "../../../assets/banner/S1.png";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Sparkles, ShoppingBag, Star, ArrowRight } from "lucide-react";
 
-
+// Professional Brand Palette: Amber, Gold, Deep Brown, Warm White
 const slides = [
   {
+    id: 1,
     title: "शुद्ध और ताज़ा आटा",
     subtitle: "मिलावट की चिंता छोड़िए—आपके सामने ताज़ा पिसाई, शुद्धता की गारंटी, हर रोटी में असली स्वाद और खुशबू।",
-    btnText: "अभी आर्डर करें",
+    btnText: "आर्डर करें",
     img: Slider1,
+    badge: "100% Pure & Fresh",
   },
   {
-    title: " सम्पूर्ण आहार",
+    id: 2,
+    title: "सम्पूर्ण आहार",
     subtitle: "बिना गेहूं का 12 अनाजों से बना लो GI आटा—हल्का, संतुलित और पेट-भर पोषण, रोज़ के सम्पूर्ण आहार के लिए बेहतर विकल्प।",
-    btnText: "अभी आर्डर करें",
+    btnText: "आर्डर करें",
     img: Slider2,
+    badge: "Premium Quality",
   },
   {
+    id: 3,
     title: "एक सम्पूर्ण आहार",
-    subtitle: "जौ, चना, ज्वार, काला गेहूं, रागी, अजवायन, अलसी, मेथी, मूंग, मोठ, अरहर, राजमा\n12 अनाज का बिना गेहूं का LOW GI AATA—फाइबर से भरपूर, लंबे समय तक ऊर्जा और बढ़िया स्वाद के साथ।",
+    subtitle: "जौ, चना, ज्वार, काला गेहूं, रागी, अलसी, और 12 अनाज का लो GI आटा—फाइबर से भरपूर, लंबे समय तक ऊर्जा और बढ़िया स्वाद।",
     btnText: "अभी ऑर्डर करें",
     img: Slider3,
+    badge: "Fiber Rich",
   },
   {
-    title: "अपनाएं ठंडी पिसाई वाला आटा",
-    subtitle: "कोल्ड-मिल्ड (ठंडी पिसाई) आटा—नैचुरल पोषक तत्व और स्वाद बरकरार। लो GI, शुगर-मैनेजमेंट के लिए अनुकूल; विशेषज्ञ भी संतुलित आहार में सुझाते हैं।",
-    btnText: "अभी आर्डर करें",
+    id: 4,
+    title: "ठंडी पिसाई वाला आटा",
+    subtitle: "कोल्ड-मिल्ड (ठंडी पिसाई) आटा—नैचुरल पोषक तत्व और स्वाद बरकरार। विशेषज्ञ भी संतुलित आहार में सुझाते हैं।",
+    btnText: "आर्डर करें",
     img: Slider4,
+    badge: "Cold Milled Technology",
   },
-]
+];
+
 const HeroSection = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   const nextSlide = () => setActiveSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // Animation Variants
-  const textVariant = {
-    hidden: { y: -50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
-    exit: { y: -50, opacity: 0, transition: { duration: 0.6, ease: "easeIn" } },
-  };
-
-  const imageVariant = {
-    hidden: { y: 80, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 1, ease: "easeOut" },
-    },
-    exit: { y: 80, opacity: 0, transition: { duration: 0.6, ease: "easeIn" } },
-  };
-
-
-
-  const handleBooking = () => {
-    navigate('/createbooking')
-
-  }
   return (
-    <div
-      className="relative w-full overflow-hidden font-sans bg-gray-50"
-      style={{ backgroundImage: `url(${Bg})`, backgroundSize: "cover", backgroundPosition: "center" }}
-    >
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+    <div className="relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900">
 
-      <div className="container mx-auto px-4 md:px-8 lg:px-12 py-12 md:py-20 lg:py-24 relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-20 min-h-[600px]">
+      {/* Background Texture & Gradients */}
+      <div className="absolute inset-0 opacity-40 pointer-events-none">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-200 rounded-full blur-[100px] opacity-30"></div>
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-orange-100 rounded-full blur-[120px] opacity-40"></div>
+        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-yellow-100 rounded-full blur-[80px] opacity-30"></div>
+      </div>
 
-        <AnimatePresence mode="wait">
-          {/* Left Text Section */}
-          <motion.div
-            key={activeSlide}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex-[3] md:flex-[3] text-center md:text-left"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-block px-4 py-1 mb-4 rounded-full bg-orange-100 border border-orange-200"
-            >
-              <span className="text-sm font-bold text-orange-700 uppercase tracking-wider">Premium Quality</span>
-            </motion.div>
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-8 pb-16 lg:py-20">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 min-h-[550px]">
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-gray-900 mb-6 tracking-tight">
-              <span className="block">{slides[activeSlide].title.split(" ")[0]}</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
-                {slides[activeSlide].title.split(" ").slice(1).join(" ")}
-              </span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto md:mx-0">
-              {slides[activeSlide].subtitle}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <button
-                onClick={handleBooking}
-                className="px-8 py-4 rounded-full bg-gray-900 text-white font-bold text-lg shadow-lg hover:bg-gray-800 hover:scale-105 transition-all duration-300"
+          {/* Content Section */}
+          <div className="flex-1 w-full max-w-2xl text-center lg:text-left">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSlide}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="space-y-6 md:space-y-8"
               >
-                {slides[activeSlide].btnText}
-              </button>
-              {/* <button className="px-8 py-4 rounded-full bg-white text-gray-900 font-bold text-lg border-2 border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all duration-300">
-                        Learn More
-                    </button> */}
-            </div>
-          </motion.div>
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200 shadow-sm mx-auto lg:mx-0"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span className="text-sm font-bold text-amber-800 tracking-wide uppercase">
+                    {slides[activeSlide].badge}
+                  </span>
+                </motion.div>
 
-          {/* Right Image Section */}
-          <motion.div
-            key={`img-${activeSlide}`}
-            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            exit={{ opacity: 0, scale: 1.1, rotate: 5 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex-[2] md:flex-[2] relative flex justify-center items-center"
-          >
-            {/* Floating Animation */}
-            <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="relative z-10 w-full max-w-[400px] md:max-w-[500px]"
-            >
-              <img
-                src={slides[activeSlide].img}
-                alt={slides[activeSlide].title}
-                className="w-full h-auto object-contain drop-shadow-2xl"
-              />
-            </motion.div>
+                {/* Title */}
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.15] text-amber-950 tracking-tight">
+                  {slides[activeSlide].title.split(" ")[0] + " "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-600 to-orange-700">
+                    {slides[activeSlide].title.split(" ").slice(1).join(" ")}
+                  </span>
+                </h1>
 
-            {/* Decorative Elements behind image */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-orange-200/40 to-transparent rounded-full blur-3xl transform scale-110 -z-10"></div>
-          </motion.div>
-        </AnimatePresence>
+                {/* Subtitle */}
+                <p className="text-lg md:text-xl text-gray-600 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
+                  {slides[activeSlide].subtitle}
+                </p>
 
-        {/* Custom Navigation Dots */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 md:left-12 md:translate-x-0 flex gap-3 z-20">
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                  <button
+                    onClick={() => navigate("/createbooking")}
+                    className="group relative px-8 py-4 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-bold text-lg shadow-lg hover:shadow-orange-200/50 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {slides[activeSlide].btnText}
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <div className="absolute inset-0 bg-white/20 transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+                  </button>
+
+                  <button
+                    onClick={() => navigate("/allproducts")}
+                    className="px-8 py-4 rounded-xl bg-white text-amber-900 font-bold text-lg border-2 border-amber-100 hover:border-amber-300 hover:bg-amber-50 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
+                  >
+                    View Products
+                  </button>
+                </div>
+
+                {/* Ratings / Trust */}
+                <div className="flex items-center justify-center lg:justify-start gap-4 pt-4 opacity-90">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
+                        <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
+                      ))}
+                    </div>
+                    <span className="text-sm font-bold text-amber-900">4.9/5 Trusted by Moms</span>
+                  </div>
+                </div>
+
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Image Section */}
+          <div className="flex-1 w-full relative perspective-1000">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSlide}
+                initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 1.1, x: -20 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="relative flex justify-center items-center"
+              >
+                {/* Organic Shape Blob Background */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-100 to-orange-50 rounded-full blur-3xl opacity-60 transform scale-110 -z-10 animate-pulse-slow"></div>
+
+                <motion.img
+                  src={slides[activeSlide].img}
+                  alt="Mobile Chakki Product"
+                  className="w-full max-w-[400px] md:max-w-[500px] lg:max-w-[600px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                  animate={{ y: [0, -15, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                />
+
+                {/* Floating Badge on Image */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="absolute -bottom-4 -right-4 md:bottom-10 md:right-10 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-amber-100 hidden sm:block"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                      <Sparkles size={20} />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Freshness</p>
+                      <p className="text-sm font-bold text-gray-900">Guaranteed</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setActiveSlide(index)}
-              className={`h-3 rounded-full transition-all duration-500 ${index === activeSlide ? "w-10 bg-gray-900" : "w-3 bg-gray-400 hover:bg-gray-600"
+              className={`h-2 rounded-full transition-all duration-300 ${activeSlide === index
+                ? "w-8 bg-amber-600"
+                : "w-2 bg-amber-200 hover:bg-amber-400"
                 }`}
             />
           ))}
         </div>
+
+        {/* Side Arrows */}
+        {/* <button onClick={prevSlide} className="hidden lg:flex absolute top-1/2 left-4 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full items-center justify-center text-amber-900 shadow-lg border border-amber-100 transition-all hover:scale-110 z-20">
+          <ChevronLeft size={24} />
+        </button>
+        <button onClick={nextSlide} className="hidden lg:flex absolute top-1/2 right-4 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full items-center justify-center text-amber-900 shadow-lg border border-amber-100 transition-all hover:scale-110 z-20">
+          <ChevronRight size={24} />
+        </button> */}
 
       </div>
     </div>

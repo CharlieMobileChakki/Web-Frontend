@@ -5,7 +5,6 @@ import {
     userGetProfile,
     userUpdateProfile,
 } from "../../../store/slices/ProfileSlice";
-import AddressSection from "./AddressSection";
 import { updateUser } from "../../../store/slices/AuthSlice";
 import { toast } from "react-toastify";
 import { User, Phone, Mail, Calendar, Save, Edit2 } from "lucide-react";
@@ -39,7 +38,9 @@ const MyProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await dispatch(userUpdateProfile(form)).unwrap();
+            // Only send name field to avoid accidentally sending addresses or other fields
+            const payload = { name: form.name };
+            const res = await dispatch(userUpdateProfile(payload)).unwrap();
             const updatedUser = res?.data || res;
             dispatch(updateUser(updatedUser));
             toast.success("✅ Profile updated successfully!");
@@ -66,7 +67,7 @@ const MyProfile = () => {
         );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 py-8 px-4">
+        <div className="  bg-gradient-to-br from-orange-50 via-white to-amber-50 py-8 px-4">
             <div className="max-w-5xl mx-auto">
                 {/* Profile Header Card */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
@@ -182,8 +183,7 @@ const MyProfile = () => {
                     </div>
                 )}
 
-                {/* Address Section */}
-                <AddressSection />
+
             </div>
         </div>
     );

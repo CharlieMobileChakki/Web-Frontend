@@ -16,6 +16,7 @@ const Product = ({
   sellingPrice,
   actualPrice,
   variantId, // ✅ Accept variantId prop
+  reviewCount = 0, // ✅ Accept reviewCount prop with default value
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -135,7 +136,15 @@ const Product = ({
           name: storedUser?.name,
         };
 
-        const totalAmount = addedItem.product.sellingPrice * addedItem.quantity;
+        // ✅ Safe price extraction with fallbacks to prevent NaN
+        const itemPrice = addedItem.sellingPrice ||
+          addedItem.product?.sellingPrice ||
+          addedItem.price ||
+          0;
+
+        const totalAmount = itemPrice * (addedItem.quantity || 1);
+
+        console.log("🛒 Buy Now - Item Price:", itemPrice, "Quantity:", addedItem.quantity, "Total:", totalAmount);
 
         navigate("/checkout", {
           state: {
@@ -219,7 +228,9 @@ const Product = ({
           <div className="flex items-center bg-green-100 px-2 py-0.5 rounded text-green-700 text-xs font-bold">
             {rating > 0 ? rating.toFixed(1) : "New"} <Star size={10} className="ml-1 fill-green-700" />
           </div>
-          <span className="text-xs text-gray-400">({Math.floor(Math.random() * 50) + 10} reviews)</span>
+          <span className="text-xs text-gray-400">
+            ({reviewCount > 0 ? `${reviewCount} review${reviewCount !== 1 ? 's' : ''}` : 'No reviews'})
+          </span>
         </div>
 
         {/* Title */}

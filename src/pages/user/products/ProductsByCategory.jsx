@@ -68,6 +68,11 @@ export const ProductsByCategory = () => {
         return Number(average.toFixed(1)); // 1 decimal, e.g., 4.4
     };
 
+    const getReviewCount = (productId) => {
+        const productReviews = reviewsByProduct[productId] || [];
+        return productReviews.length;
+    };
+
 
     // dynamic slidesToShow based on actual window width — more robust than relying only on slick breakpoints
     const [slidesToShow, setSlidesToShow] = useState(5);
@@ -201,6 +206,7 @@ export const ProductsByCategory = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {filteredProducts.map((product) => {
                                     const avgRating = getAverageRating(product._id);
+                                    const reviewCount = getReviewCount(product._id);
 
                                     // Get pricing from first variant
                                     const firstVariant = product.variants?.[0];
@@ -217,6 +223,7 @@ export const ProductsByCategory = () => {
                                             sellingPrice={sellingPrice}
                                             actualPrice={actualPrice}
                                             rating={avgRating}
+                                            reviewCount={reviewCount}
                                         />
                                     );
                                 })}

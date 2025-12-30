@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { UserGetOrder, UserOrder, UserOrderById } from "../../services/NetworkServices";
+import { UserGetOrder, UserOrder, UserOrderById, UserCancelOrder } from "../../services/NetworkServices";
 
 
 
@@ -60,6 +60,21 @@ export const userorderbyid = createAsyncThunk(
     }
 )
 
+// cancel order
+export const usercancelorder = createAsyncThunk(
+    "order/usercancelorder",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await UserCancelOrder(id);
+            return response?.data;
+        } catch (error) {
+            return rejectWithValue(
+                error?.response?.data || "Failed to cancel order"
+            )
+        }
+    }
+)
+
 const OrderSlice = createSlice({
     name: 'order',
     initialState: {
@@ -100,7 +115,7 @@ const OrderSlice = createSlice({
             })
             .addCase(usergetorder.fulfilled, (state, action) => {
                 state.loading = false;
-                state.orders = action.payload;
+                state.orders = Array.isArray(action.payload) ? action.payload : [];
             })
             .addCase(usergetorder.rejected, (state, action) => {
                 state.loading = false;
@@ -119,6 +134,29 @@ const OrderSlice = createSlice({
             .addCase(userorderbyid.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Failed to fetch order details";
+            })
+
+            // ✅ CANCEL: order
+            .addCase(usercancelorder.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(usercancelorder.fulfilled, (state, action) => {
+                state.loading = false;
+                // Update local state to reflect cancellation
+                const cancelledOrderId = action.meta.arg;
+                state.orders = state.orders.map(order =>
+                    order._id === cancelledOrderId
+                        ? { ...order, orderStatus: 'Cancelled' }
+                        : order
+                );
+                if (state.orderDetails && state.orderDetails._id === cancelledOrderId) {
+                    state.orderDetails.orderStatus = 'Cancelled';
+                }
+            })
+            .addCase(usercancelorder.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to cancel order";
             });
     }
 

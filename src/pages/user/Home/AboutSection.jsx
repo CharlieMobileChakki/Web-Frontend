@@ -13,15 +13,15 @@ const AboutSection = () => {
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-red-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
 
         {/* Left Content */}
-        <div className="order-2 lg:order-1">
+        <div className="">
           <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 font-semibold text-sm mb-6">
             Who We Are
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
             MobileChakki – <span className="text-[#C6363E] relative">
               Freshness
               {/* <svg className="absolute bottom-0 left-0 w-full h-3 text-red-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -64,21 +64,21 @@ const AboutSection = () => {
         </div>
 
         {/* Right Side Images - Masonry Layout */}
-        <div className="order-1 lg:order-2 grid grid-cols-2 gap-4">
-          <div className="space-y-4 pt-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-4 sm:pt-12">
             <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img1} alt="About 1" className="w-full h-64 object-cover" />
+              <img src={img1} alt="About 1" className="w-full h-auto object-contain" />
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img3} alt="About 3" className="w-full h-48 object-cover" />
+              <img src={img3} alt="About 3" className="w-full h-auto object-contain" />
             </div>
           </div>
           <div className="space-y-4">
             <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img2} alt="About 2" className="w-full h-48 object-cover" />
+              <img src={img2} alt="About 2" className="w-full h-auto object-contain" />
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img4} alt="About 4" className="w-full h-64 object-cover" />
+              <img src={img4} alt="About 4" className="w-full h-auto object-contain" />
             </div>
           </div>
         </div>

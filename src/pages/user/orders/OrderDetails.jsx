@@ -35,12 +35,29 @@ const OrderDetails = () => {
             <h2 className="text-2xl font-bold mb-4 text-blue-700">
                 Order ID: {_id}
             </h2>
-            <p className="text-gray-600 mb-2">
-                Status: <strong>{orderStatus}</strong>
-            </p>
-            <p className="text-gray-600 mb-2">
-                Payment: <strong>{paymentMethod}</strong>
-            </p>
+
+            {/* Status Badge with Colors */}
+            <div className="mb-2">
+                <span className="text-gray-600 mr-2">Status:</span>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${orderStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                        orderStatus === 'Processing' ? 'bg-blue-100 text-blue-800' :
+                            orderStatus === 'Shipped' ? 'bg-purple-100 text-purple-800' :
+                                orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' :
+                                    orderStatus === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                                        'bg-gray-100 text-gray-800'
+                    }`}>
+                    {orderStatus}
+                </span>
+            </div>
+
+            {/* Payment Method Badge */}
+            <div className="mb-2">
+                <span className="text-gray-600 mr-2">Payment:</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold bg-blue-100 text-blue-800">
+                    💵 {paymentMethod}
+                </span>
+            </div>
+
             <p className="text-gray-600 mb-4">
                 Date: {new Date(createdAt).toLocaleString()}
             </p>
