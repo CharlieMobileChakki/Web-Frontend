@@ -156,7 +156,7 @@ const SignInUser = () => {
                 value={formData.otp}
                 name="otp"
                 onChange={handleChange}
-                placeholder="6-digit OTP"
+                placeholder="4-digit OTP"
                 className={`w-full pl-10 pr-3 py-2 border rounded-lg bg-[#fffaf3] 
                   ${errors.otp ? "border-red-500" : "border-[#e6d9b5]"} 
                   focus:outline-none focus:ring-2 focus:ring-[#d4a94d]`}
@@ -171,8 +171,8 @@ const SignInUser = () => {
                   onClick={handleResendOtp}
                   disabled={!canResend}
                   className={`text-sm font-semibold ${canResend
-                      ? "text-[#d4a94d] cursor-pointer hover:text-[#b08943]"
-                      : "text-gray-400 cursor-not-allowed"
+                    ? "text-[#d4a94d] cursor-pointer hover:text-[#b08943]"
+                    : "text-gray-400 cursor-not-allowed"
                     }`}
                 >
                   {canResend ? "Resend OTP" : "Resend OTP"}

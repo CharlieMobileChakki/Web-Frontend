@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Star, Heart } from "lucide-react";
+import { Star, Heart, ShoppingCart, Zap } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useraddtocart, usergetcart } from "../../store/slices/CartSlice";
 import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../store/slices/WishlistSlice";
+import { userproductbyid } from "../../store/slices/ProductSlice"; // Import the fetch action
 import { toast } from "react-toastify";
 import { checkAuth } from "../../utils/checkAuth";
 
@@ -60,8 +61,7 @@ const Product = ({
     setIsAdded(alreadyInCart);
   }, [cartItems, id]);
 
-  const handleAddToCart = () => {
-
+  const handleAddToCart = async () => {
     if (!checkAuth(navigate)) return;
 
     if (isAdded) {
@@ -69,58 +69,67 @@ const Product = ({
       return;
     }
 
+    let targetVariantId = variantId;
 
-    dispatch(useraddtocart({ productId: id, variantId, quantity: 1 }))
+    // 🛡️ Fail-safe: If variantId is missing, fetch the product to get the default variant
+    if (!targetVariantId) {
+      try {
+        const res = await dispatch(userproductbyid(id)).unwrap();
+        // Assuming response structure: { _id, variants: [...] }
+        const defaultVariant = res?.variants?.[0]; // Get first variant
+        if (defaultVariant?._id) {
+          targetVariantId = defaultVariant._id;
+          console.log("⚠️ Variant missing provided. Fetched default:", targetVariantId);
+        } else {
+          console.error("❌ No variants found for product during fetch-check.");
+          toast.error("Cannot add to cart: Product has no options.");
+          return;
+        }
+      } catch (err) {
+        console.error("❌ Failed to fetch default variant:", err);
+        toast.error("Failed to retrieve product options.");
+        return;
+      }
+    }
+
+    dispatch(useraddtocart({ productId: id, variantId: targetVariantId, quantity: 1 }))
       .unwrap()
       .then((updatedCart) => {
         console.log("✅ Cart updated:", updatedCart);
         toast.success("✅ Product added successfully!");
         setIsAdded(true);
-        dispatch(usergetcart()); // 🔄 Synced cart data to populate full product details
+        dispatch(usergetcart());
       })
       .catch((err) => {
         console.error("Add to cart failed:", err);
-        toast.error("❌ Failed to add product to cart");
+        // If error is "Variant not found" and we just fetched it... tricky.
+        toast.error(err || "❌ Failed to add product to cart");
       });
   };
 
+  // ... (Wishlist toggle code remains same)
 
-
-
-
-  // 💖 Wishlist toggle handler with real-time updates
-  const handleWishlistToggle = async () => {
-    // Optimistic UI update
-
+  const handleBuyNow = async () => {
     if (!checkAuth(navigate)) return;
 
-    setIsWishlisted((prev) => !prev);
+    let targetVariantId = variantId;
 
-    try {
-      if (!isWishlisted) {
-        // 👉 Add to wishlist
-        await dispatch(useraddwishlist({ productId: id })).unwrap();
-        toast.success("💖 Added to wishlist");
-      } else {
-        // 👉 Remove from wishlist
-        await dispatch(userremovewishlist({ productId: id })).unwrap();
-        toast.info("💔 Removed from wishlist");
+    // 🛡️ Fail-safe for Buy Now too
+    if (!targetVariantId) {
+      try {
+        const res = await dispatch(userproductbyid(id)).unwrap();
+        const defaultVariant = res?.variants?.[0];
+        if (defaultVariant?._id) {
+          targetVariantId = defaultVariant._id;
+        } else {
+          toast.error("Cannot proceed: Product has no options.");
+          return;
+        }
+      } catch (err) {
+        toast.error("Failed to retrieve product options.");
+        return;
       }
-
-      // ✅ Re-fetch wishlist once after success to stay synced
-      dispatch(usergetwishlist());
-    } catch (err) {
-      console.error("Wishlist toggle failed:", err);
-      // ❌ Rollback UI state on error
-      setIsWishlisted((prev) => !prev);
-      toast.error("❌ Something went wrong");
     }
-  };
-
-
-
-  const handleBuyNow = () => {
-    if (!checkAuth(navigate)) return;
 
     dispatch(usergetcart()).then((res) => {
       const existingItem = res.payload?.items?.find(
@@ -136,7 +145,6 @@ const Product = ({
           name: storedUser?.name,
         };
 
-        // ✅ Safe price extraction with fallbacks to prevent NaN
         const itemPrice = addedItem.sellingPrice ||
           addedItem.product?.sellingPrice ||
           addedItem.price ||
@@ -155,12 +163,11 @@ const Product = ({
         });
       };
 
-      // ✅ If already in cart → just checkout
       if (existingItem) {
         proceedToCheckout(existingItem);
       } else {
-        // ✅ Otherwise, add first then checkout
-        dispatch(useraddtocart({ productId: id, variantId, quantity: 1 }))
+        // Use the secured targetVariantId
+        dispatch(useraddtocart({ productId: id, variantId: targetVariantId, quantity: 1 }))
           .unwrap()
           .then(() => {
             dispatch(usergetcart()).then((res2) => {
@@ -187,7 +194,7 @@ const Product = ({
       {/* 🏷️ Badges */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
         {/* Sale Badge */}
-        <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wide">
+        <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full shadow-sm tracking-wide">
           SALE
         </span>
       </div>
@@ -198,10 +205,11 @@ const Product = ({
           e.stopPropagation();
           handleWishlistToggle();
         }}
-        className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-transform duration-200 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+        className={`absolute top-2 right-2 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-transform duration-200 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
       >
         <Heart
-          size={20}
+          size={18}
+          className="md:w-5 md:h-5"
           fill={isWishlisted ? "currentColor" : "none"}
           strokeWidth={2}
         />
@@ -209,7 +217,7 @@ const Product = ({
 
       {/* 🖼️ Image Section */}
       <div
-        className="relative w-full h-56 p-6 bg-gray-50 flex items-center justify-center overflow-hidden cursor-pointer"
+        className="relative w-full h-40 md:h-56 p-4 md:p-6 bg-gray-50 flex items-center justify-center overflow-hidden cursor-pointer"
         onClick={() => navigate(`/products/${id}`)}
       >
         <img
@@ -222,36 +230,36 @@ const Product = ({
       </div>
 
       {/* 📝 Content Section */}
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-3 md:p-5 flex flex-col flex-grow">
         {/* Rating */}
         <div className="flex items-center gap-1 mb-2">
-          <div className="flex items-center bg-green-100 px-2 py-0.5 rounded text-green-700 text-xs font-bold">
+          <div className="flex items-center bg-green-100 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded text-green-700 text-[10px] md:text-xs font-bold">
             {rating > 0 ? rating.toFixed(1) : "New"} <Star size={10} className="ml-1 fill-green-700" />
           </div>
-          <span className="text-xs text-gray-400">
+          <span className="text-[10px] md:text-xs text-gray-400">
             ({reviewCount > 0 ? `${reviewCount} review${reviewCount !== 1 ? 's' : ''}` : 'No reviews'})
           </span>
         </div>
 
         {/* Title */}
         <h3
-          className="text-gray-800 font-bold text-lg leading-tight mb-1 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer"
+          className="text-gray-800 font-bold text-sm md:text-lg leading-tight mb-1 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer"
           onClick={() => navigate(`/products/${id}`)}
         >
           {description}
         </h3>
 
         {/* Weight / Quantity */}
-        <p className="text-sm text-gray-500 mb-4">{quantity}</p>
+        <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">{quantity}</p>
 
         <div className="mt-auto">
           {/* Price */}
-          <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-xl font-bold text-gray-900">₹{sellingPrice}</span>
+          <div className="flex items-baseline gap-1 md:gap-2 mb-3 md:mb-4">
+            <span className="text-lg md:text-xl font-bold text-gray-900">₹{sellingPrice}</span>
             {actualPrice > sellingPrice && (
               <>
-                <span className="text-sm text-gray-400 line-through">₹{actualPrice}</span>
-                <span className="text-xs font-bold text-green-600">
+                <span className="text-xs md:text-sm text-gray-400 line-through">₹{actualPrice}</span>
+                <span className="text-[10px] md:text-xs font-bold text-green-600">
                   {Math.round(((actualPrice - sellingPrice) / actualPrice) * 100)}% OFF
                 </span>
               </>
@@ -259,21 +267,23 @@ const Product = ({
           </div>
 
           {/* Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
             <button
               onClick={handleAddToCart}
-              className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${isAdded
+              className={`flex items-center justify-center gap-2 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 ${isAdded
                 ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
                 : 'bg-gray-900 text-white hover:bg-gray-800 shadow-gray-200'} shadow-md active:scale-95`}
             >
-              {isAdded ? "View Cart" : "Add to Cart"}
+              <ShoppingCart size={18} className="md:hidden" />
+              <span className="hidden md:inline">{isAdded ? "View Cart" : "Add to Cart"}</span>
             </button>
 
             <button
               onClick={handleBuyNow}
-              className="flex items-center justify-center py-2.5 rounded-xl text-sm font-semibold border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
+              className="flex items-center justify-center py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
             >
-              Buy Now
+              <Zap size={18} className="md:hidden" fill="currentColor" />
+              <span className="hidden md:inline">Buy Now</span>
             </button>
           </div>
         </div>

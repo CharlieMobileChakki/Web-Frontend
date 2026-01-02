@@ -54,7 +54,7 @@ const AllProducts = () => {
 
 
             <div className="">
-                <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 py-20 px-6">
+                <div className="container mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5 py-20 px-3 md:px-6">
 
 
                     {products?.length > 0 ? (
@@ -79,6 +79,7 @@ const AllProducts = () => {
                                     actualPrice={actualPrice}
                                     rating={avgRating}
                                     reviewCount={reviewCount}
+                                    variantId={firstVariant?._id}
                                 />
                             );
                         })

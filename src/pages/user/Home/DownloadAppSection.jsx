@@ -139,7 +139,7 @@ const DownloadAppSection = () => {
                                 <img
                                     src={LogoImg}
                                     alt="Mobile Chakki App"
-                                    className="w-64 md:w-80 lg:w-96 drop-shadow-xl rounded-3xl border-4 border-white/50"
+                                    className="w-40 md:w-64 lg:w-64 drop-shadow-xl rounded-3xl border-4 border-white/50"
                                 />
 
                                 {/* Decorative Ring */}

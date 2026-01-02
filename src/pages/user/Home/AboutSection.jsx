@@ -6,7 +6,24 @@ import img4 from '../../../assets/Banner/hero-services-img3.webp'
 
 
 
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 const AboutSection = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+  };
+
+  const images = [img1, img3, img2, img4]; // Order based on the grid layout visual flow if needed, or just list
+
   return (
     <section className="relative py-20 px-4 lg:px-8 bg-white overflow-hidden">
       {/* Background decoration */}
@@ -63,22 +80,38 @@ const AboutSection = () => {
           </button>
         </div>
 
-        {/* Right Side Images - Masonry Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-4 sm:pt-12">
-            <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img1} alt="About 1" className="w-full h-auto object-contain" />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img3} alt="About 3" className="w-full h-auto object-contain" />
-            </div>
+        {/* Right Side - Carousel for Mobile, Grid for Desktop */}
+        <div className="w-full">
+          {/* Mobile Slider (< md) */}
+          <div className="block md:hidden">
+            <Slider {...settings}>
+              {images.map((img, index) => (
+                <div key={index} className="px-2">
+                  <div className="rounded-2xl overflow-hidden shadow-lg">
+                    <img src={img} alt={`About ${index + 1}`} className="w-full h-64 object-cover" />
+                  </div>
+                </div>
+              ))}
+            </Slider>
           </div>
-          <div className="space-y-4">
-            <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img2} alt="About 2" className="w-full h-auto object-contain" />
+
+          {/* Desktop Masonry Grid (>= md) */}
+          <div className="hidden md:grid grid-cols-2 gap-4">
+            <div className="space-y-4 pt-12">
+              <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
+                <img src={img1} alt="About 1" className="w-full h-auto object-contain" />
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
+                <img src={img3} alt="About 3" className="w-full h-auto object-contain" />
+              </div>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
-              <img src={img4} alt="About 4" className="w-full h-auto object-contain" />
+            <div className="space-y-4">
+              <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
+                <img src={img2} alt="About 2" className="w-full h-auto object-contain" />
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-lg transform transition-transform duration-500 hover:scale-[1.02]">
+                <img src={img4} alt="About 4" className="w-full h-auto object-contain" />
+              </div>
             </div>
           </div>
         </div>

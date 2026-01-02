@@ -55,10 +55,10 @@ const ProductDetails = () => {
                                 <button
                                     key={variant._id || index}
                                     onClick={() => setSelectedVariant(variant)}
-                                    className={`px-6 py-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${selectedVariant?._id === variant._id ||
-                                            (!selectedVariant && index === 0)
-                                            ? "border-red-600 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg"
-                                            : "border-gray-200 bg-white hover:border-red-400 hover:shadow-md"
+                                    className={`px-4 py-3 md:px-6 md:py-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${selectedVariant?._id === variant._id ||
+                                        (!selectedVariant && index === 0)
+                                        ? "border-red-600 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg"
+                                        : "border-gray-200 bg-white hover:border-red-400 hover:shadow-md"
                                         }`}
                                 >
                                     <div className="text-base font-bold text-gray-900">

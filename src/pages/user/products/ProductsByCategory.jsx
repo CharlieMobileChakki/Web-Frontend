@@ -203,7 +203,7 @@ export const ProductsByCategory = () => {
                     <div>
                         <h3 className="py-3">{categoryName || "Not name"}</h3>
                         {filteredProducts.length > 0 && (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
                                 {filteredProducts.map((product) => {
                                     const avgRating = getAverageRating(product._id);
                                     const reviewCount = getReviewCount(product._id);
@@ -223,6 +223,7 @@ export const ProductsByCategory = () => {
                                             sellingPrice={sellingPrice}
                                             actualPrice={actualPrice}
                                             rating={avgRating}
+                                            variantId={firstVariant?._id}
                                             reviewCount={reviewCount}
                                         />
                                     );

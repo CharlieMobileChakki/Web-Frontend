@@ -18,7 +18,8 @@ const Header = () => {
   // const { cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const cartItems = useSelector((state) => state.cart?.cart?.items || []);
+  const cartState = useSelector((state) => state.cart);
+  const cartItems = cartState?.cart?.items || [];
 
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -180,6 +181,16 @@ const Header = () => {
                           className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                         >
                           View Profile
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            navigate("/my-orders"); // ✅ Go to My Orders page
+                            setAuthOpen(false);
+                          }}
+                          className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                        >
+                          My Orders
                         </button>
 
                         <button
