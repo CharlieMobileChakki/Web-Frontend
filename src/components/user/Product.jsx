@@ -107,7 +107,29 @@ const Product = ({
       });
   };
 
-  // ... (Wishlist toggle code remains same)
+  const handleWishlistToggle = async () => {
+    if (!checkAuth(navigate)) return;
+
+    if (isWishlisted) {
+      // Remove
+      try {
+        await dispatch(userremovewishlist({ productId: id })).unwrap();
+        toast.success("Removed from wishlist 💔");
+        setIsWishlisted(false);
+      } catch (err) {
+        toast.error("Failed to remove from wishlist");
+      }
+    } else {
+      // Add
+      try {
+        await dispatch(useraddwishlist({ productId: id })).unwrap();
+        toast.success("Added to wishlist ❤️");
+        setIsWishlisted(true);
+      } catch (err) {
+        toast.error("Failed to add to wishlist");
+      }
+    }
+  };
 
   const handleBuyNow = async () => {
     if (!checkAuth(navigate)) return;
@@ -205,7 +227,7 @@ const Product = ({
           e.stopPropagation();
           handleWishlistToggle();
         }}
-        className={`absolute top-2 right-2 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-transform duration-200 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+        className={`absolute top-2 right-2 md:top-3 md:right-3 z-10 p-1.5 md:p-2 rounded-full backdrop-blur-sm shadow-sm transition-transform duration-200 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-red-500 bg-red-50 hover:bg-red-100' : 'text-gray-400 hover:text-red-500 bg-white/80'}`}
       >
         <Heart
           size={18}

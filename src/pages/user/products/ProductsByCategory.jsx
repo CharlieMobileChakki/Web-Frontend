@@ -154,43 +154,7 @@ export const ProductsByCategory = () => {
                     {error && <p className="text-red-500 text-center">{error}</p>}
 
 
-                    <div className="my-4">
 
-
-
-                        {!loading && !error && categories?.length > 0 && (
-                            <div className="max-w-full mx-auto">
-                                <Slider {...settings} ref={sliderRef} className="category-slider">
-                                    {categories.map((category, index) => (
-
-                                        <div
-                                            key={index}
-                                            className={`!flex !justify-center px-2 ${id === category._id ? "scale-105" : ""
-                                                }`}
-                                        >
-                                            <div
-                                                className={`w-full max-w-[300px] sm:max-w-[260px] md:max-w-[220px] transition-all duration-300 rounded-xl border-2 ${id === category._id
-                                                    ? "border-[#A98C43]  shadow-lg bg-blue-50"
-                                                    : "border-transparent bg-white"
-                                                    }`}
-                                            >
-                                                <CategoryCard
-                                                    id={category._id}
-                                                    title={category.name}
-                                                    subtitle={category.title}
-                                                    icon={category.image}
-                                                    state={{
-                                                        categoryName: category.name,
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-
-                                    ))}
-                                </Slider>
-                            </div>
-                        )}
-                    </div>
 
 
 
@@ -228,6 +192,49 @@ export const ProductsByCategory = () => {
                                         />
                                     );
                                 })}
+                            </div>
+                        )}
+                    </div>
+
+
+
+
+                    <div className="my-4">
+
+                        <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
+                            Category
+                        </h1>
+
+                        {!loading && !error && categories?.length > 0 && (
+                            <div className="max-w-full mx-auto">
+                                <Slider {...settings} ref={sliderRef} className="category-slider">
+                                    {categories.map((category, index) => (
+
+                                        <div
+                                            key={index}
+                                            className={`!flex !justify-center px-2 ${id === category._id ? "scale-105" : ""
+                                                }`}
+                                        >
+                                            <div
+                                                className={`w-full max-w-[300px] sm:max-w-[260px] md:max-w-[220px] transition-all duration-300 rounded-xl border-2 ${id === category._id
+                                                    ? "border-[#A98C43]  shadow-lg bg-blue-50"
+                                                    : "border-transparent bg-white"
+                                                    }`}
+                                            >
+                                                <CategoryCard
+                                                    id={category._id}
+                                                    title={category.name}
+                                                    subtitle={category.title}
+                                                    icon={category.image}
+                                                    state={{
+                                                        categoryName: category.name,
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                    ))}
+                                </Slider>
                             </div>
                         )}
                     </div>

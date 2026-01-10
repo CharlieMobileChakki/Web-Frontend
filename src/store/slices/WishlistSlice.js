@@ -6,12 +6,17 @@ import {
 } from "../../services/NetworkServices";
 
 // ✅ Add to wishlist
+// ✅ Add to wishlist
 export const useraddwishlist = createAsyncThunk(
   "wishlist/addwishlist",
-  async (data, { rejectWithValue }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     try {
       const response = await UserAddWishlist(data);
       console.log("✅ Added to wishlist:", response?.data);
+
+      // 🔄 Immediate refetch to get populated data
+      dispatch(usergetwishlist());
+
       return response?.data?.wishlistItem || response?.data;
     } catch (error) {
       return rejectWithValue(
@@ -24,10 +29,10 @@ export const useraddwishlist = createAsyncThunk(
 // ❌ Remove from wishlist
 export const userremovewishlist = createAsyncThunk(
   "wishlist/removewishlist",
-  async ({productId }, { rejectWithValue }) => {
+  async ({ productId }, { rejectWithValue }) => {
     try {
-      const response = await UserRemoveWishlist(productId ); 
-       return productId; // return to filter in reducer
+      const response = await UserRemoveWishlist(productId);
+      return productId; // return to filter in reducer
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Something went wrong"
@@ -68,15 +73,9 @@ const WishlistSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(useraddwishlist.fulfilled, (state, action) => {
+      .addCase(useraddwishlist.fulfilled, (state) => {
         state.loading = false;
-        // avoid duplicates
-        const exists = state.items.some(
-          (item) => item?.productId?._id === action.payload?.productId
-        );
-        if (!exists) {
-          state.items.push(action.payload);
-        }
+        // Data updated via usergetwishlist
       })
       .addCase(useraddwishlist.rejected, (state, action) => {
         state.loading = false;
@@ -87,18 +86,16 @@ const WishlistSlice = createSlice({
       .addCase(userremovewishlist.pending, (state) => {
         state.loading = true;
       })
-      .addCase(userremovewishlist.fulfilled, (state, action) => {
+      .addCase(userremovewishlist.fulfilled, (state) => {
         state.loading = false;
-        state.items = state.items.filter(
-          (item) => item?.productId?._id !== action.payload
-        );
+        // Data updated via usergetwishlist
       })
       .addCase(userremovewishlist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-        
-        
+
+
       // 📋 Get All Wishlist
       .addCase(usergetwishlist.pending, (state) => {
         state.loading = true;

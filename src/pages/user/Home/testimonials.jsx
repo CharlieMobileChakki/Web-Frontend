@@ -90,14 +90,7 @@ const Testimonials = () => {
                 </div>
 
                 {/* Profile Image */}
-                <div className="relative mb-6 mt-4">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-orange-400 rounded-full blur-md opacity-50"></div>
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="relative w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-                  />
-                </div>
+
 
                 {/* Star Rating */}
                 <div className="flex gap-1 mb-4">

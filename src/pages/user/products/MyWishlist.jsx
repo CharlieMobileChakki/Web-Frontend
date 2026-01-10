@@ -48,21 +48,32 @@ const MyWishlist = () => {
                                     className="w-full h-48 object-cover rounded-md cursor-pointer"
                                     onClick={() => navigate(`/products/${item?.productId?._id}`)}
                                 />
-                                <h2 className="text-lg font-semibold mt-3">
-                                    {item?.productId?.name}
+                                <h2
+                                    className="text-lg font-semibold mt-3 cursor-pointer hover:text-green-600 transition"
                                     onClick={() => navigate(`/products/${item?.productId?._id}`)}
+                                >
+                                    {item?.productId?.name}
                                 </h2>
                                 <p className="text-gray-600 mt-1">
                                     ₹{(item?.productId?.sellingPrice || item?.productId?.price)?.toLocaleString()}
 
                                 </p>
 
-                                <button
-                                    onClick={() => handleRemove(item?.productId?._id)}
-                                    className="mt-3 bg-red-500 text-white cursor-pointer px-4 py-2 rounded-md hover:bg-red-600 transition"
-                                >
-                                    Remove
-                                </button>
+                                {/* Action Buttons */}
+                                <div className="flex gap-2 mt-4">
+                                    <button
+                                        onClick={() => navigate(`/products/${item?.productId?._id}`)}
+                                        className="flex-1 bg-green-600 text-white cursor-pointer px-3 py-2 rounded-md hover:bg-green-700 transition text-sm font-medium"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    <button
+                                        onClick={() => handleRemove(item?.productId?._id)}
+                                        className="flex-1 bg-red-50 text-red-600 border border-red-200 cursor-pointer px-3 py-2 rounded-md hover:bg-red-100 transition text-sm font-medium"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>

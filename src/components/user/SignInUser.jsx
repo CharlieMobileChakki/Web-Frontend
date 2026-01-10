@@ -97,8 +97,15 @@ const SignInUser = () => {
         otp: formData.otp,
       }
 
-      await dispatch(verifyOtpAndSignin(payload)).unwrap()
-      navigate("/")
+      await dispatch(verifyOtpAndSignin(payload)).unwrap();
+
+      const redirectPath = localStorage.getItem("redirectAfterLogin");
+      if (redirectPath) {
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath);
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       setErrors({ otp: error?.message || "Invalid OTP" })
     }

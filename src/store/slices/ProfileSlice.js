@@ -13,16 +13,31 @@ import { setGetLocalData } from "../../services/LocalStorageHelper";
 
 // Helper to fetch full profile with addresses from separate API
 const fetchFullProfile = async () => {
-  const [profileRes, addressesRes] = await Promise.all([
-    UserGetMyProfile(),
-    UserGetAllAddresses()
-  ]);
-  const profile = profileRes?.data?.data;
-  const addresses = addressesRes?.data?.data; // Array of addresses from separate API
-  if (profile) {
-    profile.addresses = addresses || [];
+  try {
+    const [profileRes, addressesRes] = await Promise.all([
+      UserGetMyProfile(),
+      UserGetAllAddresses()
+    ]);
+
+    console.log("👤 Profile API Data:", profileRes?.data);
+    console.log("🏠 Addresses API Data:", addressesRes?.data);
+
+    // API Doc: Get All Addresses -> { success: true, data: [...] }
+    const addresses = addressesRes?.data?.data || [];
+
+    // API Doc: Get Profile -> { success: true, data: { ... } } (assuming standard)
+    // The user didn't provide Profile doc, but usually it's similar.
+    const profile = profileRes?.data?.data || profileRes?.data?.user;
+
+    if (profile) {
+      profile.addresses = Array.isArray(addresses) ? addresses : [];
+      console.log("✅ Merged Profile with Addresses:", profile);
+    }
+    return profile;
+  } catch (error) {
+    console.error("Error fetching full profile:", error);
+    return null;
   }
-  return profile;
 };
 
 // ==========================
@@ -79,8 +94,9 @@ export const userAddAddress = createAsyncThunk(
   async (payload, { dispatch, rejectWithValue }) => {
     try {
       const res = await UserAddNewAddress(payload);
-      // Separate address API returns { success, message, data: {...addressObject} }
-      const newAddress = res?.data?.data;
+
+      // Robust extraction
+      const newAddress = res?.data?.data || res?.data?.address || res?.data?.newAddress || res?.data;
 
       // Re-fetch complete profile to sync everything
       const fullProfile = await fetchFullProfile();

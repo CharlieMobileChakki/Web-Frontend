@@ -10,10 +10,7 @@ export const MyBooking = () => {
     const [filter, setFilter] = useState("all"); // all, active, cancelled
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user?._id) {
-            dispatch(usergetbookings(user._id));
-        }
+        dispatch(usergetbookings());
     }, [dispatch]);
 
     // handle cancel
@@ -22,10 +19,7 @@ export const MyBooking = () => {
             try {
                 await dispatch(usercancelbooking(id)).unwrap();
                 // ✅ Instantly update list without refresh
-                const user = JSON.parse(localStorage.getItem("user"));
-                if (user?._id) {
-                    dispatch(usergetbookings(user._id));
-                }
+                dispatch(usergetbookings());
                 toast.success("✅ Booking cancelled successfully");
             } catch (error) {
                 toast.error("❌ Failed to cancel booking");
@@ -129,8 +123,8 @@ export const MyBooking = () => {
                     <button
                         onClick={() => setFilter("all")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${filter === "all"
-                                ? "bg-blue-500 text-white"
-                                : "text-gray-600 hover:bg-gray-100"
+                            ? "bg-blue-500 text-white"
+                            : "text-gray-600 hover:bg-gray-100"
                             }`}
                     >
                         All
@@ -138,8 +132,8 @@ export const MyBooking = () => {
                     <button
                         onClick={() => setFilter("active")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${filter === "active"
-                                ? "bg-green-500 text-white"
-                                : "text-gray-600 hover:bg-gray-100"
+                            ? "bg-green-500 text-white"
+                            : "text-gray-600 hover:bg-gray-100"
                             }`}
                     >
                         Active
@@ -147,8 +141,8 @@ export const MyBooking = () => {
                     <button
                         onClick={() => setFilter("cancelled")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${filter === "cancelled"
-                                ? "bg-red-500 text-white"
-                                : "text-gray-600 hover:bg-gray-100"
+                            ? "bg-red-500 text-white"
+                            : "text-gray-600 hover:bg-gray-100"
                             }`}
                     >
                         Cancelled
@@ -223,10 +217,10 @@ export const MyBooking = () => {
                                             <div>
                                                 <p className="text-sm text-gray-500">Address</p>
                                                 <p className="font-semibold text-gray-800 line-clamp-2">
-                                                    {booking.address?.manualAddress?.street},{" "}
-                                                    {booking.address?.manualAddress?.city},{" "}
-                                                    {booking.address?.manualAddress?.state} -{" "}
-                                                    {booking.address?.manualAddress?.zipCode}
+                                                    {booking.address?.street},{" "}
+                                                    {booking.address?.city},{" "}
+                                                    {booking.address?.state} -{" "}
+                                                    {booking.address?.zipCode}
                                                 </p>
                                             </div>
                                         </div>

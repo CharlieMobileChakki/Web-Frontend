@@ -110,21 +110,21 @@ const HeroSection = () => {
                 </p>
 
                 {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                <div className="flex flex-row gap-4 justify-center lg:justify-start pt-2">
                   <button
                     onClick={() => navigate("/createbooking")}
-                    className="group relative px-8 py-4 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-bold text-lg shadow-lg hover:shadow-orange-200/50 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                    className="flex-1 sm:flex-none group relative px-4 py-3 sm:px-8 sm:py-4 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-bold text-sm sm:text-lg shadow-lg hover:shadow-orange-200/50 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       {slides[activeSlide].btnText}
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div className="absolute inset-0 bg-white/20 transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
                   </button>
 
                   <button
                     onClick={() => navigate("/allproducts")}
-                    className="px-8 py-4 rounded-xl bg-white text-amber-900 font-bold text-lg border-2 border-amber-100 hover:border-amber-300 hover:bg-amber-50 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
+                    className="flex-1 sm:flex-none px-4 py-3 sm:px-8 sm:py-4 rounded-xl bg-white text-amber-900 font-bold text-sm sm:text-lg border-2 border-amber-100 hover:border-amber-300 hover:bg-amber-50 shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
                   >
                     View Products
                   </button>

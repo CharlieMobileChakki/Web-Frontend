@@ -42,9 +42,9 @@ export const usercancelbooking = createAsyncThunk(
 // ============================
 export const usergetbookings = createAsyncThunk(
     "booking/getbookings",
-    async (userId, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await UserGetBooking(userId);
+            const response = await UserGetBooking();
             console.log(response, "get my bookings");
             return response?.data?.data;
         } catch (error) {

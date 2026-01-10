@@ -69,15 +69,14 @@ const AboutSection = () => {
             ))}
           </ul>
 
-          <button className="group relative px-8 py-4 bg-[#C6363E] text-white font-bold rounded-xl shadow-lg hover:bg-black hover:shadow-xl transition-all duration-300 overflow-hidden">
+          {/* <button className="group relative px-8 py-4 bg-[#C6363E] text-white font-bold rounded-xl shadow-lg hover:bg-black hover:shadow-xl transition-all duration-300 overflow-hidden">
             <span className="relative z-10 flex items-center gap-2">
-              Learn More
-              {/* Arrow Icon */}
+              Learn More 
               <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </span>
-          </button>
+          </button> */}
         </div>
 
         {/* Right Side - Carousel for Mobile, Grid for Desktop */}

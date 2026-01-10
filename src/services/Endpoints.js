@@ -53,6 +53,13 @@ const Endpoints = {
           ADMIN_CREATE_BANNER: '/api/admin/banners',                    // POST create banner
           ADMIN_UPDATE_BANNER: (id) => `/api/admin/banners/${id}`,      // PUT update banner
           ADMIN_DELETE_BANNER: (id) => `/api/admin/banners/${id}`,      // DELETE banner
+
+          // ================= DRIVER MANAGEMENT =================
+          ADMIN_CREATE_DRIVER: '/api/admin/drivers/create-driver',        // POST create driver
+          ADMIN_GET_ALL_DRIVERS: '/api/admin/drivers/get-drivers',        // GET all drivers
+          ADMIN_GET_DRIVER_BY_ID: (id) => `/api/admin/drivers/${id}`,     // GET driver by id
+          ADMIN_UPDATE_DRIVER: (id) => `/api/admin/drivers/${id}`,        // PUT update driver
+          ADMIN_DELETE_DRIVER: (id) => `/api/admin/drivers/${id}`,        // DELETE driver
      },
 
 
@@ -105,13 +112,13 @@ const Endpoints = {
           // wishlist apis
           USERADDWISHLIST: '/api/wishlist/add', // Add Item to Wishlist 
           USERREMOVEWISHLIST: '/api/wishlist/remove', // Remove Item from Wishlist 
-          USERGETWISHLIST: '/api/wishlist ', //Get All Wishlist Items 
+          USERGETWISHLIST: '/api/wishlist', //Get All Wishlist Items 
 
 
           // booking
-          USERCREATEBOOKING: '/api/user/bookings/create', // POST : CREATE BOOKING
+          USERCREATEBOOKING: '/api/booking/create', // POST : CREATE BOOKING
           USERCANCELBOOKING: (id) => `/api/user/bookings/cancel/${id}`, // cancel booking
-          USERGETBOOKING: (userId) => `/api/user/bookings/my-bookings/${userId} `, // get booking 
+          USERGETBOOKING: '/api/booking/get-bookings', // get booking 
 
 
           // profile 

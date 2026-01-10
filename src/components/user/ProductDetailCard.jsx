@@ -17,10 +17,15 @@ const ProductDetailCard = ({
     actualPrice = 1299,
     reviews = [],
     variantId, // ✅ Accept variantId prop
+    variants = [],
+    selectedVariant,
+    setSelectedVariant,
 }) => {
     const [mainImage, setMainImage] = useState(images[0]);
     const [isAdded, setIsAdded] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const [showFullDesc, setShowFullDesc] = useState(false); // ✅ State for Read More
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -183,26 +188,26 @@ const ProductDetailCard = ({
                     {/* LEFT SIDE: IMAGE GALLERY */}
                     <div className="flex flex-col gap-4 md:gap-6">
                         {/* Main Image */}
-                        <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden p-6 md:p-8 group cursor-pointer">
+                        <div className="relative bg-white border border-gray-100 rounded-3xl overflow-hidden p-6 md:p-10 group cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleWishlistToggle();
                                 }}
-                                className="absolute top-3 right-3 md:top-4 md:right-4 z-10 bg-white rounded-full p-2 md:p-3 shadow-lg hover:scale-110 transition-transform duration-300"
+                                className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur rounded-full p-2.5 shadow-sm border border-gray-100 hover:scale-110 transition-transform duration-300"
                             >
                                 <Heart
-                                    size={20}
+                                    size={22}
                                     fill={isWishlisted ? "#ef4444" : "transparent"}
-                                    stroke={isWishlisted ? "#ef4444" : "#374151"}
-                                    className="transition-colors duration-300 md:w-6 md:h-6"
+                                    stroke={isWishlisted ? "#ef4444" : "#9ca3af"}
+                                    className="transition-colors duration-300"
                                 />
                             </button>
 
                             <img
                                 src={mainImage}
                                 alt={name}
-                                className="w-full h-64 md:h-[400px] object-contain transition-transform duration-500 group-hover:scale-105"
+                                className="w-full h-64 md:h-[450px] object-contain transition-transform duration-700 ease-in-out group-hover:scale-110"
                             />
                         </div>
 
@@ -227,12 +232,12 @@ const ProductDetailCard = ({
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex gap-3 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:static md:bg-transparent md:shadow-none md:p-0 z-50">
+                        <div className="flex gap-3 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:static md:bg-transparent md:shadow-none md:p-0 z-49">
                             <button
                                 onClick={isAdded ? () => navigate("/viewcart") : handleAddToCart}
-                                className={`flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform active:scale-95 hover:scale-105 ${isAdded
-                                    ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-green-200"
-                                    : "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg hover:shadow-red-200"
+                                className={`flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform active:scale-95 hover:scale-105 shadow-lg ${isAdded
+                                    ? "bg-green-600 hover:bg-green-700 text-white shadow-green-200"
+                                    : "bg-gray-900 hover:bg-black text-white shadow-gray-200"
                                     }`}
                             >
                                 {isAdded ? "View Cart" : "Add To Cart"}
@@ -240,7 +245,7 @@ const ProductDetailCard = ({
 
                             <button
                                 onClick={handleBuyNow}
-                                className="flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 transform active:scale-95 hover:scale-105"
+                                className="flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg bg-[#A98C43] hover:bg-[#8c7335] text-white shadow-lg shadow-orange-100 transition-all duration-300 transform active:scale-95 hover:scale-105"
                             >
                                 Buy Now
                             </button>
@@ -283,53 +288,68 @@ const ProductDetailCard = ({
                         </div>
 
                         {/* Description */}
-                        <div className="bg-gray-50 rounded-xl p-4 md:p-6">
-                            <h3 className="font-bold text-gray-900 mb-2 md:mb-3 text-base md:text-lg">Product Description</h3>
-                            <p className="text-sm md:text-base text-gray-700 leading-relaxed">{description}</p>
+                        <div className="py-2">
+                            <h3 className="font-bold text-gray-900 mb-2 text-lg">Description</h3>
+                            <div className="text-gray-600 leading-relaxed text-base">
+                                {description?.length > 250 ? (
+                                    <>
+                                        {showFullDesc ? description : `${description.slice(0, 250)}...`}
+                                        <button
+                                            onClick={() => setShowFullDesc(!showFullDesc)}
+                                            className="ml-2 text-red-600 font-semibold hover:underline text-sm focus:outline-none"
+                                        >
+                                            {showFullDesc ? "Read Less" : "Read More"}
+                                        </button>
+                                    </>
+                                ) : (
+                                    description
+                                )}
+                            </div>
                         </div>
 
+                        {/* Variant Selector */}
+                        {variants?.length > 1 && (
+                            <div className="mb-4">
+                                <h3 className="font-bold text-gray-900 mb-3 text-base">Select Pack Size:</h3>
+                                <div className="flex flex-wrap gap-3">
+                                    {variants.map((variant, index) => {
+                                        const isSelected = selectedVariant?._id === variant._id || (!selectedVariant && index === 0);
+                                        return (
+                                            <button
+                                                key={variant._id || index}
+                                                onClick={() => setSelectedVariant(variant)}
+                                                className={`relative px-4 py-3 rounded-xl border transition-all duration-300 flex flex-col items-center min-w-[100px] ${isSelected
+                                                    ? "border-[#A98C43] bg-orange-50/50 text-gray-900 ring-1 ring-[#A98C43]"
+                                                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                                    }`}
+                                            >
+                                                <span className="text-sm font-semibold">
+                                                    {variant.nameSuffix || `${variant.quantity}g`}
+                                                </span>
+                                                <span className={`text-xs mt-1 font-medium ${isSelected ? "text-[#A98C43]" : "text-gray-500"}`}>
+                                                    ₹{variant.sellingPrice}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Features Grid */}
-                        <div className="grid grid-cols-2 gap-3 md:gap-4">
-                            <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-blue-50 rounded-xl">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white text-base md:text-xl">
-                                    ✓
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-2">
+                            {[
+                                { icon: "✓", title: "Quality", subtitle: "Certified" },
+                                { icon: "🚚", title: "Fast", subtitle: "Delivery" },
+                                { icon: "💳", title: "Secure", subtitle: "Payment" },
+                                { icon: "⭐", title: "Top", subtitle: "Rated" },
+                            ].map((feature, idx) => (
+                                <div key={idx} className="flex flex-col items-center justify-center p-3 bg-white border border-gray-100 rounded-xl text-center shadow-sm">
+                                    <div className="text-xl mb-1">{feature.icon}</div>
+                                    <p className="font-semibold text-gray-900 text-xs">{feature.title}</p>
+                                    <p className="text-[10px] text-gray-500">{feature.subtitle}</p>
                                 </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-xs md:text-base">1 Year Warranty</p>
-                                    <p className="text-[10px] md:text-sm text-gray-600">On Product</p>
-                                </div>
-                            </div>
-
-
-                            <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-green-50 rounded-xl">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-green-600 rounded-lg flex items-center justify-center text-white text-base md:text-xl">
-                                    🚚
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-xs md:text-base">Free Delivery</p>
-                                    <p className="text-[10px] md:text-sm text-gray-600">By Tomorrow</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-purple-50 rounded-xl">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-600 rounded-lg flex items-center justify-center text-white text-base md:text-xl">
-                                    💳
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-xs md:text-base">Bank Offers</p>
-                                    <p className="text-[10px] md:text-sm text-gray-600">5% Cashback</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-orange-50 rounded-xl">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-600 rounded-lg flex items-center justify-center text-white text-base md:text-xl">
-                                    ⭐
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-xs md:text-base">Premium Quality</p>
-                                    <p className="text-[10px] md:text-sm text-gray-600">Guaranteed</p>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>

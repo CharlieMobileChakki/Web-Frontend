@@ -44,6 +44,9 @@ import BannerManagment from "../pages/admin/adminBanner/BannerMangement";
 import StockManagement from "../pages/admin/adminStock/StockManagement";
 import BookingManagement from "../pages/admin/adminBooking/BookingManagement";
 import DriverManagement from "../pages/admin/adminDriver/DriverManagement";
+import CreateDriver from "../pages/admin/adminDriver/CreateDriver";
+import EditDriver from "../pages/admin/adminDriver/EditDriver";
+import DriverDetails from "../pages/admin/adminDriver/DriverDetails";
 import AdminCreation from "../pages/admin/adminCreation/AdminCreation";
 import OrdersManagement from "../pages/admin/adminOrders/OrdersManagement";
 import ContactManagement from "../pages/admin/adminContact/ContactManagement";
@@ -103,6 +106,9 @@ const AppRoutes = () => {
           <Route path="/stockmanagement" element={<StockManagement />} />
           <Route path="/bookingmanagement" element={<BookingManagement />} />
           <Route path="/drivermanagement" element={<DriverManagement />} />
+          <Route path="/drivermanagement/create" element={<CreateDriver />} />
+          <Route path="/drivermanagement/edit/:id" element={<EditDriver />} />
+          <Route path="/drivermanagement/view/:id" element={<DriverDetails />} />
           <Route path="/admincreation" element={<AdminCreation />} />
           <Route path="/contactmanagement" element={<ContactManagement />} />
 
@@ -110,7 +116,7 @@ const AppRoutes = () => {
       </Route>
 
 
-    </Routes>    
+    </Routes>
   );
 };
 

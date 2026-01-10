@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductDetailCard from "../../../components/user/ProductDetailCard";
 import { userproductbyid } from "../../../store/slices/ProductSlice";
 import { userreviewsaccess } from "../../../store/slices/ReviewSlice";
+import MilletManImg from "../../../assets/blog/10.jpeg";
 
 const ProductDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
+    const navigate = useNavigate();
     const [selectedVariant, setSelectedVariant] = useState(null);
 
     const { selectedProduct, loading, error } = useSelector(
@@ -46,43 +48,36 @@ const ProductDetails = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
             <div className="container mx-auto px-4">
-                {/* Variant Selector */}
-                {product.variants?.length > 1 && (
-                    <div className="mb-6 bg-white rounded-2xl shadow-lg p-6 max-w-7xl mx-auto">
-                        <h3 className="font-bold text-gray-900 mb-4 text-lg">Select Variant:</h3>
-                        <div className="flex flex-wrap gap-3">
-                            {product.variants.map((variant, index) => (
-                                <button
-                                    key={variant._id || index}
-                                    onClick={() => setSelectedVariant(variant)}
-                                    className={`px-4 py-3 md:px-6 md:py-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${selectedVariant?._id === variant._id ||
-                                        (!selectedVariant && index === 0)
-                                        ? "border-red-600 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg"
-                                        : "border-gray-200 bg-white hover:border-red-400 hover:shadow-md"
-                                        }`}
-                                >
-                                    <div className="text-base font-bold text-gray-900">
-                                        {variant.nameSuffix || `${variant.quantity}g`}
-                                    </div>
-                                    <div className="text-lg font-bold text-red-600 mt-1">
-                                        ₹{variant.sellingPrice}
-                                    </div>
-                                    {variant.stock > 0 ? (
-                                        <div className="text-xs text-green-600 font-semibold mt-1 flex items-center gap-1">
-                                            <span className="w-2 h-2 bg-green-600 rounded-full"></span>
-                                            In Stock
-                                        </div>
-                                    ) : (
-                                        <div className="text-xs text-red-600 font-semibold mt-1 flex items-center gap-1">
-                                            <span className="w-2 h-2 bg-red-600 rounded-full"></span>
-                                            Out of Stock
-                                        </div>
-                                    )}
-                                </button>
-                            ))}
+                {/* Millet Man Section - Moved to Top */}
+                <div className="mb-8 bg-white rounded-3xl shadow-lg overflow-hidden max-w-4xl mx-auto border border-gray-100">
+                    <div className="flex flex-col md:flex-row items-center">
+                        <div className="w-full md:w-1/2">
+                            <img
+                                src={MilletManImg}
+                                alt="Millet Man - Dr. Khader Vali"
+                                className="w-full h-64 md:h-full object-cover"
+                            />
+                        </div>
+                        <div className="w-full md:w-1/2 p-6 md:p-10">
+                            <p className="text-sm text-gray-500 mb-2 font-medium">August 25, 2025 • Mobile Chakki Team</p>
+                            <h3 className="text-2xl font-bold text-[#A98C43] mb-4">
+                                Millets by : Khader Vali
+                            </h3>
+                            <div className="w-16 h-1 bg-red-600 rounded-full mb-4"></div>
+                            <p className="text-gray-600 leading-relaxed mb-6">
+                                Known as the Millet Man of India, Dr. Khader Vali highlighted the health benefits of organic millets.
+                                His insights encouraged families to embrace nutrition and wellness in daily life.
+                            </p>
+                            <button
+                                onClick={() => navigate("/blog")}
+                                className="text-red-600 font-bold hover:text-red-700 transition-colors flex items-center gap-2 group cursor-pointer"
+                            >
+                                Read More
+                                <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                            </button>
                         </div>
                     </div>
-                )}
+                </div>
 
                 <ProductDetailCard
                     id={selectedProduct?._id}
@@ -93,6 +88,9 @@ const ProductDetails = () => {
                     actualPrice={actualPrice}
                     reviews={productReviews}
                     variantId={activeVariant?._id} // Pass variant ID for cart operations
+                    variants={product.variants}
+                    selectedVariant={selectedVariant}
+                    setSelectedVariant={setSelectedVariant}
                 />
             </div>
         </div>

@@ -177,6 +177,33 @@ export const AdminDeleteBanner = async (id) => {
   return await api.delete(Endpoints.Admin.ADMIN_DELETE_BANNER(id));
 };
 
+// ================= DRIVER MANAGEMENT =================
+
+// CREATE DRIVER
+export const AdminCreateDriver = async (data) => {
+  return await api.post(Endpoints.Admin.ADMIN_CREATE_DRIVER, data);
+};
+
+// GET ALL DRIVERS
+export const AdminGetAllDrivers = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_DRIVERS);
+};
+
+// GET DRIVER BY ID
+export const AdminGetDriverById = async (id) => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_DRIVER_BY_ID(id));
+};
+
+// UPDATE DRIVER
+export const AdminUpdateDriver = async (id, data) => {
+  return await api.put(Endpoints.Admin.ADMIN_UPDATE_DRIVER(id), data);
+};
+
+// DELETE DRIVER
+export const AdminDeleteDriver = async (id) => {
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_DRIVER(id));
+};
+
 
 // .....................USER API'S.......................///////
 // .....................USER API'S.......................///////
@@ -325,8 +352,8 @@ export const UserCancelBooking = async (id) => {
 }
 
 
-export const UserGetBooking = async (userId) => {
-  return await api.get(Endpoints.User.USERGETBOOKING(userId))
+export const UserGetBooking = async () => {
+  return await api.get(Endpoints.User.USERGETBOOKING)
 }
 
 
@@ -344,7 +371,15 @@ export const UserUpdateProfile = async (payload) => {
 
 // add new address
 export const UserAddNewAddress = async (payload) => {
-  return await api.post(Endpoints.User.USERADDNEWADDRESS, payload)
+  console.log("🚀 Payload sending to /api/address/addresses:", payload);
+  try {
+    const response = await api.post(Endpoints.User.USERADDNEWADDRESS, payload);
+    console.log("✅ Response from /api/address/addresses:", response.data);
+    return response;
+  } catch (error) {
+    console.error("❌ Error adding address:", error.response?.data || error.message);
+    throw error;
+  }
 }
 
 // get all addresses

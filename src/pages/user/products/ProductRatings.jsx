@@ -35,7 +35,7 @@ const ProductRatings = ({ reviews = [], productId }) => {
     }));
 
     const totalRatings = reviews.length;
-    const reviewImages = reviews.map((r) => r.image).filter(Boolean).slice(0, 5);
+
 
     // ✅ Updated handleSubmit with toast
     const handleSubmit = async () => {
@@ -138,19 +138,7 @@ const ProductRatings = ({ reviews = [], productId }) => {
                 </div>
             )}
 
-            {/* Review Images */}
-            {reviewImages.length > 0 && (
-                <div className="flex gap-2 mb-6 flex-wrap">
-                    {reviewImages.map((img, idx) => (
-                        <img key={idx} src={img} alt="review" className="w-16 h-16 object-cover rounded-lg border" />
-                    ))}
-                    {reviews.length > 5 && (
-                        <div className="w-16 h-16 flex items-center justify-center border rounded-lg bg-gray-100 text-sm text-gray-600">
-                            +{reviews.length - 5}
-                        </div>
-                    )}
-                </div>
-            )}
+
 
             {/* User Reviews */}
             <div className="space-y-6">
