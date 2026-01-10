@@ -4,7 +4,6 @@ import { userproduct } from "../../../store/slices/ProductSlice";
 import Product from "../../../components/user/Product";
 import { userreviewsaccess } from "../../../store/slices/ReviewSlice";
 import { BannerSection } from "../../../components/user/BannerSection";
-// import Bg from "../../assets/Banner/S1.png";
 import Bg from "../../../assets/Banner/S1.png";
 
 const AllProducts = () => {
