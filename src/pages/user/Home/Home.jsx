@@ -3,9 +3,9 @@ import HeroSection from "./HeroSection";
 import ProductHome from "./ProductHome";
 import Categories from "./Categories";
 import AboutSection from "./AboutSection";
-import Features from "./Features";
+// import Features from "./Features";
+import Testimonials from "./Testimonials"
 import WhyChoose from "./WhyChoose";
-import Testimonials from "./Testimonials";
 import DownloadAppSection from "./DownloadAppSection";
 
 const Home = () => {
