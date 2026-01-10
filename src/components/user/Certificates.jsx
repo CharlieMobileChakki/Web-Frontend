@@ -16,7 +16,7 @@ import HACCP from "../../assets/certificate/HACCP_07BD_25_SOFT_COPY_OF_AATAWALA_
 // Import Logos (you’ll need to place PNG/SVG logos inside assets/certLogos folder)
 import iso9001Logo from "../../assets/certificate/iso9001Logo.png";
 import iso45001Logo from "../../assets/certificate/iso-45001.png";
-import iso22000Logo from "../../assets/certificate/iso-22000.png";
+import iso22000Logo from "../../assets/certificate/ISO-22000.png";
 import fdaLogo from "../../assets/certificate/FDA.jpg";
 import halalLogo from "../../assets/certificate/HALAL.jpg";
 import gmpLogo from "../../assets/certificate/GMP.png";
