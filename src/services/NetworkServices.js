@@ -155,26 +155,26 @@ export const AdminDeleteBlog = async (id) => {
   return await api.delete(Endpoints.Admin.ADMIN_DELETE_BLOG(id));
 };
 
-// ================= BANNER MANAGEMENT =================
+// ================= Banner MANAGEMENT =================
 
-// GET ALL BANNERS
+// GET ALL BannerS
 export const AdminGetAllBanners = async () => {
-  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_BANNERS);
+  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_BannerS);
 };
 
-// CREATE BANNER
+// CREATE Banner
 export const AdminCreateBanner = async (data) => {
-  return await api.post(Endpoints.Admin.ADMIN_CREATE_BANNER, data);
+  return await api.post(Endpoints.Admin.ADMIN_CREATE_Banner, data);
 };
 
-// UPDATE BANNER
+// UPDATE Banner
 export const AdminUpdateBanner = async (id, data) => {
-  return await api.put(Endpoints.Admin.ADMIN_UPDATE_BANNER(id), data);
+  return await api.put(Endpoints.Admin.ADMIN_UPDATE_Banner(id), data);
 };
 
-// DELETE BANNER
+// DELETE Banner
 export const AdminDeleteBanner = async (id) => {
-  return await api.delete(Endpoints.Admin.ADMIN_DELETE_BANNER(id));
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_Banner(id));
 };
 
 // ================= DRIVER MANAGEMENT =================

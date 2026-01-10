@@ -20,7 +20,7 @@ const ReturnsPolicy = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-[#7a5410] mb-6">
             Our Promise of Purity and Satisfaction
           </h1>
-     
+
           {/* Quality Section */}
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
             At <strong>Mobile Chakki</strong>, our foundation lies in purity, freshness, and trust.

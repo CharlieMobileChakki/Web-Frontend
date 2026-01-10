@@ -18,7 +18,7 @@ const menuItems = [
   { name: "Products Management", icon: <FaBoxOpen />, href: "/productmanagement" },
   { name: "Users Management", icon: <FaUsers />, href: "/usersmanagement" },
   { name: "Blog Management", icon: <FaFileAlt />, href: "/blogmanagement" },
-  { name: "Banner Management", icon: <FaImage />, href: "/bannermanagement" },
+  { name: "Banner Management", icon: <FaImage />, href: "/Bannermanagement" },
   { name: "Stock Management", icon: <FaWarehouse />, href: "/stockmanagement" },
   { name: "Booking Management", icon: <FaCalendarAlt />, href: "/bookingmanagement" },
   { name: "Driver Management", icon: <FaTruck />, href: "/drivermanagement" },

@@ -131,7 +131,7 @@ const BannerFormModal = ({ isOpen, onClose, onSave, editData }) => {
                             onChange={handleChange}
                             className={`w-full border p-2 rounded ${errors.title ? "border-red-500" : "border-gray-300"
                                 }`}
-                            placeholder="Enter banner title"
+                            placeholder="Enter Banner title"
                         />
                         {errors.title && (
                             <p className="text-red-500 text-sm mt-1">{errors.title}</p>

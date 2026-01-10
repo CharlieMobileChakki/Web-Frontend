@@ -12,7 +12,7 @@ import SidebarTitle from "../../../components/admin/SidebarTitle";
 
 const BannerManagement = () => {
   const dispatch = useDispatch();
-  const { banners, loading, error } = useSelector((state) => state.adminBanner);
+  const { Banners, loading, error } = useSelector((state) => state.adminBanner);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -32,8 +32,8 @@ const BannerManagement = () => {
     setEditData(null);
   };
 
-  const handleEdit = (banner) => {
-    setEditData(banner);
+  const handleEdit = (Banner) => {
+    setEditData(Banner);
     setIsModalOpen(true);
   };
 
@@ -68,14 +68,14 @@ const BannerManagement = () => {
       {loading && (
         <div className="text-center py-8">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-700"></div>
-          <p className="mt-2 text-gray-600">Loading banners...</p>
+          <p className="mt-2 text-gray-600">Loading Banners...</p>
         </div>
       )}
 
       {/* Banner Grid */}
       {!loading && (
         <BannerTable
-          banners={banners}
+          Banners={Banners}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />

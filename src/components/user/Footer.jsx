@@ -36,7 +36,7 @@ export default function Footer() {
     },
     {
       title: "Contact Us",
-      links: [ 
+      links: [
         {
           name: "Plot no C-45, Hawa Sadak, Riico Industrial Area, Bais Godam, Jaipur, Rajasthan 302006",
 

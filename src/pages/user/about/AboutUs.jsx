@@ -84,7 +84,7 @@ const AboutUs = () => {
 
 
         {/* FAQ Component */}
-        <FAQ   />
+        <FAQ />
       </div>
     </>
 
@@ -93,4 +93,4 @@ const AboutUs = () => {
 
 export default AboutUs;
 
- 
+

@@ -13,7 +13,7 @@ const SidebarTitle = () => {
         { name: "Products Management", href: "/productmanagement" },
         { name: "Users Management", href: "/usersmanagement" },
         { name: "Blog Management", href: "/blogmanagement" },
-        { name: "Banner Management", href: "/bannermanagement" },
+        { name: "Banner Management", href: "/Bannermanagement" },
         { name: "Stock Management", href: "/stockmanagement" },
         { name: "Booking Management", href: "/bookingmanagement" },
         { name: "Driver Management", href: "/drivermanagement" },

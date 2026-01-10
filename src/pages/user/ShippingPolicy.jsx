@@ -1,7 +1,7 @@
 import React from 'react';
 import { Truck } from 'lucide-react';
 import { BannerSection } from '../../components/user/BannerSection';
-import bgImage from '../../assets/Banner/S1.png'; // Using an existing banner image
+import bgImage from '../../assets/Banner/S1.png'; // Using an existing Banner image
 
 const ShippingPolicy = () => {
   return (

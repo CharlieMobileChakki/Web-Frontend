@@ -102,7 +102,7 @@ const AppRoutes = () => {
           <Route path="/ordersmanagement" element={<OrdersManagement />} />
           <Route path="/usersmanagement" element={<UsersManagement />} />
           <Route path="/blogmanagement" element={<BlogManagement />} />
-          <Route path="/bannermanagement" element={<BannerManagment />} />
+          <Route path="/Bannermanagement" element={<BannerManagment />} />
           <Route path="/stockmanagement" element={<StockManagement />} />
           <Route path="/bookingmanagement" element={<BookingManagement />} />
           <Route path="/drivermanagement" element={<DriverManagement />} />

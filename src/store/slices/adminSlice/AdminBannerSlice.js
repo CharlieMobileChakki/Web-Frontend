@@ -6,7 +6,7 @@ import {
     AdminDeleteBanner,
 } from "../../../services/NetworkServices";
 
-// ================= GET ALL BANNERS =================
+// ================= GET ALL BannerS =================
 export const adminGetAllBanners = createAsyncThunk(
     "adminBanner/getAllBanners",
     async (_, { rejectWithValue }) => {
@@ -15,13 +15,13 @@ export const adminGetAllBanners = createAsyncThunk(
             return response.data;
         } catch (error) {
             return rejectWithValue(
-                error?.response?.data?.message || "Failed to fetch banners"
+                error?.response?.data?.message || "Failed to fetch Banners"
             );
         }
     }
 );
 
-// ================= CREATE BANNER =================
+// ================= CREATE Banner =================
 export const adminCreateBanner = createAsyncThunk(
     "adminBanner/createBanner",
     async (data, { rejectWithValue, dispatch }) => {
@@ -31,13 +31,13 @@ export const adminCreateBanner = createAsyncThunk(
             return response.data;
         } catch (error) {
             return rejectWithValue(
-                error?.response?.data?.message || "Failed to create banner"
+                error?.response?.data?.message || "Failed to create Banner"
             );
         }
     }
 );
 
-// ================= UPDATE BANNER =================
+// ================= UPDATE Banner =================
 export const adminUpdateBanner = createAsyncThunk(
     "adminBanner/updateBanner",
     async ({ id, body }, { rejectWithValue, dispatch }) => {
@@ -47,13 +47,13 @@ export const adminUpdateBanner = createAsyncThunk(
             return response.data;
         } catch (error) {
             return rejectWithValue(
-                error?.response?.data?.message || "Failed to update banner"
+                error?.response?.data?.message || "Failed to update Banner"
             );
         }
     }
 );
 
-// ================= DELETE BANNER =================
+// ================= DELETE Banner =================
 export const adminDeleteBanner = createAsyncThunk(
     "adminBanner/deleteBanner",
     async (id, { rejectWithValue, dispatch }) => {
@@ -63,7 +63,7 @@ export const adminDeleteBanner = createAsyncThunk(
             return response.data;
         } catch (error) {
             return rejectWithValue(
-                error?.response?.data?.message || "Failed to delete banner"
+                error?.response?.data?.message || "Failed to delete Banner"
             );
         }
     }
@@ -73,7 +73,7 @@ export const adminDeleteBanner = createAsyncThunk(
 const AdminBannerSlice = createSlice({
     name: "adminBanner",
     initialState: {
-        banners: [],
+        Banners: [],
         loading: false,
         error: null,
     },
@@ -84,21 +84,21 @@ const AdminBannerSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // GET ALL BANNERS
+            // GET ALL BannerS
             .addCase(adminGetAllBanners.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(adminGetAllBanners.fulfilled, (state, action) => {
                 state.loading = false;
-                state.banners = action.payload;
+                state.Banners = action.payload;
             })
             .addCase(adminGetAllBanners.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
 
-            // CREATE BANNER
+            // CREATE Banner
             .addCase(adminCreateBanner.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -111,7 +111,7 @@ const AdminBannerSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // UPDATE BANNER
+            // UPDATE Banner
             .addCase(adminUpdateBanner.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -124,7 +124,7 @@ const AdminBannerSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // DELETE BANNER
+            // DELETE Banner
             .addCase(adminDeleteBanner.pending, (state) => {
                 state.loading = true;
                 state.error = null;

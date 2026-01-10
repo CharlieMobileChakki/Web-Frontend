@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Slider1 from "../../../assets/banner/hero-services-img.webp";
-import Slider2 from "../../../assets/banner/hero-services-img1.webp";
-import Slider3 from "../../../assets/banner/hero-services-img2.webp";
-import Slider4 from "../../../assets/banner/hero-services-img3.webp";
+import Slider1 from "../../../assets/Banner/hero-services-img.webp";
+import Slider2 from "../../../assets/Banner/hero-services-img1.webp";
+import Slider3 from "../../../assets/Banner/hero-services-img2.webp";
+import Slider4 from "../../../assets/Banner/hero-services-img3.webp";
 import Bg from "../../../assets/Banner/S1.png";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Sparkles, ShoppingBag, Star, ArrowRight } from "lucide-react";

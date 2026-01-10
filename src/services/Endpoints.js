@@ -48,11 +48,11 @@ const Endpoints = {
           ADMIN_UPDATE_BLOG: (id) => `/api/admin/blogs/${id}`,          // PUT update blog
           ADMIN_DELETE_BLOG: (id) => `/api/admin/blogs/${id}`,          // DELETE blog
 
-          // ================= BANNER MANAGEMENT =================
-          ADMIN_GET_ALL_BANNERS: '/api/admin/banners',                  // GET all banners
-          ADMIN_CREATE_BANNER: '/api/admin/banners',                    // POST create banner
-          ADMIN_UPDATE_BANNER: (id) => `/api/admin/banners/${id}`,      // PUT update banner
-          ADMIN_DELETE_BANNER: (id) => `/api/admin/banners/${id}`,      // DELETE banner
+          // ================= Banner MANAGEMENT =================
+          ADMIN_GET_ALL_BannerS: '/api/admin/Banners',                  // GET all Banners
+          ADMIN_CREATE_Banner: '/api/admin/Banners',                    // POST create Banner
+          ADMIN_UPDATE_Banner: (id) => `/api/admin/Banners/${id}`,      // PUT update Banner
+          ADMIN_DELETE_Banner: (id) => `/api/admin/Banners/${id}`,      // DELETE Banner
 
           // ================= DRIVER MANAGEMENT =================
           ADMIN_CREATE_DRIVER: '/api/admin/drivers/create-driver',        // POST create driver
