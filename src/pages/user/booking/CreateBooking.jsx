@@ -94,12 +94,12 @@ const CreateBooking = () => {
 
         // Manual Validation
         const newErrors = {};
-        if (!formData.name) newErrors.name = "Name is required";
-        if (!formData.mobile) newErrors.mobile = "Phone is required";
-        if (!formData.serviceType) newErrors.serviceType = "Service type is required";
-        if (!formData.date) newErrors.date = "Date is required";
-        if (!formData.timeSlot) newErrors.timeSlot = "Time slot is required";
-        if (!formData.address) newErrors.address = "Please select an address";
+        if (!formData.name) newErrors.name = "Please enter your full name";
+        if (!formData.mobile) newErrors.mobile = "Please enter your phone number";
+        if (!formData.serviceType) newErrors.serviceType = "Please select a service type";
+        if (!formData.date) newErrors.date = "Please choose a date";
+        if (!formData.timeSlot) newErrors.timeSlot = "Please select a time slot";
+        if (!formData.address) newErrors.address = "Please select a delivery address";
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);

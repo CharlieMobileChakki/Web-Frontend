@@ -52,7 +52,14 @@ const SignInUser = () => {
       setTimer(300); // Start 5-minute timer (300 seconds)
       setCanResend(false);
     } catch (error) {
-      setErrors({ phone: error?.message || error })
+      let errorMessage = error?.message || error;
+      if (typeof errorMessage === "string" && errorMessage.toLowerCase().includes("not found")) {
+        errorMessage = "Account not found. Please sign up first.";
+      } else if (typeof errorMessage === "string" && (errorMessage.toLowerCase().includes("invalid") || errorMessage.toLowerCase().includes("user"))) {
+        // Catching generic invalid user/phone errors
+        errorMessage = "We couldn't find an account with this number. Please Sign Up.";
+      }
+      setErrors({ phone: errorMessage });
     }
   };
 
@@ -64,7 +71,8 @@ const SignInUser = () => {
       setCanResend(false);
       setErrors({});
     } catch (error) {
-      setErrors({ phone: error?.message || "Failed to resend OTP" });
+      let errorMessage = error?.message || "Failed to resend OTP. Please try again.";
+      setErrors({ phone: errorMessage });
     }
   };
 
@@ -107,7 +115,11 @@ const SignInUser = () => {
         navigate("/");
       }
     } catch (error) {
-      setErrors({ otp: error?.message || "Invalid OTP" })
+      let errorMessage = error?.message || "Invalid OTP";
+      if (errorMessage.toLowerCase().includes("invalid") || errorMessage.toLowerCase().includes("incorrect")) {
+        errorMessage = "Incorrect OTP. Please check and try again.";
+      }
+      setErrors({ otp: errorMessage });
     }
   };
 

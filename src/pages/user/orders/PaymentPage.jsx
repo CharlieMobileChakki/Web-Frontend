@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const PaymentPage = () => {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const PaymentPage = () => {
     console.log("PaymentPage received state:", state);
 
     const handlePayment = () => {
-        alert(`Payment done using ${paymentMethod}! ✅`);
+        toast.success(`Payment successful using ${paymentMethod}! ✅`);
         navigate("/order-success", {
             // state: {
             //     orderId: Math.floor(Math.random() * 1000000000), // temporary order ID
@@ -28,7 +29,7 @@ const PaymentPage = () => {
             // },
         });
     };
-    
+
     return (
         <div className="flex flex-col md:flex-row bg-gray-50 px-6 py-4">
             {/* LEFT SIDE - PAYMENT METHOD */}
@@ -43,8 +44,8 @@ const PaymentPage = () => {
                             <label
                                 key={method}
                                 className={`flex items-center justify-between border p-3 rounded cursor-pointer transition ${paymentMethod === method
-                                        ? "border-blue-600 bg-blue-50"
-                                        : "border-gray-300 hover:border-gray-400"
+                                    ? "border-blue-600 bg-blue-50"
+                                    : "border-gray-300 hover:border-gray-400"
                                     }`}
                             >
                                 <span className="text-gray-800 font-medium">{method}</span>

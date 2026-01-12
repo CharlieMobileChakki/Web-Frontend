@@ -73,7 +73,11 @@ const SignUpUser = () => {
       setTimer(300); // Start 5-minute timer (300 seconds)
       setCanResend(false);
     } catch (err) {
-      setErrors({ phone: err.message || err });
+      let errorMessage = err.message || err;
+      if (typeof errorMessage === "string" && errorMessage.toLowerCase().includes("already exists")) {
+        errorMessage = "This phone number is already registered. Please sign in.";
+      }
+      setErrors({ phone: errorMessage });
     }
   };
 
@@ -86,7 +90,7 @@ const SignUpUser = () => {
       setCanResend(false);
       setErrors({});
     } catch (err) {
-      setErrors({ phone: err.message || "Failed to resend OTP" });
+      setErrors({ phone: err.message || "Failed to resend OTP. Please try again." });
     }
   };
 
@@ -106,7 +110,11 @@ const SignUpUser = () => {
       // console.log("Signup completed ✅");
       navigate("/");
     } catch (err) {
-      setErrors({ otp: err.message || "Invalid OTP" });
+      let errorMessage = err.message || "Invalid OTP";
+      if (errorMessage.toLowerCase().includes("invalid")) {
+        errorMessage = "Incorrect OTP. Please check and try again.";
+      }
+      setErrors({ otp: errorMessage });
     }
   };
 
