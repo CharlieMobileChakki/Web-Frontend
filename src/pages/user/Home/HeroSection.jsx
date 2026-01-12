@@ -5,41 +5,44 @@ import Slider1 from "../../../assets/Banner/hero-services-img.webp";
 import Slider2 from "../../../assets/Banner/hero-services-img1.webp";
 import Slider3 from "../../../assets/Banner/hero-services-img2.webp";
 import Slider4 from "../../../assets/Banner/hero-services-img3.webp";
-import Bg from "../../../assets/Banner/S1.png";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Sparkles, ShoppingBag, Star, ArrowRight } from "lucide-react";
+import { Sparkles, Star, ArrowRight } from "lucide-react";
 
 // Professional Brand Palette: Amber, Gold, Deep Brown, Warm White
 const slides = [
   {
     id: 1,
-    title: "शुद्ध और ताज़ा आटा",
-    subtitle: "मिलावट की चिंता छोड़िए—आपके सामने ताज़ा पिसाई, शुद्धता की गारंटी, हर रोटी में असली स्वाद और खुशबू।",
-    btnText: "आर्डर करें",
+    title: "Pure & Fresh Atta",
+    subtitle:
+      "Forget all worries of adulteration — freshly ground atta with guaranteed purity, delivering real taste and aroma in every roti.",
+    btnText: "Order Now",
     img: Slider1,
     badge: "100% Pure & Fresh",
   },
   {
     id: 2,
-    title: "सम्पूर्ण आहार",
-    subtitle: "बिना गेहूं का 12 अनाजों से बना लो GI आटा—हल्का, संतुलित और पेट-भर पोषण, रोज़ के सम्पूर्ण आहार के लिए बेहतर विकल्प।",
-    btnText: "आर्डर करें",
+    title: "Complete Nutrition",
+    subtitle:
+      "Low GI atta made from a blend of 12 wholesome grains — light on the stomach, well-balanced, and perfect for everyday nutrition.",
+    btnText: "Order Now",
     img: Slider2,
     badge: "Premium Quality",
   },
   {
     id: 3,
-    title: "एक सम्पूर्ण आहार",
-    subtitle: "जौ, चना, ज्वार, काला गेहूं, रागी, अलसी, और 12 अनाज का लो GI आटा—फाइबर से भरपूर, लंबे समय तक ऊर्जा और बढ़िया स्वाद।",
-    btnText: "अभी ऑर्डर करें",
+    title: "A Complete Diet",
+    subtitle:
+      "A nutritious blend of barley, chana, jowar, black wheat, ragi, flaxseed, and 12 grains — rich in fiber, long-lasting energy, and great taste.",
+    btnText: "Order Now",
     img: Slider3,
     badge: "Fiber Rich",
   },
   {
     id: 4,
-    title: "ठंडी पिसाई वाला आटा",
-    subtitle: "कोल्ड-मिल्ड (ठंडी पिसाई) आटा—नैचुरल पोषक तत्व और स्वाद बरकरार। विशेषज्ञ भी संतुलित आहार में सुझाते हैं।",
-    btnText: "आर्डर करें",
+    title: "Cold Milled Atta",
+    subtitle:
+      "Cold-milled atta that preserves natural nutrients and flavor — recommended by experts for a healthy and balanced diet.",
+    btnText: "Order Now",
     img: Slider4,
     badge: "Cold Milled Technology",
   },
@@ -56,8 +59,6 @@ const HeroSection = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const nextSlide = () => setActiveSlide((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900">
