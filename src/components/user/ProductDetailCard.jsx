@@ -350,7 +350,7 @@ const ProductDetailCard = ({
                         )}
 
                         {/* Action Buttons */}
-                        <div className="flex gap-4 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] md:static md:bg-transparent md:border-0 md:shadow-none md:p-0 z-50">
+                        <div className="flex gap-4 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] md:static md:bg-transparent md:border-0 md:shadow-none md:p-0 z-49">
                             <button
                                 onClick={isAdded ? () => navigate("/viewcart") : handleAddToCart}
                                 className={`flex-1 py-3 px-3 md:py-3.5 md:px-4 rounded-2xl font-bold cursor-pointer text-[10px] sm:text-xs md:text-base uppercase tracking-wide transition-all duration-300 transform active:scale-95 hover:shadow-xl flex items-center justify-center gap-1.5 md:gap-2 ${isAdded
