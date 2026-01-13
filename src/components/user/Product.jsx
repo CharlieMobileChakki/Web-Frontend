@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Star, Heart, ShoppingCart, Zap } from "lucide-react";
+import { Star, Heart, ShoppingCart, ShoppingBag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useraddtocart, usergetcart } from "../../store/slices/CartSlice";
 import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../store/slices/WishlistSlice";
@@ -114,7 +114,7 @@ const Product = ({
       // Remove
       try {
         await dispatch(userremovewishlist({ productId: id })).unwrap();
-        toast.success("Removed from wishlist 💔");
+        toast.info("Removed from wishlist 💔");
         setIsWishlisted(false);
       } catch (err) {
         toast.error("Failed to remove from wishlist");
@@ -292,9 +292,9 @@ const Product = ({
           <div className="grid grid-cols-2 gap-2 md:gap-3">
             <button
               onClick={handleAddToCart}
-              className={`flex items-center justify-center gap-2 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 ${isAdded
+              className={`flex items-center justify-center gap-2 py-2 cursor-pointer md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 ${isAdded
                 ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
-                : 'bg-gray-900 text-white hover:bg-gray-800 shadow-gray-200'} shadow-md active:scale-95`}
+                : 'bg-[#DA352D] text-white hover:bg-[#C82333] shadow-[#DA352D]'} shadow-md active:scale-95`}
             >
               <ShoppingCart size={18} className="md:hidden" />
               <span className="hidden md:inline">{isAdded ? "View Cart" : "Add to Cart"}</span>
@@ -302,9 +302,9 @@ const Product = ({
 
             <button
               onClick={handleBuyNow}
-              className="flex items-center justify-center py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 active:scale-95"
+              className="flex items-center justify-center py-2 md:py-2.5 cursor-pointer rounded-lg md:rounded-xl text-xs md:text-sm font-semibold border border-[#A98C43] text-[#A98C43] hover:bg-[#A98C43] hover:text-white shadow-[#A98C43] transition-all duration-300 active:scale-95"
             >
-              <Zap size={18} className="md:hidden" fill="currentColor" />
+              <ShoppingBag size={18} className="md:hidden" strokeWidth={2.5} />
               <span className="hidden md:inline">Buy Now</span>
             </button>
           </div>

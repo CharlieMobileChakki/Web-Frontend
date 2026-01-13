@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, ShoppingCart, ShoppingBag } from "lucide-react";
 import ProductRatings from "../../pages/user/products/ProductRatings";
 import { useDispatch, useSelector } from "react-redux";
 import { useraddtocart, usergetcart } from "../../store/slices/CartSlice";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../store/slices/WishlistSlice";
 import { toast } from "react-toastify";
 import { checkAuth } from "../../utils/checkAuth";
+import MilletManImg from "../../assets/blog/10.jpeg";
 
 const ProductDetailCard = ({
     id,
@@ -75,13 +76,28 @@ const ProductDetailCard = ({
     const handleAddToCart = () => {
         if (!checkAuth(navigate)) return;
 
-        dispatch(useraddtocart({ productId: id, variantId, quantity: 1 })) // ✅ call API with variantId
+        // 🔍 Priority: 1. Locally selected variant (UI state) -> 2. Passed variantId -> 3. First available variant
+        let targetVariantId = selectedVariant?._id || variantId;
+
+        // 🛡️ Auto-select first variant if none selected
+        if (!targetVariantId && variants?.length > 0) {
+            console.log("⚠️ No variant selected. Defaulting to first variant:", variants[0]);
+            targetVariantId = variants[0]._id;
+            if (setSelectedVariant) setSelectedVariant(variants[0]); // Update UI
+        }
+
+        if (!targetVariantId) {
+            toast.error("Please select a pack size");
+            return;
+        }
+
+        dispatch(useraddtocart({ productId: id, variantId: targetVariantId, quantity: 1 }))
             .unwrap()
             .then((updatedCart) => {
                 console.log("✅ ProductDetail - Cart updated:", updatedCart);
                 setIsAdded(true);
                 toast.success("Successfully added to cart!");
-                dispatch(usergetcart()); // 🔄 Synced cart data to populate full product details
+                dispatch(usergetcart());
             })
             .catch((err) => {
                 console.error("Add to cart failed:", err);
@@ -92,6 +108,21 @@ const ProductDetailCard = ({
 
     const handleBuyNow = () => {
         if (!checkAuth(navigate)) return;
+
+        // 🔍 Priority: 1. Locally selected variant (UI state) -> 2. Passed variantId -> 3. First available variant
+        let targetVariantId = selectedVariant?._id || variantId;
+
+        // 🛡️ Auto-select first variant if none selected
+        if (!targetVariantId && variants?.length > 0) {
+            console.log("⚠️ No variant selected (BuyNow). Defaulting to first variant:", variants[0]);
+            targetVariantId = variants[0]._id;
+            if (setSelectedVariant) setSelectedVariant(variants[0]);
+        }
+
+        if (!targetVariantId) {
+            toast.error("Please select a pack size");
+            return;
+        }
 
         dispatch(usergetcart()).then((res) => {
             const existingItem = res.payload?.items?.find(
@@ -107,15 +138,12 @@ const ProductDetailCard = ({
                     name: storedUser?.name,
                 };
 
-                // ✅ Safe price extraction with fallbacks to prevent NaN
                 const itemPrice = addedItem.sellingPrice ||
                     addedItem.product?.sellingPrice ||
                     addedItem.price ||
                     0;
 
                 const totalAmount = itemPrice * (addedItem.quantity || 1);
-
-                console.log("🛒 Buy Now - Item Price:", itemPrice, "Quantity:", addedItem.quantity, "Total:", totalAmount);
 
                 navigate("/checkout", {
                     state: {
@@ -126,12 +154,10 @@ const ProductDetailCard = ({
                 });
             };
 
-            // ✅ If already in cart → just checkout
             if (existingItem) {
                 proceedToCheckout(existingItem);
             } else {
-                // ✅ Otherwise, add first then checkout
-                dispatch(useraddtocart({ productId: id, variantId, quantity: 1 }))
+                dispatch(useraddtocart({ productId: id, variantId: targetVariantId, quantity: 1 }))
                     .unwrap()
                     .then(() => {
                         dispatch(usergetcart()).then((res2) => {
@@ -217,39 +243,21 @@ const ProductDetailCard = ({
                                 <button
                                     key={idx}
                                     onClick={() => setMainImage(img)}
-                                    className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img
+                                    className={`flex - shrink - 0 w - 16 h - 16 md: w - 20 md: h - 20 rounded - xl overflow - hidden border - 2 transition - all duration - 300 ${mainImage === img
                                         ? "border-red-600 ring-2 ring-red-200 scale-105"
                                         : "border-gray-200 hover:border-red-400"
-                                        }`}
+                                        } `}
                                 >
                                     <img
                                         src={img}
-                                        alt={`${name}-${idx}`}
+                                        alt={`${name} -${idx} `}
                                         className="w-full h-full object-cover"
                                     />
                                 </button>
                             ))}
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-3 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:static md:bg-transparent md:shadow-none md:p-0 z-49">
-                            <button
-                                onClick={isAdded ? () => navigate("/viewcart") : handleAddToCart}
-                                className={`flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform active:scale-95 hover:scale-105 shadow-lg ${isAdded
-                                    ? "bg-green-600 hover:bg-green-700 text-white shadow-green-200"
-                                    : "bg-gray-900 hover:bg-black text-white shadow-gray-200"
-                                    }`}
-                            >
-                                {isAdded ? "View Cart" : "Add To Cart"}
-                            </button>
 
-                            <button
-                                onClick={handleBuyNow}
-                                className="flex-1 py-3 px-4 md:py-4 md:px-6 rounded-xl font-bold text-base md:text-lg bg-[#A98C43] hover:bg-[#8c7335] text-white shadow-lg shadow-orange-100 transition-all duration-300 transform active:scale-95 hover:scale-105"
-                            >
-                                Buy Now
-                            </button>
-                        </div>
                         {/* Spacer for fixed bottom buttons on mobile */}
                         <div className="h-16 md:hidden"></div>
                     </div>
@@ -258,7 +266,7 @@ const ProductDetailCard = ({
                     <div className="flex flex-col gap-4 md:gap-6">
                         {/* Product Title */}
                         <div>
-                            <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-2 md:mb-4">
+                            <h1 className="text-2xl md:text-2xl font-extrabold text-gray-900 leading-tight mb-2 md:mb-4">
                                 {name}
                             </h1>
 
@@ -308,7 +316,7 @@ const ProductDetailCard = ({
                         </div>
 
                         {/* Variant Selector */}
-                        {variants?.length > 1 && (
+                        {variants?.length > 0 && (
                             <div className="mb-4">
                                 <h3 className="font-bold text-gray-900 mb-3 text-base">Select Pack Size:</h3>
                                 <div className="flex flex-wrap gap-3">
@@ -318,15 +326,20 @@ const ProductDetailCard = ({
                                             <button
                                                 key={variant._id || index}
                                                 onClick={() => setSelectedVariant(variant)}
-                                                className={`relative px-4 py-3 rounded-xl border transition-all duration-300 flex flex-col items-center min-w-[100px] ${isSelected
-                                                    ? "border-[#A98C43] bg-orange-50/50 text-gray-900 ring-1 ring-[#A98C43]"
-                                                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
-                                                    }`}
+                                                className={`relative px-5 py-3 rounded-2xl border transition-all duration-300 flex flex-col items-center min-w-[0px] shadow-sm transform hover:-translate-y-1 ${isSelected
+                                                    ? "border-[#A98C43] bg-orange-50/80 text-gray-900 ring-2 ring-[#A98C43] shadow-orange-100"
+                                                    : "border-gray-100 bg-white text-gray-500 hover:border-[#A98C43]/50 hover:bg-orange-50/30 hover:shadow-md"
+                                                    } `}
                                             >
-                                                <span className="text-sm font-semibold">
+                                                {isSelected && (
+                                                    <div className="absolute -top-3 -right-2 bg-[#A98C43] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm font-bold tracking-wide">
+                                                        SELECTED
+                                                    </div>
+                                                )}
+                                                <span className="text-base font-bold tracking-tight">
                                                     {variant.nameSuffix || `${variant.quantity}g`}
                                                 </span>
-                                                <span className={`text-xs mt-1 font-medium ${isSelected ? "text-[#A98C43]" : "text-gray-500"}`}>
+                                                <span className={`text-sm mt-1 font-semibold ${isSelected ? "text-[#A98C43]" : "text-gray-400"} `}>
                                                     ₹{variant.sellingPrice}
                                                 </span>
                                             </button>
@@ -335,6 +348,37 @@ const ProductDetailCard = ({
                                 </div>
                             </div>
                         )}
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-4 md:gap-4 fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] md:static md:bg-transparent md:border-0 md:shadow-none md:p-0 z-50">
+                            <button
+                                onClick={isAdded ? () => navigate("/viewcart") : handleAddToCart}
+                                className={`flex-1 py-3 px-3 md:py-3.5 md:px-4 rounded-2xl font-bold cursor-pointer text-[10px] sm:text-xs md:text-base uppercase tracking-wide transition-all duration-300 transform active:scale-95 hover:shadow-xl flex items-center justify-center gap-1.5 md:gap-2 ${isAdded
+                                    ? "bg-gradient-to-r from-green-600 to-green-500 hover:to-green-600 text-white shadow-green-200"
+                                    : "bg-gradient-to-r from-[#DA352D] to-[#FF4D4D] hover:to-[#DA352D] text-white shadow-red-200"
+                                    } `}
+                            >
+                                {isAdded ? (
+                                    <>
+                                        <ShoppingCart size={16} className="md:w-5 md:h-5" strokeWidth={2.5} />
+                                        <span>View Cart</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingCart size={16} className="md:w-5 md:h-5" strokeWidth={2.5} />
+                                        <span>Add To Cart</span>
+                                    </>
+                                )}
+                            </button>
+
+                            <button
+                                onClick={handleBuyNow}
+                                className="flex-1 py-3 px-3 md:py-3.5 md:px-4 cursor-pointer rounded-2xl font-bold text-[10px] sm:text-xs md:text-base uppercase tracking-wide bg-gradient-to-r from-[#A98C43] to-[#Ceb063] hover:to-[#A98C43] text-white shadow-lg shadow-orange-100 transition-all duration-300 transform active:scale-95 hover:shadow-xl flex items-center justify-center gap-1.5 md:gap-2"
+                            >
+                                <ShoppingBag size={16} className="md:w-5 md:h-5" strokeWidth={2.5} />
+                                <span>Buy Now</span>
+                            </button>
+                        </div>
 
                         {/* Features Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-2">
@@ -350,6 +394,33 @@ const ProductDetailCard = ({
                                     <p className="text-[10px] text-gray-500">{feature.subtitle}</p>
                                 </div>
                             ))}
+                        </div>
+
+
+
+
+
+                        {/* Compact Millet Man Section */}
+                        <div className="mt-6 p-4 bg-orange-50/50 rounded-2xl border border-orange-100 flex gap-4 items-center">
+                            <img
+                                src={MilletManImg}
+                                alt="Dr. Khader Vali"
+                                className="w-20 h-20 rounded-xl object-cover shrink-0"
+                            />
+                            <div>
+                                <h3 className="text-sm font-bold text-[#A98C43] mb-1">
+                                    Millets by Dr. Khader Vali
+                                </h3>
+                                <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                                    Known as the Millet Man of India, highlighting the health benefits of organic millets.
+                                </p>
+                                <button
+                                    onClick={() => navigate("/blog")}
+                                    className="text-xs font-bold text-red-600 flex items-center gap-1 hover:underline cursor-pointer"
+                                >
+                                    Read More →
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

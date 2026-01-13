@@ -10,6 +10,7 @@ import {
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { toast } from "react-toastify";
 
 // Fix Leaflet marker icon issue
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -22,72 +23,24 @@ let DefaultIcon = L.icon({
     iconAnchor: [12, 41],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
+{/* <LocationMarker formData={formData} setFormData={setFormData} /> */ }
 
-const LocationMarker = ({ setFormData }) => {
-    const [position, setPosition] = useState(null);
-
-    const fetchAddressFromCoordinates = async (lat, lng) => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-            const data = await response.json();
-
-            if (data && data.address) {
-                const addr = data.address;
-                setFormData(prev => ({
-                    ...prev,
-                    lat: parseFloat(lat),
-                    lng: parseFloat(lng),
-                    street: addr.road || addr.pedestrian || addr.suburb || "",
-                    city: addr.city || addr.town || addr.village || addr.county || "",
-                    state: addr.state || "",
-                    zipCode: addr.postcode || "",
-                    country: addr.country || "India",
-                    landmark: addr.neighbourhood || addr.suburb || ""
-                }));
-            }
-        } catch (error) {
-            console.error("Error fetching address:", error);
-        }
-    };
-
+const LocationMarker = ({ formData, setFormData }) => {
     const map = useMapEvents({
         click(e) {
-            setPosition(e.latlng);
-            setFormData((prev) => ({
+            const { lat, lng } = e.latlng;
+            setFormData(prev => ({
                 ...prev,
-                lat: e.latlng.lat,
-                lng: e.latlng.lng,
+                lat,
+                lng
             }));
-            fetchAddressFromCoordinates(e.latlng.lat, e.latlng.lng);
-            map.flyTo(e.latlng, map.getZoom());
-        },
-        locationfound(e) {
-            setPosition(e.latlng);
-            setFormData((prev) => ({
-                ...prev,
-                lat: e.latlng.lat,
-                lng: e.latlng.lng,
-            }));
-            fetchAddressFromCoordinates(e.latlng.lat, e.latlng.lng);
             map.flyTo(e.latlng, map.getZoom());
         },
     });
 
-    useEffect(() => {
-        // Trigger location search responsibly? Or rely on the "Use My Current Location" button.
-        // The original code auto-located on mount. Let's keep it but ensure we don't spam api.
-        // map.locate(); 
-        // Actually, let's NOT auto-locate on every mount if it disrupts editing.
-        // But for "Add New", it's helpful.
-        // Let's leave it as is for now or just trust the button.
-        // map.locate(); // Commented out to prevent auto-move on edit if not desired, 
-        // but user asked for "selected location on map", so click is key.
-        // The original code had map.locate() inside useEffect.
-    }, [map]);
+    if (!formData.lat || !formData.lng) return null;
 
-    return position === null ? null : (
-        <Marker position={position}></Marker>
-    );
+    return <Marker position={[formData.lat, formData.lng]} />;
 };
 
 const AddressModal = ({ onSelect }) => {
@@ -165,57 +118,130 @@ const AddressModal = ({ onSelect }) => {
         }));
     };
 
-    // ✅ Get Live Location (Browser API)
     const handleGetLocation = () => {
         if (!navigator.geolocation) {
-            alert("Geolocation is not supported by your browser");
+            alert("Geolocation not supported by your browser");
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude } = position.coords;
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        };
 
+        toast.info("📍 Fetching your location...", { autoClose: 2000 });
+
+        navigator.geolocation.getCurrentPosition(
+            async ({ coords }) => {
+                const { latitude, longitude } = coords;
+
+                // 1. Set Coordinates immediately
                 setFormData(prev => ({
                     ...prev,
                     lat: latitude,
                     lng: longitude
                 }));
 
-                // alert(`Location fetched: ${latitude}, ${longitude}. Please confirm on map.`);
+                // Center map
+                // Note: The map component will need to listed to lat/lng changes or use a re-center component. 
+                // In this current code, passing new props might not auto-fly unless we have a component observing it.
+                // However, the map click handler updates state, so state updates should re-render markers.
+
+                // 2. Reverse Geocode with proper headers
+                try {
+                    const res = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+                        {
+                            headers: {
+                                "User-Agent": "ATPL_MobileChakki_Web/1.0",
+                                "Accept-Language": "en-US,en;q=0.9"
+                            }
+                        }
+                    );
+
+                    if (!res.ok) throw new Error("Geocoding service unavailable");
+
+                    const data = await res.json();
+
+                    if (data?.address) {
+                        const a = data.address;
+
+                        // Construct address fields
+                        const newAddress = {
+                            street: a.road || a.pedestrian || a.suburb || "",
+                            city: a.city || a.town || a.village || a.county || "",
+                            state: a.state || "",
+                            zipCode: a.postcode || "",
+                            country: a.country || "India",
+                            landmark: a.neighbourhood || a.suburb || ""
+                        };
+
+                        setFormData(prev => ({
+                            ...prev,
+                            ...newAddress
+                        }));
+
+                        toast.success("Location fetched successfully! 🌍");
+                    } else {
+                        toast.warn("Location found, but address details unavailable. Please fill manually.");
+                    }
+                } catch (err) {
+                    console.error("Reverse geocode failed", err);
+                    toast.error("Could not fetch address details. Please fill manually.");
+                }
             },
             (error) => {
-                console.error("Error getting location:", error);
-                alert("Failed to get location. Please allow location access.");
-            }
+                console.error("Geolocation error:", error);
+                let msg = "Location permission denied";
+                if (error.code === 2) msg = "Location unavailable";
+                if (error.code === 3) msg = "Location request timed out";
+                alert(msg);
+            },
+            options
         );
     };
+
 
     // add/update address
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Construct formatted address
-        const fullAddress = `${formData.street}, ${formData.landmark ? formData.landmark + ", " : ""}${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`;
+        // Construct formatted address if not provided or valid
+        const generatedFormattedAddress = `${formData.street}, ${formData.landmark ? formData.landmark + ", " : ""}${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`;
 
-        // Payload matching the new address API specification
+        // Prepare base payload with required fields
         const payload = {
-            label: formData.label || "Home",
+            label: formData.label,
             name: formData.name,
             phone: formData.phone,
             street: formData.street,
-            landmark: formData.landmark || "",
             city: formData.city,
             state: formData.state,
             zipCode: formData.zipCode,
             country: formData.country,
-            // Ensure numbers for coordinates
-            lat: parseFloat(formData.lat) || 0,
-            lng: parseFloat(formData.lng) || 0,
-            googlePlaceId: formData.googlePlaceId || "",
-            formattedAddress: fullAddress,
-            isDefault: formData.isDefault || false // ensure boolean
+            landmark: formData.landmark || "",
+            isDefault: Boolean(formData.isDefault),
+
+            // ✅ REQUIRED
+            lat: Number(formData.lat),
+            lng: Number(formData.lng),
+            formattedAddress: `${formData.street}, ${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`,
         };
+
+
+        // Conditionally add optional fields
+        if (formData.landmark?.trim()) payload.landmark = formData.landmark;
+        if (formData.googlePlaceId?.trim()) payload.googlePlaceId = formData.googlePlaceId;
+
+        // Use provided formatted address or generated one
+        payload.formattedAddress = formData.formattedAddress || generatedFormattedAddress;
+
+        // Handle coordinates - only send if valid numbers
+        const lat = parseFloat(formData.lat);
+        const lng = parseFloat(formData.lng);
+        if (!isNaN(lat) && lat !== 0) payload.lat = lat;
+        if (!isNaN(lng) && lng !== 0) payload.lng = lng;
 
         console.log("📤 Submitting Address Payload:", payload);
 
@@ -227,23 +253,27 @@ const AddressModal = ({ onSelect }) => {
             } else {
                 await dispatch(userAddAddress(payload)).unwrap();
             }
-            // Is it necessary to get profile again? 
-            // The slice add/update already calls fetchFullProfile internally now in my previous fix?
-            // Let's check ProfileSlice. Yes it does.
-            // But doing it here for safety doesn't hurt, though redundant.
-            // I'll keep it to be safe, or relies on slice. 
-            // Actually, slice logic I wrote: "Re-fetch complete profile to sync everything".
-            // So I can remove it here to save a call, OR keep it. 
-            // Let's keep duplicate check or just let slice handle it.
-            // ProfileSlice updates state.data. So we just close modal.
-
-            // await dispatch(userGetProfile()); // Removed as slice handles it now for efficiency
 
             setIsModalOpen(false);
-            setFormData(prev => ({ ...prev, name: "", phone: "", street: "", city: "", state: "", zipCode: "", landmark: "" })); // Reset form
+            // Reset form with reasonable defaults but keep lat/lng if user wants to add another nearby
+            setFormData({
+                name: user?.name || "",
+                phone: user?.phone || "",
+                street: "",
+                city: "",
+                state: "",
+                zipCode: "",
+                country: "India",
+                label: "Home",
+                landmark: "",
+                isDefault: false,
+                lat: 26.9124,
+                lng: 75.7873
+            });
         } catch (err) {
             console.error("Save address error:", err);
-            // Optionally show toast here if not handled globally
+            // Alert user of error since we don't have toast in this component context visible
+            alert(`Failed to save address: ${err?.message || "Unknown error"}`);
         }
     };
 
@@ -269,7 +299,7 @@ const AddressModal = ({ onSelect }) => {
                 </h2>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="text-white underline text-sm hover:text-gray-100"
+                    className="text-white underline text-sm hover:text-gray-100 cursor-pointer"
                 >
                     + Add New Address
                 </button>
@@ -351,7 +381,7 @@ const AddressModal = ({ onSelect }) => {
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                         />
-                                        <LocationMarker setFormData={setFormData} />
+                                        <LocationMarker formData={formData} setFormData={setFormData} />
                                     </MapContainer>
                                     <p className="text-xs text-gray-500 mt-1 text-center">Click on map to set location</p>
                                 </div>
@@ -475,3 +505,5 @@ const AddressModal = ({ onSelect }) => {
 };
 
 export default AddressModal;
+
+

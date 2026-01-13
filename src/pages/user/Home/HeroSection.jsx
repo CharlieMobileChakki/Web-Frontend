@@ -98,7 +98,7 @@ const HeroSection = () => {
                 </motion.div>
 
                 {/* Title */}
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.15] text-amber-950 tracking-tight">
+                <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-7xl font-extrabold leading-[1.15] text-amber-950 tracking-tight">
                   {slides[activeSlide].title.split(" ")[0] + " "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-600 to-orange-700">
                     {slides[activeSlide].title.split(" ").slice(1).join(" ")}

@@ -19,8 +19,8 @@ const fetchFullProfile = async () => {
       UserGetAllAddresses()
     ]);
 
-    console.log("👤 Profile API Data:", profileRes?.data);
-    console.log("🏠 Addresses API Data:", addressesRes?.data);
+    // console.log("👤 Profile API Data:", profileRes?.data);
+    // console.log("🏠 Addresses API Data:", addressesRes?.data);
 
     // API Doc: Get All Addresses -> { success: true, data: [...] }
     const addresses = addressesRes?.data?.data || [];
@@ -31,11 +31,11 @@ const fetchFullProfile = async () => {
 
     if (profile) {
       profile.addresses = Array.isArray(addresses) ? addresses : [];
-      console.log("✅ Merged Profile with Addresses:", profile);
+      // console.log("✅ Merged Profile with Addresses:", profile);
     }
     return profile;
   } catch (error) {
-    console.error("Error fetching full profile:", error);
+    // console.error("Error fetching full profile:", error);
     return null;
   }
 };
@@ -98,6 +98,8 @@ export const userAddAddress = createAsyncThunk(
       // Robust extraction
       const newAddress = res?.data?.data || res?.data?.address || res?.data?.newAddress || res?.data;
 
+
+      // console.log(newAddress, "addd addresssssssss")
       // Re-fetch complete profile to sync everything
       const fullProfile = await fetchFullProfile();
 
@@ -106,7 +108,7 @@ export const userAddAddress = createAsyncThunk(
         dispatch(updateUser(fullProfile));
       }
 
-      return newAddress;
+      return fullProfile;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to add address"
@@ -134,7 +136,7 @@ export const userUpdateAddress = createAsyncThunk(
         dispatch(updateUser(fullProfile));
       }
 
-      return updatedAddress;
+      return fullProfile;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to update address"
@@ -161,7 +163,7 @@ export const userDeleteAddress = createAsyncThunk(
         dispatch(updateUser(fullProfile));
       }
 
-      return addressId;
+      return fullProfile;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to delete address"
@@ -206,29 +208,22 @@ const profileSlice = createSlice({
 
       // ✅ Add Address
       .addCase(userAddAddress.fulfilled, (state, action) => {
-        // action.payload is the new address object
-        if (state.data?.addresses && action.payload) {
-          state.data.addresses.push(action.payload);
+        if (action.payload) {
+          state.data = action.payload;
         }
       })
 
       // ✅ Update Address
       .addCase(userUpdateAddress.fulfilled, (state, action) => {
-        // action.payload is the updated address object
-        if (state.data?.addresses && action.payload) {
-          const index = state.data.addresses.findIndex(addr => addr._id === action.payload._id);
-          if (index !== -1) {
-            state.data.addresses[index] = action.payload;
-          }
+        if (action.payload) {
+          state.data = action.payload;
         }
       })
 
       // ✅ Delete Address
       .addCase(userDeleteAddress.fulfilled, (state, action) => {
-        if (state.data?.addresses) {
-          state.data.addresses = state.data.addresses.filter(
-            (addr) => addr._id !== action.payload
-          );
+        if (action.payload) {
+          state.data = action.payload;
         }
       });
   },

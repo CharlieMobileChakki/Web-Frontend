@@ -27,6 +27,7 @@ const CreateBooking = () => {
     const [errors, setErrors] = useState({});
     const [showPopup, setShowPopup] = useState(false);
 
+
     // ✅ Restore booking data if exists
     useEffect(() => {
         const savedData = localStorage.getItem("tempBookingData");
@@ -165,8 +166,7 @@ const CreateBooking = () => {
                     <div className="grid md:grid-cols-1 gap-6">
 
 
-                        <form
-                            onSubmit={handleSubmit}
+                        <div
                             className="bg-white rounded-3xl shadow-2xl overflow-hidden"
                         >
                             {/* Form Header */}
@@ -290,13 +290,14 @@ const CreateBooking = () => {
 
                                 {/* Submit Button */}
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    onClick={handleSubmit}
                                     className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                                 >
                                     Book Now
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 )}
             </div>
