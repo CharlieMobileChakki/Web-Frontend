@@ -1,8 +1,8 @@
 import { CheckCircle } from "lucide-react";
-import img1 from '../../../assets/Banner/hero-services-img.webp'
-import img2 from '../../../assets/Banner/hero-services-img1.webp'
-import img3 from '../../../assets/Banner/hero-services-img2.webp'
-import img4 from '../../../assets/Banner/hero-services-img3.webp'
+import img1 from '../../../assets/Banner/dtd2.jpg'
+import img2 from '../../../assets/Banner/dtd1.jpg'
+import img3 from '../../../assets/Banner/dtd3.jpg'
+import img4 from '../../../assets/Banner/dtd4.jpg'
 
 
 

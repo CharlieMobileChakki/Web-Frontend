@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Slider1 from "../../../assets/Banner/hero-services-img.webp";
-import Slider2 from "../../../assets/Banner/hero-services-img1.webp";
-import Slider3 from "../../../assets/Banner/hero-services-img2.webp";
-import Slider4 from "../../../assets/Banner/hero-services-img3.webp";
+import Slider1 from "../../../assets/Banner/b3.jpg";
+import Slider2 from "../../../assets/Banner/b2.png";
+import Slider3 from "../../../assets/Banner/b1.png";
+import Slider4 from "../../../assets/Banner/b4.png";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Star, ArrowRight } from "lucide-react";
 
