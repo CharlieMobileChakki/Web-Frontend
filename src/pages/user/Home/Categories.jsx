@@ -80,15 +80,15 @@ const Categories = () => {
     <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-[#F3F4F6] overflow-hidden">
       {/* Background decorative elements */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-30">
-        <div className="h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-blue-200 to-purple-200 blur-[100px]"></div>
+        <div className="h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-red-200 to-orange-200 blur-[100px]"></div>
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl text-center mb-12">
         <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-          Shop by <span className="text-blue-600">Categories</span>
+          Shop by <span className="text-[#DA352D]">Categories</span>
         </h2>
         <div className="mt-4 flex justify-center">
-          <div className="h-1 w-24 rounded bg-gradient-to-r from-blue-500 to-purple-500"></div>
+          <div className="h-1 w-24 rounded bg-gradient-to-r from-[#DA352D] to-orange-500"></div>
         </div>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
           "Chuno Apni Pasand – Sab Kuch Ek Jagah"
@@ -97,7 +97,7 @@ const Categories = () => {
 
       {loading && (
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#DA352D]"></div>
         </div>
       )}
       {error && <p className="text-center text-red-500">Error: {error}</p>}
@@ -126,3 +126,4 @@ const Categories = () => {
 };
 
 export default Categories;
+
