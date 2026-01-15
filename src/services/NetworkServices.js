@@ -263,6 +263,16 @@ export const UserCreateReviews = async (id, reviewData) => {
   return await api.post(Endpoints.User.USERCREATEREVIEWS(id), reviewData)
 }
 
+// update reviews
+export const UserUpdateReviews = async (id, reviewData) => {
+  return await api.put(Endpoints.User.USERUPDATEREVIEWS(id), reviewData)
+}
+
+// delete reviews
+export const UserDeleteReviews = async (id) => {
+  return await api.delete(Endpoints.User.USERDELETEREVIEWS(id))
+}
+
 
 
 // GET CART

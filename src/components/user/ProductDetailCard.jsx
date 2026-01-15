@@ -4,6 +4,7 @@ import ProductRatings from "../../pages/user/products/ProductRatings";
 import { useDispatch, useSelector } from "react-redux";
 import { useraddtocart, usergetcart } from "../../store/slices/CartSlice";
 import { useNavigate } from "react-router-dom";
+import Product from "./Product"; // Import Product component
 import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../store/slices/WishlistSlice";
 import { toast } from "react-toastify";
 import { checkAuth } from "../../utils/checkAuth";
@@ -21,6 +22,7 @@ const ProductDetailCard = ({
     variants = [],
     selectedVariant,
     setSelectedVariant,
+    relatedProducts = [], // Receive related products
 }) => {
     const [mainImage, setMainImage] = useState(images[0]);
     const [isAdded, setIsAdded] = useState(false);
@@ -207,7 +209,7 @@ const ProductDetailCard = ({
 
 
     return (
-        <div className="max-w-7xl mx-auto p-2 md:p-8">
+        <div className="  mx-auto  ">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 p-4 md:p-10">
 
@@ -424,6 +426,36 @@ const ProductDetailCard = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Related Products Section */}
+                {relatedProducts.length > 0 && (
+                    <div className="border-t border-gray-200 p-6 md:p-10">
+                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Related Products</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+                            {relatedProducts.map((product) => {
+                                // Basic data extraction for display
+                                const firstVariant = product.variants?.[0];
+                                const sellingPrice = firstVariant?.sellingPrice || product.sellingPrice || 0;
+                                const actualPrice = firstVariant?.price || product.price || 0;
+                                const imgUrl = product.images?.[0] || firstVariant?.images?.[0] || "https://via.placeholder.com/200";
+
+                                return (
+                                    <Product
+                                        key={product._id}
+                                        id={product._id}
+                                        imgUrl={imgUrl}
+                                        description={product.name}
+                                        sellingPrice={sellingPrice}
+                                        actualPrice={actualPrice}
+                                        rating={0} // You might want to fetch ratings if available
+                                        variantId={firstVariant?._id}
+                                        reviewCount={0}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Reviews Section */}
                 <div className="border-t border-gray-200 p-6 md:p-10">

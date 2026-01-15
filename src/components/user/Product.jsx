@@ -296,16 +296,16 @@ const Product = ({
                 ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
                 : 'bg-[#DA352D] text-white hover:bg-[#C82333] shadow-[#DA352D]'} shadow-md active:scale-95`}
             >
-              <ShoppingCart size={18} className="md:hidden" />
-              <span className="hidden md:inline">{isAdded ? "View Cart" : "Add to Cart"}</span>
+              <ShoppingCart size={18} className="lg:hidden" />
+              <span className="hidden lg:inline">{isAdded ? "View Cart" : "Add to Cart"}</span>
             </button>
 
             <button
               onClick={handleBuyNow}
               className="flex items-center justify-center py-2 md:py-2.5 cursor-pointer rounded-lg md:rounded-xl text-xs md:text-sm font-semibold border border-[#A98C43] text-[#A98C43] hover:bg-[#A98C43] hover:text-white shadow-[#A98C43] transition-all duration-300 active:scale-95"
             >
-              <ShoppingBag size={18} className="md:hidden" strokeWidth={2.5} />
-              <span className="hidden md:inline">Buy Now</span>
+              <ShoppingBag size={18} className="lg:hidden" strokeWidth={2.5} />
+              <span className="hidden lg:inline">Buy Now</span>
             </button>
           </div>
         </div>

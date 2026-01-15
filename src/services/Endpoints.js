@@ -92,6 +92,8 @@ const Endpoints = {
           // reviews
           USERREVIEWSACCESS: (id) => `/api/reviews/${id}`,
           USERCREATEREVIEWS: (id) => `/api/reviews/${id}`,
+          USERUPDATEREVIEWS: (id) => `/api/reviews/${id}`,
+          USERDELETEREVIEWS: (id) => `/api/reviews/${id}`,
 
           // cart
           USERADDTOCART: '/api/cart/items',

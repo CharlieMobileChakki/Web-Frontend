@@ -202,6 +202,15 @@ const Header = () => {
                         >
                           My Wishlist
                         </button>
+                        <button
+                          onClick={() => {
+                            navigate(`/my-bookings/${user?._id}`); // ✅ Go to My Bookings page
+                            setAuthOpen(false);
+                          }}
+                          className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                        >
+                          My Booking
+                        </button>
 
                         <button
                           onClick={() => setShowLogoutConfirm(true)}

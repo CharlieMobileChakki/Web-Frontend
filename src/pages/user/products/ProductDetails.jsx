@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ProductDetailCard from "../../../components/user/ProductDetailCard";
-import { userproductbyid } from "../../../store/slices/ProductSlice";
+import { userproductbyid, userproduct } from "../../../store/slices/ProductSlice";
 import { userreviewsaccess } from "../../../store/slices/ReviewSlice";
 
 const ProductDetails = () => {
@@ -10,7 +10,7 @@ const ProductDetails = () => {
     const { id } = useParams();
     const [selectedVariant, setSelectedVariant] = useState(null);
 
-    const { selectedProduct, loading, error } = useSelector(
+    const { selectedProduct, data: allProducts, loading, error } = useSelector(
         (state) => state.products
     );
 
@@ -20,6 +20,7 @@ const ProductDetails = () => {
         if (id) {
             dispatch(userproductbyid(id));
             dispatch(userreviewsaccess(id));
+            dispatch(userproduct()); // Fetch all products for related items
         }
     }, [dispatch, id]);
 
@@ -44,6 +45,11 @@ const ProductDetails = () => {
     const sellingPrice = activeVariant?.sellingPrice || 0;
     const actualPrice = activeVariant?.price || 0;
 
+    // Filter related products (same category, exclude current)
+    const relatedProducts = allProducts?.filter(
+        (p) => p.category === product.category && p._id !== product._id
+    ) || [];
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
             <div className="container mx-auto px-4">
@@ -62,6 +68,7 @@ const ProductDetails = () => {
                     variants={product.variants}
                     selectedVariant={selectedVariant}
                     setSelectedVariant={setSelectedVariant}
+                    relatedProducts={relatedProducts}
                 />
             </div>
         </div>

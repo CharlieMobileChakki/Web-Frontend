@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Pencil, Trash2, X, Check } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { usercreatereviews } from "../../../store/slices/ReviewSlice";
+import { usercreatereviews, userdeletereviews, userupdatereviews } from "../../../store/slices/ReviewSlice";
 import { toast } from "react-toastify";
 
 const ProductRatings = ({ reviews = [], productId }) => {
@@ -20,8 +20,6 @@ const ProductRatings = ({ reviews = [], productId }) => {
 
     // Get the name
     const username = userObj?.name || "You";
-
-    console.log(username, "username");
 
 
     const avgRating =
@@ -60,6 +58,44 @@ const ProductRatings = ({ reviews = [], productId }) => {
             setShowForm(false);
         } catch (error) {
             toast.error("Failed to submit review. Please try again.");
+        }
+    };
+
+    // ✅ Editing State
+    const [editingId, setEditingId] = useState(null);
+    const [editData, setEditData] = useState({ rating: 0, comment: "" });
+
+    // ✏️ Handle Edit Click
+    const handleEditClick = (review) => {
+        setEditingId(review._id);
+        setEditData({ rating: review.rating, comment: review.comment });
+    };
+
+    // 💾 Handle Update Submit
+    const handleUpdate = async (reviewId) => {
+        if (editData.rating === 0 || !editData.comment.trim()) {
+            toast.error("Rating and comment cannot be empty.");
+            return;
+        }
+
+        try {
+            await dispatch(userupdatereviews({ id: reviewId, reviewData: editData })).unwrap();
+            toast.success("Review updated successfully! ✅");
+            setEditingId(null);
+        } catch (error) {
+            toast.error("Failed to update review.");
+        }
+    };
+
+    // 🗑️ Handle Delete
+    const handleDelete = async (reviewId) => {
+        if (window.confirm("Are you sure you want to delete this review?")) {
+            try {
+                await dispatch(userdeletereviews(reviewId)).unwrap();
+                toast.success("Review deleted successfully. 🗑️");
+            } catch (error) {
+                toast.error("Failed to delete review.");
+            }
         }
     };
 
@@ -142,19 +178,81 @@ const ProductRatings = ({ reviews = [], productId }) => {
 
             {/* User Reviews */}
             <div className="space-y-6">
-                {displayedReviews.map((r) => (
-                    <div key={r._id} className="border-b border-gray-100 pb-4 last:border-none">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">
-                                {r.rating} <Star size={12} />
-                            </span>
-                            <span className="font-medium text-gray-800 text-sm">
-                                {username || "Terrific purchase"}
-                            </span>
+                {displayedReviews.map((r) => {
+                    // 🛡️ Safe check for Review Owner (Handle both populated object & string ID)
+                    const reviewUserId = r.user?._id || r.user;
+                    // Check for _id (MongoDB default) or id (sometimes used in frontend auth state)
+                    const currentUserId = userObj?._id || userObj?.id;
+
+                    const isOwner = currentUserId === reviewUserId;
+                    const authorName = r.user?.name || (isOwner ? userObj?.name : "Anonymous");
+
+                    return (
+                        <div key={r._id} className="border-b border-gray-100 pb-4 last:border-none">
+
+                            {/* Review Header: Rating, Name, Actions */}
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">
+                                        {editingId === r._id ? editData.rating : r.rating} <Star size={12} />
+                                    </span>
+                                    <span className="font-medium text-gray-800 text-sm">
+                                        {authorName}
+                                        {isOwner && <span className="text-gray-400 text-xs font-normal ml-1">(You)</span>}
+                                    </span>
+                                </div>
+
+                                {/* 🛠️ Edit/Delete Buttons (Only for Owner) */}
+                                {isOwner && (
+                                    <div className="flex gap-2">
+                                        {editingId === r._id ? (
+                                            <>
+                                                <button onClick={() => handleUpdate(r._id)} className="text-green-600 hover:bg-green-50 p-1 rounded transition">
+                                                    <Check size={16} />
+                                                </button>
+                                                <button onClick={() => setEditingId(null)} className="text-gray-500 hover:bg-gray-100 p-1 rounded transition">
+                                                    <X size={16} />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => handleEditClick(r)} className="text-blue-600 hover:bg-blue-50 p-1 rounded transition" title="Edit">
+                                                    <Pencil size={15} />
+                                                </button>
+                                                <button onClick={() => handleDelete(r._id)} className="text-red-500 hover:bg-red-50 p-1 rounded transition" title="Delete">
+                                                    <Trash2 size={15} />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Review Content */}
+                            {editingId === r._id ? (
+                                <div className="space-y-2 mt-2">
+                                    <div className="flex gap-1">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                            <Star
+                                                key={s}
+                                                size={20}
+                                                onClick={() => setEditData({ ...editData, rating: s })}
+                                                className={`cursor-pointer ${editData.rating >= s ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <textarea
+                                        className="w-full border rounded-lg p-2 text-sm focus:ring-1 focus:ring-[#A98C43] min-h-[80px]"
+                                        value={editData.comment}
+                                        onChange={(e) => setEditData({ ...editData, comment: e.target.value })}
+                                    />
+                                </div>
+                            ) : (
+                                <p className="text-gray-700 text-sm mb-2 leading-relaxed">{r.comment}</p>
+                            )}
                         </div>
-                        <p className="text-gray-700 text-sm mb-2">{r.comment}</p>
-                    </div>
-                ))}
+                    );
+                })}
 
                 {/* See More / Show Less Toggle */}
                 {reviews.length > 3 && (
