@@ -11,6 +11,13 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "react-toastify";
+import {
+    getTempAddresses,
+    saveTempAddress,
+    updateTempAddress,
+    deleteTempAddress,
+    isTempAddress
+} from "../../utils/tempAddressHelper";
 
 // Fix Leaflet marker icon issue
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -46,18 +53,24 @@ const LocationMarker = ({ formData, setFormData }) => {
 const AddressModal = ({ onSelect }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.profile?.data);
-    const addresses = user?.addresses || [];
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    const isLoggedIn = !!loggedInUser;
 
+    const [tempAddresses, setTempAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editAddress, setEditAddress] = useState(null);
+
+    // Combine saved addresses and temporary addresses
+    const savedAddresses = user?.addresses || [];
+    const allAddresses = [...savedAddresses, ...tempAddresses];
 
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
         street: "",
         city: "",
-        state: "",
+        state: "Rajasthan",
         zipCode: "",
         country: "India", // Default
         label: "Home",
@@ -68,8 +81,54 @@ const AddressModal = ({ onSelect }) => {
     });
 
     useEffect(() => {
-        dispatch(userGetProfile());
-    }, [dispatch]);
+        const migrateTemporaryAddresses = async () => {
+            if (isLoggedIn) {
+                // Get temporary addresses from localStorage
+                const tempAddrs = getTempAddresses();
+
+                if (tempAddrs.length > 0) {
+                    // Migrate each temporary address to user profile
+                    for (const addr of tempAddrs) {
+                        try {
+                            const payload = {
+                                label: addr.label,
+                                name: addr.name,
+                                phone: addr.phone,
+                                street: addr.street,
+                                city: addr.city,
+                                state: addr.state,
+                                zipCode: addr.zipCode,
+                                country: addr.country,
+                                landmark: addr.landmark || "",
+                                isDefault: Boolean(addr.isDefault),
+                                lat: Number(addr.lat),
+                                lng: Number(addr.lng),
+                                formattedAddress: addr.formattedAddress || `${addr.street}, ${addr.city}, ${addr.state} - ${addr.zipCode}, ${addr.country}`,
+                            };
+
+                            await dispatch(userAddAddress(payload)).unwrap();
+                        } catch (err) {
+                            console.error("Failed to migrate address:", err);
+                        }
+                    }
+
+                    // Clear temporary addresses after migration
+                    localStorage.removeItem('tempAddresses');
+                    setTempAddresses([]);
+
+                    toast.success(`✅ ${tempAddrs.length} temporary address(es) saved to your profile!`);
+                }
+
+                // Fetch updated profile
+                dispatch(userGetProfile());
+            } else {
+                // Load temporary addresses from localStorage for guest users
+                setTempAddresses(getTempAddresses());
+            }
+        };
+
+        migrateTemporaryAddresses();
+    }, [dispatch, isLoggedIn]);
 
     // open modal
     const handleOpenModal = (address = null) => {
@@ -80,7 +139,7 @@ const AddressModal = ({ onSelect }) => {
                 phone: address.phone || user?.phone || "",
                 street: address.street || "",
                 city: address.city || "",
-                state: address.state || "",
+                state: address.state || "Rajasthan",
                 zipCode: address.zipCode || "",
                 country: address.country || "India",
                 label: address.label || "Home",
@@ -96,7 +155,7 @@ const AddressModal = ({ onSelect }) => {
                 phone: user?.phone || "",
                 street: "",
                 city: "",
-                state: "",
+                state: "Rajasthan",
                 zipCode: "",
                 country: "India",
                 label: "Home",
@@ -246,22 +305,41 @@ const AddressModal = ({ onSelect }) => {
         console.log("📤 Submitting Address Payload:", payload);
 
         try {
-            if (editAddress?._id) {
-                await dispatch(
-                    userUpdateAddress({ addressId: editAddress._id, payload })
-                ).unwrap();
+            // Check if user is logged in
+            if (!isLoggedIn) {
+                // Guest user - save to localStorage
+                if (editAddress && isTempAddress(editAddress)) {
+                    // Update existing temporary address
+                    const updated = updateTempAddress(editAddress._id, payload);
+                    setTempAddresses(getTempAddresses());
+                    toast.success("✅ Address updated temporarily! Please login to save permanently.");
+                } else {
+                    // Save new temporary address
+                    const saved = saveTempAddress(payload);
+                    setTempAddresses(getTempAddresses());
+                    toast.success("✅ Address saved temporarily! Please login to save permanently.");
+                }
             } else {
-                await dispatch(userAddAddress(payload)).unwrap();
+                // Logged-in user - save to API
+                if (editAddress?._id && !isTempAddress(editAddress)) {
+                    await dispatch(
+                        userUpdateAddress({ addressId: editAddress._id, payload })
+                    ).unwrap();
+                    toast.success("✅ Address updated successfully!");
+                } else {
+                    await dispatch(userAddAddress(payload)).unwrap();
+                    toast.success("✅ Address saved successfully!");
+                }
             }
 
             setIsModalOpen(false);
             // Reset form with reasonable defaults but keep lat/lng if user wants to add another nearby
             setFormData({
-                name: user?.name || "",
-                phone: user?.phone || "",
+                name: user?.name || loggedInUser?.name || "",
+                phone: user?.phone || loggedInUser?.phone || "",
                 street: "",
                 city: "",
-                state: "",
+                state: "Rajasthan",
                 zipCode: "",
                 country: "India",
                 label: "Home",
@@ -272,21 +350,31 @@ const AddressModal = ({ onSelect }) => {
             });
         } catch (err) {
             console.error("Save address error:", err);
-            // Alert user of error since we don't have toast in this component context visible
-            alert(`Failed to save address: ${err?.message || "Unknown error"}`);
+            toast.error(`Failed to save address: ${err?.message || "Unknown error"}`);
         }
     };
 
     // delete address
     const handleDelete = async (id) => {
         try {
-            await dispatch(userDeleteAddress(id)).unwrap();
-            await dispatch(userGetProfile());
+            // Check if it's a temporary address
+            if (id.startsWith('temp_')) {
+                deleteTempAddress(id);
+                setTempAddresses(getTempAddresses());
+                toast.success("Temporary address deleted");
+            } else {
+                // Delete from API
+                await dispatch(userDeleteAddress(id)).unwrap();
+                await dispatch(userGetProfile());
+                toast.success("Address deleted successfully");
+            }
+
             if (selectedAddress?._id === id) {
                 setSelectedAddress(null);
             }
         } catch (err) {
             console.error("Delete error:", err);
+            toast.error("Failed to delete address");
         }
     };
 
@@ -307,8 +395,8 @@ const AddressModal = ({ onSelect }) => {
 
             {/* Address List */}
             <div className="p-5 space-y-4 max-h-60 overflow-y-auto">
-                {addresses.length > 0 ? (
-                    addresses.map((addr, idx) => (
+                {allAddresses.length > 0 ? (
+                    allAddresses.map((addr, idx) => (
                         <div
                             key={addr?._id || idx}
                             className={`border rounded-md px-4 py-3 flex justify-between items-start transition-all ${selectedAddress?._id === addr?._id
@@ -328,14 +416,24 @@ const AddressModal = ({ onSelect }) => {
                                     className="accent-[#2874F0] mt-1"
                                 />
                                 <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                                         <span className="font-semibold text-gray-800">{addr?.name}</span>
                                         <span className="bg-gray-200 text-gray-600 text-[10px] px-1.5 py-0.5 rounded uppercase">{addr?.label}</span>
+                                        {isTempAddress(addr) && (
+                                            <span className="bg-orange-100 text-orange-600 text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
+                                                Temporary
+                                            </span>
+                                        )}
                                         <span className="text-sm text-gray-800 ml-2">{addr?.phone}</span>
                                     </div>
                                     <p className="text-sm text-gray-600">
                                         {addr?.street}, {addr?.city}, {addr?.state} - {addr?.zipCode}
                                     </p>
+                                    {isTempAddress(addr) && (
+                                        <p className="text-xs text-orange-600 mt-1">
+                                            ⚠️ Login to save this address permanently
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -438,7 +536,7 @@ const AddressModal = ({ onSelect }) => {
                                         />
                                     </div>
 
-                                    <input
+                                    {/* <input
                                         type="text"
                                         name="state"
                                         placeholder="State"
@@ -446,7 +544,7 @@ const AddressModal = ({ onSelect }) => {
                                         onChange={handleChange}
                                         className="w-full border px-3 py-2 rounded"
                                         required
-                                    />
+                                    /> */}
 
                                     <input
                                         type="text"

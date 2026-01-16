@@ -144,11 +144,29 @@ export const ProductsByCategory = () => {
                 bgImage={Bg}
                 className="bg-left-bottom"
             />
-            <section className="  bg-gray-50 py-10 px-4">
+            <section className="bg-gray-50 py-10 px-4">
                 <div className="container mx-auto">
-                    <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
-                        Products in this Category
-                    </h1>
+                    {/* Selected Category Header with Description */}
+                    {categories.length > 0 && id && (() => {
+                        const selectedCategory = categories.find(cat => cat._id === id);
+                        return selectedCategory ? (
+                            <div className="mb-8 text-center">
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                                    {selectedCategory.name}
+                                </h1>
+                                {selectedCategory.title && (
+                                    <p className="text-gray-600 text-base md:text-lg max-w-3xl mx-auto mb-6">
+                                        {selectedCategory.title}
+                                    </p>
+                                )}
+                                <div className="h-1 w-24 bg-gradient-to-r from-[#DA352D] to-orange-500 mx-auto rounded-full"></div>
+                            </div>
+                        ) : (
+                            <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
+                                Products in this Category
+                            </h1>
+                        );
+                    })()}
 
                     {loading && <p className="text-center text-gray-500">Loading products...</p>}
                     {error && <p className="text-red-500 text-center">{error}</p>}
@@ -165,8 +183,7 @@ export const ProductsByCategory = () => {
 
 
                     <div>
-                        <h3 className="py-3">{categoryName || "Not name"}</h3>
-                        {filteredProducts.length > 0 && (
+                        {filteredProducts.length > 0 ? (
                             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
                                 {filteredProducts.map((product) => {
                                     const avgRating = getAverageRating(product._id);
@@ -193,6 +210,18 @@ export const ProductsByCategory = () => {
                                     );
                                 })}
                             </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-16 px-4">
+                                <div className="text-gray-300 mb-4">
+                                    <svg className="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Products Found</h3>
+                                <p className="text-gray-500 text-center max-w-md">
+                                    There are currently no products available in this category. Please check back later or explore other categories.
+                                </p>
+                            </div>
                         )}
                     </div>
 
@@ -206,32 +235,27 @@ export const ProductsByCategory = () => {
                         </h1>
 
                         {!loading && !error && categories?.length > 0 && (
-                            <div className="max-w-full mx-auto">
+                            <div className="max-w-full mx-auto py-8">
                                 <Slider {...settings} ref={sliderRef} className="category-slider">
                                     {categories.map((category, index) => (
 
                                         <div
                                             key={index}
-                                            className={`!flex !justify-center px-2 ${id === category._id ? "scale-105" : ""
-                                                }`}
+                                            className="!flex !justify-center px-2 py-4"
                                         >
-                                            <div
-                                                className={`w-full max-w-[300px] sm:max-w-[260px] md:max-w-[220px] transition-all duration-300 rounded-xl border-2 ${id === category._id
-                                                    ? "border-[#A98C43]  shadow-lg bg-blue-50"
-                                                    : "border-transparent bg-white"
-                                                    }`}
-                                            >
-                                                <CategoryCard
-                                                    id={category._id}
-                                                    title={category.name}
-                                                    subtitle={category.title}
-                                                    icon={category.image}
-                                                    state={{
-                                                        categoryName: category.name,
-                                                    }}
-                                                />
-                                            </div>
+                                            <CategoryCard
+                                                id={category._id}
+                                                title={category.name}
+                                                subtitle={category.title}
+                                                icon={category.image}
+                                                isActive={id === category._id}
+                                                showDescription={false}
+                                                state={{
+                                                    categoryName: category.name,
+                                                }}
+                                            />
                                         </div>
+
 
                                     ))}
                                 </Slider>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ProductDetailCard from "../../../components/user/ProductDetailCard";
@@ -9,6 +9,7 @@ const ProductDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const [selectedVariant, setSelectedVariant] = useState(null);
+    const hasInitialized = useRef(false);
 
     const { selectedProduct, data: allProducts, loading, error } = useSelector(
         (state) => state.products
@@ -24,13 +25,20 @@ const ProductDetails = () => {
         }
     }, [dispatch, id]);
 
-    // Set first variant as default when product loads
+    // Reset variant selection when product ID changes
     useEffect(() => {
-        if (selectedProduct?.variants?.length > 0 && !selectedVariant) {
-            console.log("🔄 Auto-selecting first variant:", selectedProduct.variants[0]);
+        hasInitialized.current = false;
+        setSelectedVariant(null);
+    }, [id]);
+
+    // Auto-select first variant when product loads
+    useEffect(() => {
+        if (selectedProduct?.variants?.length > 0 && !hasInitialized.current) {
+            console.log("✅ Auto-selecting first variant:", selectedProduct.variants[0]);
             setSelectedVariant(selectedProduct.variants[0]);
+            hasInitialized.current = true;
         }
-    }, [selectedProduct, selectedVariant]);
+    }, [selectedProduct]);
 
     if (loading) return <p className="p-4">Loading...</p>;
     if (error) return <p className="p-4 text-red-600">{error}</p>;
@@ -50,6 +58,11 @@ const ProductDetails = () => {
         (p) => p.category === product.category && p._id !== product._id
     ) || [];
 
+    // Handler to update selected variant
+    const handleVariantChange = (variant) => {
+        setSelectedVariant(variant);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
             <div className="container mx-auto px-4">
@@ -67,7 +80,7 @@ const ProductDetails = () => {
                     variantId={activeVariant?._id} // Pass variant ID for cart operations
                     variants={product.variants}
                     selectedVariant={selectedVariant}
-                    setSelectedVariant={setSelectedVariant}
+                    setSelectedVariant={handleVariantChange}
                     relatedProducts={relatedProducts}
                 />
             </div>

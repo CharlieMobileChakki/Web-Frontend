@@ -240,19 +240,19 @@ const ProductDetailCard = ({
                         </div>
 
                         {/* Thumbnail Gallery */}
-                        <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 no-scrollbar">
+                        <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide">
                             {images.map((img, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setMainImage(img)}
-                                    className={`flex - shrink - 0 w - 16 h - 16 md: w - 20 md: h - 20 rounded - xl overflow - hidden border - 2 transition - all duration - 300 ${mainImage === img
-                                        ? "border-red-600 ring-2 ring-red-200 scale-105"
-                                        : "border-gray-200 hover:border-red-400"
-                                        } `}
+                                    className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img
+                                            ? "border-red-600 ring-2 ring-red-200 scale-105"
+                                            : "border-gray-200 hover:border-red-400"
+                                        }`}
                                 >
                                     <img
                                         src={img}
-                                        alt={`${name} -${idx} `}
+                                        alt={`${name} - ${idx + 1}`}
                                         className="w-full h-full object-cover"
                                     />
                                 </button>
