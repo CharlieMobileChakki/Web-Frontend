@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { usergetwishlist, userremovewishlist } from "../../../store/slices/WishlistSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const MyWishlist = () => {
     const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const MyWishlist = () => {
     return (
         <section className="  bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-
+                <BackButton />
                 {/* 🏷️ Page Header */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-extrabold text-gray-900 mb-2">

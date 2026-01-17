@@ -7,6 +7,7 @@ import { userdeletecart } from "../../../store/slices/CartSlice";
 import AddressModal from "../../../components/user/AddressModal";
 import { toast } from "react-toastify";
 import { CheckCircle, MapPin, CreditCard, ShieldCheck, Truck, ShoppingBag, ChevronRight, Plus } from "lucide-react";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const Checkout = () => {
     const dispatch = useDispatch();
@@ -86,7 +87,7 @@ const Checkout = () => {
     return (
         <div className="bg-gray-50 min-h-screen py-8 px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
-
+                <BackButton />
                 {/* Stepper Header */}
                 <div className="mb-8 max-w-2xl mx-auto">
                     <div className="flex items-center justify-between relative">
@@ -170,7 +171,7 @@ const Checkout = () => {
 
                             <div className="px-6 pb-6">
 
-                                {selectedAddress && (
+                                {selectedAddress && selectedAddress._id && (
                                     <button
                                         onClick={() => setCurrentStep(2)}
                                         className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"

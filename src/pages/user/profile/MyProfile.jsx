@@ -8,6 +8,7 @@ import {
 import { updateUser } from "../../../store/slices/AuthSlice";
 import { toast } from "react-toastify";
 import { User, Phone, Mail, Calendar, Save, Edit2 } from "lucide-react";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const MyProfile = () => {
     const dispatch = useDispatch();
@@ -69,6 +70,7 @@ const MyProfile = () => {
     return (
         <div className="  bg-gradient-to-br from-orange-50 via-white to-amber-50 py-8 px-4">
             <div className="max-w-5xl mx-auto">
+                <BackButton />
                 {/* Profile Header Card */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
                     {/* Header Gradient */}

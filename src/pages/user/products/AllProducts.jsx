@@ -5,6 +5,7 @@ import Product from "../../../components/user/Product";
 import { userreviewsaccess } from "../../../store/slices/ReviewSlice";
 import { BannerSection } from "../../../components/user/BannerSection";
 import Bg from "../../../assets/Banner/S1.png";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const AllProducts = () => {
     const dispatch = useDispatch();
@@ -53,6 +54,9 @@ const AllProducts = () => {
 
 
             <div className="">
+                <div className="container mx-auto px-6 pt-6">
+                    <BackButton />
+                </div>
                 <div className="container mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5 py-20 px-3 md:px-6">
 
 

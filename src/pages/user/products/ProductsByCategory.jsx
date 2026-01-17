@@ -8,6 +8,7 @@ import { usercategory } from "../../../store/slices/CategorySlice";
 import CategoryCard from "../../../components/user/CategoryCard";
 import { BannerSection } from '../../../components/user/BannerSection';
 import Bg from "../../../assets/Banner/S1.png";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -146,6 +147,7 @@ export const ProductsByCategory = () => {
             />
             <section className="bg-gray-50 py-10 px-4">
                 <div className="container mx-auto">
+                    <BackButton />
                     {/* Selected Category Header with Description */}
                     {categories.length > 0 && id && (() => {
                         const selectedCategory = categories.find(cat => cat._id === id);

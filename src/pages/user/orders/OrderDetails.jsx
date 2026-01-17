@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { userorderbyid } from "../../../store/slices/OrderSlice";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -32,6 +33,7 @@ const OrderDetails = () => {
 
     return (
         <div className="max-w-4xl mx-auto bg-white shadow p-6 rounded-md my-6">
+            <BackButton />
             <h2 className="text-2xl font-bold mb-4 text-blue-700">
                 Order ID: {_id}
             </h2>
@@ -40,11 +42,11 @@ const OrderDetails = () => {
             <div className="mb-2">
                 <span className="text-gray-600 mr-2">Status:</span>
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${orderStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                        orderStatus === 'Processing' ? 'bg-blue-100 text-blue-800' :
-                            orderStatus === 'Shipped' ? 'bg-purple-100 text-purple-800' :
-                                orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' :
-                                    orderStatus === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                                        'bg-gray-100 text-gray-800'
+                    orderStatus === 'Processing' ? 'bg-blue-100 text-blue-800' :
+                        orderStatus === 'Shipped' ? 'bg-purple-100 text-purple-800' :
+                            orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' :
+                                orderStatus === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800'
                     }`}>
                     {orderStatus}
                 </span>

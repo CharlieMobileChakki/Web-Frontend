@@ -9,6 +9,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Calendar, Phone, User, Package, Clock } from "lucide-react";
 import AddressModal from "../../../components/user/AddressModal";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const CreateBooking = () => {
     const dispatch = useDispatch();
@@ -146,6 +147,7 @@ const CreateBooking = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 px-4">
             <div className="max-w-3xl mx-auto">
+                <BackButton />
                 {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">

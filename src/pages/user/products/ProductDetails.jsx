@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import ProductDetailCard from "../../../components/user/ProductDetailCard";
 import { userproductbyid, userproduct } from "../../../store/slices/ProductSlice";
 import { userreviewsaccess } from "../../../store/slices/ReviewSlice";
+import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const ProductDetails = () => {
     const dispatch = useDispatch();
@@ -31,15 +32,6 @@ const ProductDetails = () => {
         setSelectedVariant(null);
     }, [id]);
 
-    // Auto-select first variant when product loads
-    // useEffect(() => {
-    //     if (selectedProduct?.variants?.length > 0 && !hasInitialized.current) {
-    //         console.log("✅ Auto-selecting first variant:", selectedProduct.variants[0]);
-    //         setSelectedVariant(selectedProduct.variants[0]);
-    //         hasInitialized.current = true;
-    //     }
-    // }, [selectedProduct]);
-
     if (loading) return <p className="p-4">Loading...</p>;
     if (error) return <p className="p-4 text-red-600">{error}</p>;
     if (!selectedProduct) return <p className="p-4">No product found</p>;
@@ -66,8 +58,7 @@ const ProductDetails = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
             <div className="container mx-auto px-4">
-                {/* Millet Man Section - Moved to Top */}
-
+                <BackButton />
 
                 <ProductDetailCard
                     id={selectedProduct?._id}
