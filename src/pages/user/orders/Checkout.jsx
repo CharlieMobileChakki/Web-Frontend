@@ -44,14 +44,19 @@ const Checkout = () => {
             return;
         }
 
+        // const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
         const orderData = {
+            // orderId, // ✅ Root level
             orderItems: selectedCartItems.map((item) => ({
                 product: item.product?._id || item._id,
                 name: item.name || item.product?.name || "",
                 quantity: item.quantity || 1,
                 price: item.price || item.product?.price || 0,
                 sellingPrice: item.sellingPrice || item.product?.sellingPrice || 0,
-                image: item.image || item.product?.images?.[0] || item.product?.image || ""
+                image: item.image || item.product?.images?.[0] || item.product?.image || "",
+                weight: item.weight || item.variant?.quantity || item.variant?.weight || "500g",
+                // orderId: orderId, // ✅ Nested in items (just in case)
             })),
             addressId: selectedAddress._id,
             paymentMethod: "COD",
@@ -68,7 +73,7 @@ const Checkout = () => {
             toast.success("✅ Order placed successfully!");
             navigate("/order-success", {
                 state: {
-                    orderId: result._id,
+                    // orderId: result._id,
                     orderDetails: result,
                 },
             });
@@ -145,7 +150,7 @@ const Checkout = () => {
                                         )}
                                     </div>
 
-                                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                                    <div className=" flex-col-12 w-full   gap-4 items-center justify-between">
                                         <AddressModal
                                             onSelect={(addr) => setSelectedAddress(addr)}
                                             showStateField={true}
@@ -157,17 +162,23 @@ const Checkout = () => {
                                             }
                                         />
 
-                                        {selectedAddress && (
-                                            <button
-                                                onClick={() => setCurrentStep(2)}
-                                                className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
-                                            >
-                                                Deliver Here
-                                            </button>
-                                        )}
+
                                     </div>
                                 </div>
+
                             )}
+
+                            <div className="px-6 pb-6">
+
+                                {selectedAddress && (
+                                    <button
+                                        onClick={() => setCurrentStep(2)}
+                                        className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
+                                    >
+                                        Deliver Here
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* ORDER REVIEW & PAYMENT */}

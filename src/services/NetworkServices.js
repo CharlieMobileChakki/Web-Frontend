@@ -307,6 +307,7 @@ export const UserDeleteCart = async (data) => {
 
 // POST :  ORDER PRODUCT
 export const UserOrder = async (data) => {
+  console.log("🚀 Payload sending to /api/orders:", JSON.stringify(data, null, 2));
   return await api.post(Endpoints.User.USERORDER, data)
 }
 
