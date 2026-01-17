@@ -50,7 +50,7 @@ const LocationMarker = ({ formData, setFormData }) => {
     return <Marker position={[formData.lat, formData.lng]} />;
 };
 
-const AddressModal = ({ onSelect }) => {
+const AddressModal = ({ onSelect, showStateField = false }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.profile?.data);
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -151,8 +151,8 @@ const AddressModal = ({ onSelect }) => {
         } else {
             setEditAddress(null);
             setFormData({
-                name: user?.name || "",
-                phone: user?.phone || "",
+                name: user?.name || loggedInUser?.name || "",
+                phone: user?.phone || user?.mobile || loggedInUser?.phone || loggedInUser?.mobile || "",
                 street: "",
                 city: "",
                 state: "Rajasthan",
@@ -168,9 +168,52 @@ const AddressModal = ({ onSelect }) => {
         setIsModalOpen(true);
     };
 
+    // Auto-fetch City and State from Pincode
+    useEffect(() => {
+        if (formData.zipCode && formData.zipCode.length === 6) {
+            const fetchCityState = async () => {
+                try {
+                    toast.info("📍 Fetching city and state details...", { autoClose: 1500 });
+                    const response = await fetch(`https://api.postalpincode.in/pincode/${formData.zipCode}`);
+                    const data = await response.json();
+
+                    if (data && data[0] && data[0].Status === "Success") {
+                        const postOffice = data[0].PostOffice[0];
+                        const city = postOffice.District;
+                        const state = postOffice.State;
+
+                        setFormData((prev) => ({
+                            ...prev,
+                            city: city,
+                            state: state,
+                            country: "India" // Implicitly India for this API
+                        }));
+                        toast.success(`Found: ${city}, ${state}`);
+                    } else {
+                        toast.error("Invalid Pincode or data not found");
+                    }
+                } catch (error) {
+                    console.error("Error fetching pincode details:", error);
+                    toast.error("Failed to fetch location details");
+                }
+            };
+
+            fetchCityState();
+        }
+    }, [formData.zipCode]);
+
     // input change
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+
+        // Prevent typing non-numeric in pincode (optional but good UX)
+        if (name === "zipCode" && !/^\d*$/.test(value)) return;
+        // Limit pincode to 6 digits
+        if (name === "zipCode" && value.length > 6) return;
+
+        // Limit mobile to 10 digits
+        if (name === "phone" && (!/^\d*$/.test(value) || value.length > 10)) return;
+
         setFormData((prev) => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
@@ -536,15 +579,18 @@ const AddressModal = ({ onSelect }) => {
                                         />
                                     </div>
 
-                                    {/* <input
-                                        type="text"
-                                        name="state"
-                                        placeholder="State"
-                                        value={formData.state}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                        required
-                                    /> */}
+                                    {/* Conditionally Show State Field */}
+                                    {showStateField && (
+                                        <input
+                                            type="text"
+                                            name="state"
+                                            placeholder="State"
+                                            value={formData.state}
+                                            onChange={handleChange}
+                                            className="w-full border px-3 py-2 rounded"
+                                            required
+                                        />
+                                    )}
 
                                     <input
                                         type="text"
@@ -603,5 +649,3 @@ const AddressModal = ({ onSelect }) => {
 };
 
 export default AddressModal;
-
-

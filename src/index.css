@@ -5,6 +5,26 @@ body{
     overflow-x: hidden;
 }
 
+/* Global Cursor Pointer for Interactive Elements */
+button,
+a,
+[role="button"],
+[onclick],
+.cursor-pointer,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+select {
+    cursor: pointer !important;
+}
+
+/* Ensure disabled elements don't have pointer cursor */
+button:disabled,
+a:disabled,
+[disabled] {
+    cursor: not-allowed !important;
+}
+
 /* Global Toastify Overrides for Modern Look */
 .Toastify__toast {
     border-radius: 12px !important;

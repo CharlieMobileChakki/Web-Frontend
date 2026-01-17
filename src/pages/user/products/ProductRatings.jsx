@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Star, Pencil, Trash2, X, Check } from "lucide-react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { usercreatereviews, userdeletereviews, userupdatereviews } from "../../../store/slices/ReviewSlice";
 import { toast } from "react-toastify";
+import { checkAuth } from "../../../utils/checkAuth";
 
 const ProductRatings = ({ reviews = [], productId }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [showForm, setShowForm] = useState(false);
     const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
     const [showAllReviews, setShowAllReviews] = useState(false);
@@ -35,8 +38,11 @@ const ProductRatings = ({ reviews = [], productId }) => {
     const totalRatings = reviews.length;
 
 
-    // ✅ Updated handleSubmit with toast
+    // ✅ Updated handleSubmit with authentication check
     const handleSubmit = async () => {
+        // Check authentication first
+        if (!checkAuth(navigate)) return;
+
         if (newReview.rating === 0 || !newReview.comment.trim()) {
             toast.error("Please add a rating and comment.");
             return;
@@ -71,8 +77,11 @@ const ProductRatings = ({ reviews = [], productId }) => {
         setEditData({ rating: review.rating, comment: review.comment });
     };
 
-    // 💾 Handle Update Submit
+    // 💾 Handle Update Submit with authentication check
     const handleUpdate = async (reviewId) => {
+        // Check authentication first
+        if (!checkAuth(navigate)) return;
+
         if (editData.rating === 0 || !editData.comment.trim()) {
             toast.error("Rating and comment cannot be empty.");
             return;
@@ -87,8 +96,11 @@ const ProductRatings = ({ reviews = [], productId }) => {
         }
     };
 
-    // 🗑️ Handle Delete
+    // 🗑️ Handle Delete with authentication check
     const handleDelete = async (reviewId) => {
+        // Check authentication first
+        if (!checkAuth(navigate)) return;
+
         if (window.confirm("Are you sure you want to delete this review?")) {
             try {
                 await dispatch(userdeletereviews(reviewId)).unwrap();

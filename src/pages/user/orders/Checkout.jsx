@@ -148,6 +148,7 @@ const Checkout = () => {
                                     <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                                         <AddressModal
                                             onSelect={(addr) => setSelectedAddress(addr)}
+                                            showStateField={true}
                                             trigger={
                                                 <button className="flex items-center gap-2 text-blue-600 font-semibold hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors">
                                                     <Plus size={18} />

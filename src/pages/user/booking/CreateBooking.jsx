@@ -17,7 +17,7 @@ const CreateBooking = () => {
 
     const [formData, setFormData] = useState({
         name: user?.name || "",
-        mobile: user?.phone || "",
+        mobile: user?.phone || user?.mobile || "",
         serviceType: "",
         date: "",
         timeSlot: "",
@@ -41,7 +41,7 @@ const CreateBooking = () => {
                     // or keep the saved ones if they were entered manually?
                     // Let's keep the saved name/mobile if user was guest but keep user details if available now.
                     name: user?.name || parsedData.name,
-                    mobile: user?.phone || parsedData.mobile,
+                    mobile: user?.phone || user?.mobile || parsedData.mobile,
                 }));
                 // Clear temp data after restoring
                 localStorage.removeItem("tempBookingData");
@@ -183,7 +183,7 @@ const CreateBooking = () => {
                                     <label className="flex items-center gap-2 text-gray-700 font-semibold mb-2">
                                         Select Address
                                     </label>
-                                    <AddressModal onSelect={handleAddressSelect} />
+                                    <AddressModal onSelect={handleAddressSelect} showStateField={false} />
                                     {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                                 </div>
 

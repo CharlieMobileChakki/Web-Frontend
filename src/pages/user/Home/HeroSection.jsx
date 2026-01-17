@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Slider1 from "../../../assets/Banner/b3.jpg";
 import Slider2 from "../../../assets/Banner/b2.png";
-import Slider3 from "../../../assets/Banner/b1.png";
+import Slider3 from "../../../assets/Banner/b1.jpg";
 import Slider4 from "../../../assets/Banner/b4.png";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Star, ArrowRight } from "lucide-react";
@@ -15,7 +15,7 @@ const slides = [
     title: "Pure & Fresh Atta",
     subtitle:
       "Forget all worries of adulteration — freshly ground atta with guaranteed purity, delivering real taste and aroma in every roti.",
-    btnText: "Order Now",
+    btnText: "Book Now",
     img: Slider1,
     badge: "100% Pure & Fresh",
   },
@@ -24,7 +24,7 @@ const slides = [
     title: "Complete Nutrition",
     subtitle:
       "Low GI atta made from a blend of 12 wholesome grains — light on the stomach, well-balanced, and perfect for everyday nutrition.",
-    btnText: "Order Now",
+    btnText: "Book Now",
     img: Slider2,
     badge: "Premium Quality",
   },
@@ -33,7 +33,7 @@ const slides = [
     title: "A Complete Diet",
     subtitle:
       "A nutritious blend of barley, chana, jowar, black wheat, ragi, flaxseed, and 12 grains — rich in fiber, long-lasting energy, and great taste.",
-    btnText: "Order Now",
+    btnText: "Book Now",
     img: Slider3,
     badge: "Fiber Rich",
   },
@@ -42,7 +42,7 @@ const slides = [
     title: "Cold Milled Atta",
     subtitle:
       "Cold-milled atta that preserves natural nutrients and flavor — recommended by experts for a healthy and balanced diet.",
-    btnText: "Order Now",
+    btnText: "Book Now",
     img: Slider4,
     badge: "Cold Milled Technology",
   },
@@ -131,24 +131,7 @@ const HeroSection = () => {
                   </button>
                 </div>
 
-                {/* Ratings / Trust */}
-                <div className="flex items-center justify-center lg:justify-start gap-4 pt-4 opacity-90">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                        <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
-                      ))}
-                    </div>
-                    <span className="text-sm font-bold text-amber-900">4.9/5 Trusted by Moms</span>
-                  </div>
-                </div>
+
 
               </motion.div>
             </AnimatePresence>

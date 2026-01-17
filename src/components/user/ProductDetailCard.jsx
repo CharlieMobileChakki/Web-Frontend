@@ -81,12 +81,12 @@ const ProductDetailCard = ({
         // 🔍 Priority: 1. Locally selected variant (UI state) -> 2. Passed variantId -> 3. First available variant
         let targetVariantId = selectedVariant?._id || variantId;
 
-        // 🛡️ Auto-select first variant if none selected
-        if (!targetVariantId && variants?.length > 0) {
-            console.log("⚠️ No variant selected. Defaulting to first variant:", variants[0]);
-            targetVariantId = variants[0]._id;
-            if (setSelectedVariant) setSelectedVariant(variants[0]); // Update UI
-        }
+        // 🛡️ Auto-select first variant if none selected - REMOVED TO FORCE MANUAL SELECTION
+        // if (!targetVariantId && variants?.length > 0) {
+        //     console.log("⚠️ No variant selected. Defaulting to first variant:", variants[0]);
+        //     targetVariantId = variants[0]._id;
+        //     if (setSelectedVariant) setSelectedVariant(variants[0]); // Update UI
+        // }
 
         if (!targetVariantId) {
             toast.error("Please select a pack size");
@@ -114,12 +114,12 @@ const ProductDetailCard = ({
         // 🔍 Priority: 1. Locally selected variant (UI state) -> 2. Passed variantId -> 3. First available variant
         let targetVariantId = selectedVariant?._id || variantId;
 
-        // 🛡️ Auto-select first variant if none selected
-        if (!targetVariantId && variants?.length > 0) {
-            console.log("⚠️ No variant selected (BuyNow). Defaulting to first variant:", variants[0]);
-            targetVariantId = variants[0]._id;
-            if (setSelectedVariant) setSelectedVariant(variants[0]);
-        }
+        // 🛡️ Auto-select first variant if none selected - REMOVED
+        // if (!targetVariantId && variants?.length > 0) {
+        //     console.log("⚠️ No variant selected (BuyNow). Defaulting to first variant:", variants[0]);
+        //     targetVariantId = variants[0]._id;
+        //     if (setSelectedVariant) setSelectedVariant(variants[0]);
+        // }
 
         if (!targetVariantId) {
             toast.error("Please select a pack size");
@@ -246,8 +246,8 @@ const ProductDetailCard = ({
                                     key={idx}
                                     onClick={() => setMainImage(img)}
                                     className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img
-                                            ? "border-red-600 ring-2 ring-red-200 scale-105"
-                                            : "border-gray-200 hover:border-red-400"
+                                        ? "border-red-600 ring-2 ring-red-200 scale-105"
+                                        : "border-gray-200 hover:border-red-400"
                                         }`}
                                 >
                                     <img

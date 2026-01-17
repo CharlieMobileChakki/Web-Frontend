@@ -32,13 +32,13 @@ const ProductDetails = () => {
     }, [id]);
 
     // Auto-select first variant when product loads
-    useEffect(() => {
-        if (selectedProduct?.variants?.length > 0 && !hasInitialized.current) {
-            console.log("✅ Auto-selecting first variant:", selectedProduct.variants[0]);
-            setSelectedVariant(selectedProduct.variants[0]);
-            hasInitialized.current = true;
-        }
-    }, [selectedProduct]);
+    // useEffect(() => {
+    //     if (selectedProduct?.variants?.length > 0 && !hasInitialized.current) {
+    //         console.log("✅ Auto-selecting first variant:", selectedProduct.variants[0]);
+    //         setSelectedVariant(selectedProduct.variants[0]);
+    //         hasInitialized.current = true;
+    //     }
+    // }, [selectedProduct]);
 
     if (loading) return <p className="p-4">Loading...</p>;
     if (error) return <p className="p-4 text-red-600">{error}</p>;

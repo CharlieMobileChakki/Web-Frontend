@@ -164,9 +164,14 @@ const Header = () => {
                     {authOpen && (
                       <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-lg w-44 z-10">
                         <div className="border-b p-3 flex justify-between">
-                          <p className="   py-2 text-sm text-gray-600 ">
-                            👤 My Profile
-                          </p>
+                          <div>
+                            <p className="   py-2 text-sm text-gray-600 ">
+                              👤 My Profile
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {user.mobile || user.phone || "No Number"}
+                            </p>
+                          </div>
                           <p className="  py-2 text-sm text-gray-600">
                             {user.name || "User"}
                           </p>
