@@ -67,7 +67,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
   return (
     <header
       className={`
-        fixed top-0 right-0 bg-white shadow-md flex flex-col z-50
+        fixed top-0 right-0 bg-gradient-to-r from-white via-gray-50 to-white shadow-lg border-b border-gray-200 flex flex-col z-50
         transition-all duration-300
         ${!isMobile && isOpen ? "left-64" : "left-16"}
       `}
@@ -78,7 +78,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
         {isMobile && (
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="mr-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="mr-3 p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-700"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -86,15 +86,13 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
           </button>
         )}
 
-        {/* Breadcrumbs - Desktop (REMOVED as per request) */}
-        <div className="hidden lg:flex items-center gap-2 flex-1">
-          {/* Breadcrumbs removed, keeping this div for flex spacing if needed, 
-              or we can leave it empty to push right section to the right 
-              since it has flex-1 */}
-        </div>
+        {/* Page Title - Desktop */}
+        <h1 className="hidden lg:block font-bold text-xl text-gray-800 flex-1">
+          {breadcrumbs[breadcrumbs.length - 1]?.name || "Admin Panel"}
+        </h1>
 
         {/* Page Title - Mobile */}
-        <h1 className="lg:hidden font-semibold text-lg flex-1">
+        <h1 className="lg:hidden font-semibold text-lg flex-1 text-gray-800">
           {breadcrumbs[breadcrumbs.length - 1]?.name || "Admin Panel"}
         </h1>
 
@@ -108,7 +106,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DA352D] focus:border-transparent text-sm bg-white shadow-sm"
               />
               <svg
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -125,13 +123,13 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative p-2 hover:bg-red-50 rounded-lg transition-colors"
             >
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
+                <span className="absolute top-1 right-1 w-5 h-5 bg-gradient-to-r from-red-600 to-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-lg">
                   {unreadCount}
                 </span>
               )}
@@ -139,15 +137,15 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
-                <div className="px-4 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                <div className="px-4 py-3 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white font-semibold">
                   Notifications
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.map((notif) => (
                     <div
                       key={notif.id}
-                      className={`px-4 py-3 border-b hover:bg-gray-50 transition-colors ${notif.unread ? "bg-orange-50" : ""
+                      className={`px-4 py-3 border-b hover:bg-gray-50 transition-colors ${notif.unread ? "bg-red-50" : ""
                         }`}
                     >
                       <p className="text-sm font-medium text-gray-800">{notif.message}</p>
@@ -155,8 +153,8 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
                     </div>
                   ))}
                 </div>
-                <div className="px-4 py-2 bg-gray-50 text-center">
-                  <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                <div className="px-4 py-2 bg-gray-50 text-center border-t">
+                  <button className="text-sm text-[#DA352D] hover:text-[#C6363E] font-medium">
                     View All Notifications
                   </button>
                 </div>
@@ -167,7 +165,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
           {/* Back to Website Link */}
           <Link
             to="/"
-            className="hidden sm:flex items-center gap-2 px-3 lg:px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-md hover:shadow-lg text-sm font-medium"
+            className="hidden sm:flex items-center gap-2 px-3 lg:px-4 py-2 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all duration-300 shadow-md hover:shadow-lg text-sm font-medium"
             title="Back to Website"
           >
             <svg
@@ -191,15 +189,15 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 lg:gap-3 hover:bg-gray-100 rounded-lg p-1 lg:p-2 transition-colors"
+              className="flex items-center gap-2 lg:gap-3 hover:bg-red-50 rounded-lg p-1 lg:p-2 transition-colors"
             >
               <img
                 src={user.image}
                 alt="user"
-                className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-orange-500"
+                className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-[#C6A55C] shadow-md"
               />
               <div className="hidden md:block text-left">
-                <p className="font-semibold text-sm">{user.name}</p>
+                <p className="font-semibold text-sm text-gray-800">{user.name}</p>
                 <p className="text-xs text-gray-500">{user.email}</p>
               </div>
               <svg
@@ -215,15 +213,15 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
 
             {/* User Dropdown Menu */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
-                <div className="px-4 py-3 border-b bg-gradient-to-r from-orange-50 to-red-50">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                <div className="px-4 py-3 border-b bg-gradient-to-r from-red-50 to-orange-50">
                   <p className="font-semibold text-gray-800">{user.name}</p>
                   <p className="text-xs text-gray-600">{user.email}</p>
                 </div>
                 <div className="py-2">
                   <Link
                     to="/admin/profile"
-                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-red-50 transition-colors"
                     onClick={() => setShowUserMenu(false)}
                   >
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +231,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
                   </Link>
                   <Link
                     to="/admin/settings"
-                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-red-50 transition-colors"
                     onClick={() => setShowUserMenu(false)}
                   >
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

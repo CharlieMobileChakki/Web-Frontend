@@ -1,5 +1,5 @@
 import React from "react";
-import { FaEye } from "react-icons/fa";
+import { Users } from "lucide-react";
 
 const UserTable = ({ users, onView }) => {
     // Format date helper
@@ -14,16 +14,9 @@ const UserTable = ({ users, onView }) => {
 
     // Get default address
     const getDefaultAddress = (user) => {
-        // Debugging: Log first user to see structure
-        if (users && users.length > 0 && user._id === users[0]._id) {
-            console.log("First User Data:", user);
-        }
-
         const addresses = user.addresses;
 
-        // Case 1: No addresses array
         if (!addresses || addresses.length === 0) {
-            // Check singular address field just in case
             if (user.address) {
                 if (typeof user.address === 'string') return 'Address ID Only';
                 return user.address.formattedAddress || `${user.address.city || ''}, ${user.address.state || ''}`;
@@ -31,12 +24,10 @@ const UserTable = ({ users, onView }) => {
             return 'No Address';
         }
 
-        // Case 2: Addresses are strings (IDs)
         if (typeof addresses[0] === 'string') {
-            return 'Address IDs Only (Not Populated)';
+            return 'Address IDs Only';
         }
 
-        // Case 3: Addresses are objects
         const defaultAddr = addresses.find(addr => addr.isDefault) || addresses[0];
 
         if (defaultAddr.formattedAddress) return defaultAddr.formattedAddress;
@@ -52,71 +43,84 @@ const UserTable = ({ users, onView }) => {
     };
 
     return (
-        <div className="w-full overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="w-full min-w-[1000px] border-collapse bg-white">
-                <thead>
-                    <tr className="bg-gray-100 text-left text-xs sm:text-sm text-gray-700">
-                        <th className="p-3 border font-semibold">Name</th>
-                        <th className="p-3 border font-semibold">Mobile</th>
-                        <th className="p-3 border font-semibold hidden md:table-cell">Role</th>
-                        <th className="p-3 border font-semibold hidden lg:table-cell">Address</th>
-                        <th className="p-3 border font-semibold hidden sm:table-cell">Reviews</th>
-                        <th className="p-3 border font-semibold">Created</th>
-                        <th className="p-3 border font-semibold text-center">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {users?.map((user) => (
-                        <tr key={user._id} className="text-xs sm:text-sm hover:bg-gray-50 transition">
-                            <td className="p-3 border">
-                                <div className="font-medium text-gray-800">{user.name}</div>
-                            </td>
-
-                            <td className="p-3 border text-gray-700">
-                                {user.mobile}
-                            </td>
-
-                            <td className="p-3 border hidden md:table-cell">
-                                <span className={`px-2 py-1 rounded text-xs font-semibold ${user.role === 'admin'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-blue-100 text-blue-700'
-                                    }`}>
-                                    {user.role}
-                                </span>
-                            </td>
-
-                            <td className="p-3 border text-gray-600 hidden lg:table-cell max-w-[200px] truncate" title={getDefaultAddress(user)}>
-                                {getDefaultAddress(user)}
-                            </td>
-
-                            <td className="p-3 border text-center hidden sm:table-cell">
-                                <span className="inline-block bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-700">
-                                    {user.reviews?.length || 0}
-                                </span>
-                            </td>
-
-                            <td className="p-3 border text-gray-600">
-                                {formatDate(user.createdAt)}
-                            </td>
-
-                            <td className="p-3 border text-center">
-                                <button
-                                    onClick={() => onView(user)}
-                                    className="text-blue-600 hover:text-blue-800 transition flex items-center justify-center gap-1 mx-auto"
-                                    title="View Details"
-                                >
-                                    <FaEye /> <span className="hidden sm:inline">View</span>
-                                </button>
-                            </td>
+        <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full whitespace-nowrap text-left">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mobile</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Role</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Reviews</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Created</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-100">
+                        {users?.map((user) => (
+                            <tr key={user._id} className="hover:bg-gray-50 transition duration-150">
+                                {/* Name */}
+                                <td className="px-6 py-4">
+                                    <div className="font-medium text-gray-900">{user.name}</div>
+                                </td>
+
+                                {/* Mobile */}
+                                <td className="px-6 py-4 text-sm text-gray-600">
+                                    {user.mobile}
+                                </td>
+
+                                {/* Role */}
+                                <td className="px-6 py-4 text-center">
+                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${user.role === 'admin'
+                                        ? 'bg-red-100 text-red-700'
+                                        : 'bg-blue-100 text-blue-700'
+                                        }`}>
+                                        {user.role}
+                                    </span>
+                                </td>
+
+                                {/* Address */}
+                                <td className="px-6 py-4 text-sm text-gray-600 max-w-[250px] truncate" title={getDefaultAddress(user)}>
+                                    {getDefaultAddress(user)}
+                                </td>
+
+                                {/* Reviews */}
+                                <td className="px-6 py-4 text-center">
+                                    <span className="inline-block bg-gray-100 px-2 py-1 rounded-full text-xs font-medium text-gray-700">
+                                        {user.reviews?.length || 0}
+                                    </span>
+                                </td>
+
+                                {/* Created Date */}
+                                <td className="px-6 py-4 text-sm text-gray-600">
+                                    {formatDate(user.createdAt)}
+                                </td>
+
+                                {/* Actions */}
+                                <td className="px-6 py-4 text-right">
+                                    <button
+                                        onClick={() => onView(user)}
+                                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                        title="View Details"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {users?.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                    No users found
+                <div className="text-center py-12 text-gray-500">
+                    <Users size={48} className="mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">No users found</p>
                 </div>
             )}
         </div>

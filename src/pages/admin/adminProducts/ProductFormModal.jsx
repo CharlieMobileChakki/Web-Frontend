@@ -173,234 +173,227 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
 
 
     return (
-        <div className="  bg-opacity-40 flex  justify-center inset-0 z-50 overflow-y-auto">
-            <div className="bg-white px-6 py-10 rounded shadow-md w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-4xl lg:max-w-5xl my-8">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#00000080] backdrop-blur-sm sm:p-4 overflow-hidden">
+            <div className="bg-white sm:rounded-xl shadow-2xl w-full max-w-6xl h-full sm:h-auto sm:max-h-[95vh] relative flex flex-col transition-all duration-300">
 
-                <h2 className="text-xl font-semibold mb-4">
-                    {editData ? "Edit Product" : "Add Product"}
-                </h2>
-
-                {/* Name */}
-                <div className="mb-3">
-                    <label className="block font-medium">Product Name</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        className="w-full border px-3 py-2 rounded"
-                    />
+                {/* Header */}
+                <div className="bg-[#2c3e50] p-4 rounded-t-none sm:rounded-t-xl flex justify-between items-center sticky top-0 z-10 flex-shrink-0">
+                    <h2 className="text-lg sm:text-2xl font-bold text-white">
+                        {editData ? "Edit Product" : "Add New Product"}
+                    </h2>
+                    <button onClick={onClose} className="text-gray-300 hover:text-white transition text-3xl font-light leading-none">&times;</button>
                 </div>
 
-                {/* Category */}
-                <div className="mb-3">
-                    <label>Category</label>
-                    <select
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                        className="w-full border px-3 py-2 rounded"
-                    >
-                        <option value="">Select Category</option>
-                        {categories?.map((cat) => (
-                            <option key={cat._id} value={cat._id}>
-                                {cat.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                {/* Scrollable Content */}
+                <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1">
 
-                {/* Status */}
-                <div className="mb-3">
-                    <label>Status</label>
-                    <select
-                        name="status"
-                        value={form.status}
-                        onChange={handleChange}
-                        className="w-full border px-3 py-2 rounded"
-                    >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-
-
-                {/* PRODUCT IMAGES */}
-                <div className="mb-4">
-                    <label className="block font-medium mb-1">Product Images</label>
-                    <input
-                        type="file"
-                        multiple
-                        onChange={handleProductImageUpload}
-                        className="w-full border px-3 py-2 rounded"
-                    />
-
-                    {/* PREVIEW */}
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                        {form.images?.map((img, index) => (
-                            <div key={index} className="relative">
-                                <img
-                                    src={img}
-                                    className="w-20 h-20 object-cover rounded border"
-                                    alt="product"
+                    {/* General Info Section */}
+                    <div className="mb-6 sm:mb-8">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b pb-2">General Information</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                            <div className="md:col-span-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={form.name}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
+                                    placeholder="Enter product name"
                                 />
-                                <button
-                                    type="button"
-                                    className="absolute top-[-6px] left-[0px] bg-red-600 text-white rounded-full w-6 h-6 text-xs"
-                                    onClick={() => handleRemoveProductImage(index)}
-                                >
-                                    X
-                                </button>
                             </div>
-                        ))}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select
+                                    name="category"
+                                    value={form.category}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white text-sm"
+                                >
+                                    <option value="">Select Category</option>
+                                    {categories?.map((cat) => (
+                                        <option key={cat._id} value={cat._id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <select
+                                    name="status"
+                                    value={form.status}
+                                    onChange={handleChange}
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white text-sm"
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div className="flex items-center mt-2 md:mt-6 lg:mt-8 md:col-span-3 lg:col-span-1">
+                                <label className="flex items-center cursor-pointer relative">
+                                    <input
+                                        type="checkbox"
+                                        name="isFeatured"
+                                        checked={form.isFeatured}
+                                        onChange={handleChange}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                    <span className="ml-3 text-sm font-medium text-gray-900">Featured Product</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Images Section */}
+                    <div className="mb-6 sm:mb-8">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 border-b pb-2">Product Images</h3>
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 bg-gray-50 text-center hover:bg-gray-100 transition relative">
+                            <input
+                                type="file"
+                                multiple
+                                onChange={handleProductImageUpload}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            <p className="text-gray-500 text-sm">Drag & drop images here or <span className="text-blue-600 font-medium">browse</span></p>
+                        </div>
+
+                        {form.images.length > 0 && (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-4">
+                                {form.images.map((img, index) => (
+                                    <div key={index} className="relative group aspect-square">
+                                        <img src={img} className="w-full h-full object-cover rounded-lg shadow-sm border" alt="product" />
+                                        <button
+                                            type="button"
+                                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-md hover:bg-red-600"
+                                            onClick={() => handleRemoveProductImage(index)}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Variants Section */}
+                    <div>
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-800">Product Variants</h3>
+                            <button
+                                type="button"
+                                onClick={addVariant}
+                                className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-xs sm:text-sm font-medium border border-blue-200"
+                            >
+                                + Add Variant
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            {form.variants.map((variant, index) => (
+                                <div key={index} className="border border-gray-200 p-4 rounded-xl bg-gray-50 relative hover:shadow-sm transition">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h4 className="font-medium text-gray-700 bg-gray-200 px-3 py-1 rounded-md text-xs sm:text-sm">Variant #{index + 1}</h4>
+                                        {form.variants.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeVariant(index)}
+                                                className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium hover:underline"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                                        <div className="col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Quantity</label>
+                                            <input
+                                                type="number"
+                                                value={variant.quantity}
+                                                onChange={(e) => handleVariantChange(index, 'quantity', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                                placeholder="e.g. 500"
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Unit</label>
+                                            <input
+                                                type="text"
+                                                value={variant.nameSuffix}
+                                                onChange={(e) => handleVariantChange(index, 'nameSuffix', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                                placeholder="g, kg"
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Stock</label>
+                                            <input
+                                                type="number"
+                                                value={variant.stock}
+                                                onChange={(e) => handleVariantChange(index, 'stock', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Price (MRP)</label>
+                                            <input
+                                                type="number"
+                                                value={variant.price}
+                                                onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                            />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Selling Price</label>
+                                            <input
+                                                type="number"
+                                                value={variant.sellingPrice}
+                                                onChange={(e) => handleVariantChange(index, 'sellingPrice', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                            />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Purchase Price</label>
+                                            <input
+                                                type="number"
+                                                value={variant.purchasePrice}
+                                                onChange={(e) => handleVariantChange(index, 'purchasePrice', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                            />
+                                        </div>
+                                        <div className="col-span-2 md:col-span-4 lg:col-span-6">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
+                                            <input
+                                                type="text"
+                                                value={variant.description}
+                                                onChange={(e) => handleVariantChange(index, 'description', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                                placeholder="Variant details..."
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-
-
-                {/* isFeatured */}
-                <div className="mb-4 flex items-center">
-                    <input
-                        type="checkbox"
-                        name="isFeatured"
-                        checked={form.isFeatured}
-                        onChange={handleChange}
-                        className="mr-2 w-4 h-4"
-                    />
-                    <label className="font-medium">Featured Product</label>
-                </div>
-
-                <hr className="my-4" />
-
-                {/* VARIANTS SECTION */}
-                <h3 className="text-lg font-semibold mb-3">Product Variants</h3>
-
-                {form.variants.map((variant, index) => (
-                    <div key={index} className="border p-4 mb-4 rounded bg-gray-50">
-                        <div className="flex justify-between items-center mb-3">
-                            <h4 className="font-medium">Variant {index + 1}</h4>
-                            {form.variants.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => removeVariant(index)}
-                                    className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-                                >
-                                    Remove
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {/* Quantity */}
-                            <div>
-                                <label className="text-sm">Quantity (e.g., 500)</label>
-                                <input
-                                    type="number"
-                                    value={variant.quantity}
-                                    onChange={(e) => handleVariantChange(index, 'quantity', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                    placeholder="500"
-                                />
-                            </div>
-
-                            {/* Name Suffix */}
-                            <div>
-                                <label className="text-sm">Name Suffix (e.g., 500g)</label>
-                                <input
-                                    type="text"
-                                    value={variant.nameSuffix}
-                                    onChange={(e) => handleVariantChange(index, 'nameSuffix', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                    placeholder="500g"
-                                />
-                            </div>
-
-                            {/* Description */}
-                            <div className="md:col-span-2">
-                                <label className="text-sm">Description</label>
-                                <input
-                                    type="text"
-                                    value={variant.description}
-                                    onChange={(e) => handleVariantChange(index, 'description', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                    placeholder="Small pack"
-                                />
-                            </div>
-
-                            {/* Prices */}
-                            <div>
-                                <label className="text-sm">Price (MRP)</label>
-                                <input
-                                    type="number"
-                                    value={variant.price}
-                                    onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="text-sm">Selling Price</label>
-                                <input
-                                    type="number"
-                                    value={variant.sellingPrice}
-                                    onChange={(e) => handleVariantChange(index, 'sellingPrice', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="text-sm">Purchase Price</label>
-                                <input
-                                    type="number"
-                                    value={variant.purchasePrice}
-                                    onChange={(e) => handleVariantChange(index, 'purchasePrice', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="text-sm">Stock</label>
-                                <input
-                                    type="number"
-                                    value={variant.stock}
-                                    onChange={(e) => handleVariantChange(index, 'stock', e.target.value)}
-                                    className="w-full border px-3 py-2 rounded"
-                                />
-                            </div>
-                        </div>
-
-
-                    </div>
-                ))}
-
-                {/* Add Variant Button */}
-                <button
-                    type="button"
-                    onClick={addVariant}
-                    className="px-4 py-2 bg-blue-600 text-white rounded mb-4"
-                >
-                    + Add Another Variant
-                </button>
-
-                <hr className="my-4" />
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                    <button
-                        onClick={handleSubmit}
-                        className="px-4 py-2 bg-green-600 text-white rounded"
-                    >
-                        Save Product
-                    </button>
-
+                {/* Footer */}
+                <div className="bg-gray-50 p-4 border-t rounded-b-none sm:rounded-b-xl flex justify-end gap-3 sticky bottom-0 z-10 flex-shrink-0">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-600 text-white rounded"
+                        className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition shadow-sm text-sm"
                     >
-                        Close
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSubmit}
+                        className="px-6 py-2 bg-[#2c3e50] text-white rounded-lg hover:bg-[#34495e] font-medium transition shadow-sm disabled:opacity-70 text-sm"
+                    >
+                        {editData ? "Update" : "Save"}
                     </button>
                 </div>
-
             </div>
         </div>
     );

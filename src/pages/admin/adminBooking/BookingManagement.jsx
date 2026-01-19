@@ -6,6 +6,7 @@ import {
 } from "../../../store/slices/adminSlice/AdminBookingSlice";
 import { FaEye, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUser, FaPhone } from "react-icons/fa";
 import { toast } from "react-toastify";
+import Pagination from "../../../components/admin/Pagination";
 
 const BookingManagement = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,16 @@ const BookingManagement = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentBookings = bookings?.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil((bookings?.length || 0) / itemsPerPage);
 
   useEffect(() => {
     dispatch(adminGetAllBookings());
@@ -76,65 +87,72 @@ const BookingManagement = () => {
       ) : bookings.length === 0 ? (
         <div className="text-center py-10 text-gray-500">No bookings found.</div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full whitespace-nowrap">
-              <thead className="bg-gray-50 text-gray-700 font-semibold">
-                <tr>
-                  <th className="px-6 py-3 text-left">Booking ID</th>
-                  <th className="px-6 py-3 text-left">Customer</th>
-                  <th className="px-6 py-3 text-left">Service</th>
-                  <th className="px-6 py-3 text-left">Date & Time</th>
-                  <th className="px-6 py-3 text-left">Status</th>
-                  <th className="px-6 py-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {bookings.map((booking) => (
-                  <tr key={booking._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      #{booking._id.slice(-6).toUpperCase()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {booking.name}
-                      </div>
-                      <div className="text-sm text-gray-500">{booking.phone}</div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700 capitalize">
-                      {booking.serviceType}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
-                        {new Date(booking.date).toLocaleDateString()}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {booking.timeSlot}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                          booking.status
-                        )}`}
-                      >
-                        {booking.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleViewDetails(booking)}
-                        className="text-blue-600 hover:text-blue-800 flex items-center gap-1 transition"
-                      >
-                        <FaEye /> View
-                      </button>
-                    </td>
+        <>
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full whitespace-nowrap">
+                <thead className="bg-gray-50 text-gray-700 font-semibold">
+                  <tr>
+                    <th className="px-6 py-3 text-left">Booking ID</th>
+                    <th className="px-6 py-3 text-left">Customer</th>
+                    <th className="px-6 py-3 text-left">Service</th>
+                    <th className="px-6 py-3 text-left">Date & Time</th>
+                    <th className="px-6 py-3 text-left">Status</th>
+                    <th className="px-6 py-3 text-left">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {currentBookings.map((booking) => (
+                    <tr key={booking._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        #{booking._id.slice(-6).toUpperCase()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {booking.name}
+                        </div>
+                        <div className="text-sm text-gray-500">{booking.phone}</div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 capitalize">
+                        {booking.serviceType}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {new Date(booking.date).toLocaleDateString()}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {booking.timeSlot}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                            booking.status
+                          )}`}
+                        >
+                          {booking.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleViewDetails(booking)}
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1 transition"
+                        >
+                          <FaEye /> View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
       )}
 
       {/* Booking Details Modal */}

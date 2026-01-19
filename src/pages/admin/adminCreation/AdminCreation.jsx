@@ -53,7 +53,7 @@ const AdminCreation = () => {
             setEditData(null);
             setIsModalOpen(true);
           }}
-          className="px-4 py-2 bg-green-700 cursor-pointer text-white rounded hover:bg-green-800 transition"
+          className="px-4 py-2 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition"
         >
           + Add Admin
         </button>

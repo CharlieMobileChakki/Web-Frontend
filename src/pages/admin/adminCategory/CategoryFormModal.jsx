@@ -1,6 +1,5 @@
 
 
-
 import React, { useState, useEffect } from "react";
 
 const CategoryFormModal = ({ isOpen, onClose, onSave, editData }) => {
@@ -61,84 +60,99 @@ const CategoryFormModal = ({ isOpen, onClose, onSave, editData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#00000080] backdrop-blur-sm p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
 
-        <h2 className="text-xl font-semibold mb-4">
-          {editData ? "Edit Category" : "Add Category"}
-        </h2>
+        {/* Header */}
+        <div className="bg-[#2c3e50] p-4 sm:p-6 rounded-t-xl flex justify-between items-center">
+          <h2 className="text-lg sm:text-2xl font-bold text-white">
+            {editData ? "Edit Category" : "Add Category"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-300 hover:text-white transition text-3xl font-light leading-none"
+          >
+            &times;
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Content */}
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
 
           {/* Category Name */}
           <div>
-            <label className="block text-gray-700 mb-1">Category Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
+              placeholder="Enter category name"
               required
             />
           </div>
 
           {/* Title */}
           <div>
-            <label className="block text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
+              placeholder="Enter category title"
             />
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="block text-gray-700 mb-1">Image</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category Image</label>
 
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            />
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-center hover:bg-gray-100 transition relative">
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <p className="text-gray-500 text-sm">
+                Drag & drop image here or <span className="text-blue-600 font-medium">browse</span>
+              </p>
+            </div>
 
             {/* Preview */}
             {preview && (
-              <div className="mt-3 relative inline-block">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-24 h-24 object-cover rounded border"
-                />
-
-
+              <div className="mt-3 flex justify-center">
+                <div className="relative inline-block">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
+                  />
+                  {fileName && (
+                    <p className="mt-2 text-xs text-center text-gray-600 truncate max-w-[128px]">{fileName}</p>
+                  )}
+                </div>
               </div>
-            )}
-
-            {/* File Name */}
-            {fileName && (
-              <p className="mt-1 text-sm text-green-700">{fileName}</p>
             )}
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-4 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400"
+              className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition shadow-sm text-sm"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="px-4 py-2 bg-green-700 text-white cursor-pointer rounded hover:bg-green-800"
+              className="px-6 py-2 bg-[#2c3e50] text-white rounded-lg hover:bg-[#34495e] font-medium transition shadow-sm text-sm"
             >
               {editData ? "Update" : "Save"}
             </button>
@@ -152,4 +166,3 @@ const CategoryFormModal = ({ isOpen, onClose, onSave, editData }) => {
 };
 
 export default CategoryFormModal;
-

@@ -74,7 +74,7 @@ const DriverManagement = () => {
         <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1>
         <Link
           to="/drivermanagement/create"
-          className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
         >
           <FaPlus /> Add Driver
         </Link>

@@ -79,175 +79,157 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
     };
 
     return (
-        <div className="w-full overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="w-full min-w-[1000px] border-collapse h-max-content">
-                <thead>
-                    <tr className="bg-gray-100 text-left text-xs sm:text-sm">
-                        <th className="p-1 sm:p-2 border">Image</th>
-                        <th className="p-1 sm:p-2 border">Name</th>
-                        <th className="p-1 sm:p-2 border">Category</th>
-                        <th className="p-1 sm:p-2 border">Variants</th>
-                        <th className="p-1 sm:p-2 border">Price Range</th>
-                        <th className="p-1 sm:p-2 border">Total Stock</th>
-                        <th className="p-1 sm:p-2 border hidden sm:table-cell">Featured</th>
-                        <th className="p-1 sm:p-2 border hidden sm:table-cell">Status</th>
-                        <th className="p-1 sm:p-2 border">Actions</th>
-                    </tr>
-                </thead>
+        <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full whitespace-nowrap text-left">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Variants</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price Range</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Stock</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    {products?.map((p) => (
-                        <React.Fragment key={p._id}>
-                            <tr className="text-xs sm:text-sm">
-                                {/* Image - show first variant's first image */}
-                                {/* Image - show first variant's first image */}
-                                <td className="p-2 border min-w-[140px]">
-                                    <div className="flex flex-wrap gap-1">
-                                        {p.images?.length > 0 ? (
-                                            p.images.map((img, idx) => (
-                                                <img
-                                                    key={idx}
-                                                    src={img}
-                                                    className="h-10 w-10 rounded object-cover border border-gray-200"
-                                                    alt={p.name}
-                                                    title={`Image ${idx + 1}`}
-                                                />
-                                            ))
-                                        ) : (
-                                            <div className="h-10 w-10 bg-gray-100 rounded flex justify-center items-center text-xs text-gray-400 border border-gray-200">
-                                                N/A
+                    <tbody className="divide-y divide-gray-100">
+                        {products?.map((p) => (
+                            <React.Fragment key={p._id}>
+                                <tr className="hover:bg-gray-50 transition duration-150">
+                                    {/* Product: Image + Name */}
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                                                {p.images?.length > 0 ? (
+                                                    <img src={p.images[0]} className="w-full h-full object-cover" alt={p.name} />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">N/A</div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                </td>
-
-
-                                {/* Name */}
-                                <td className="p-1 sm:p-2 border align-top">
-                                    {expandedNameId === p._id ? (
-                                        <div className="relative bg-white border rounded p-2 shadow-md">
-                                            <p className="text-xs sm:text-sm text-gray-800 whitespace-pre-line">
-                                                {p.name}
-                                            </p>
-                                            <button
-                                                className="text-blue-600 cursor-pointer text-xs mt-2 underline"
-                                                onClick={() => setExpandedNameId(null)}
-                                            >
-                                                Show Less
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <p
-                                                ref={(el) => (nameRefs.current[p._id] = el)}
-                                                className="text-xs sm:text-sm text-gray-800 line-clamp-2"
-                                            >
-                                                {p.name}
-                                            </p>
-                                            {isNameOverflow[p._id] && (
-                                                <button
-                                                    className="text-blue-600 cursor-pointer text-xs block mt-1 underline"
-                                                    onClick={() => setExpandedNameId(p._id)}
-                                                >
-                                                    Show More
-                                                </button>
-                                            )}
-                                        </>
-                                    )}
-                                </td>
-
-
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm">{getCategoryName(p.category)}</td>
-                                {/* Variants Count */}
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm">
-                                    <button
-                                        onClick={() => toggleVariants(p._id)}
-                                        className="text-blue-600 underline"
-                                    >
-                                        {p.variants?.length || 0} variant(s)
-                                    </button>
-                                </td>
-
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm">{getPriceDisplay(p)}</td>
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm">{getTotalStock(p)}</td>
-
-                                {/* Featured */}
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm hidden sm:table-cell">
-                                    {p.isFeatured ? (
-                                        <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">★ Featured</span>
-                                    ) : (
-                                        <span className="text-gray-400">-</span>
-                                    )}
-                                </td>
-
-                                <td className="p-1 sm:p-2 border text-xs sm:text-sm hidden sm:table-cell">
-                                    <span className={`px-2 py-1 rounded text-xs ${p.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                        {p.status}
-                                    </span>
-                                </td>
-
-                                <td className="p-1 sm:p-2 border">
-                                    <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
-                                        <button
-                                            onClick={() => onEdit(p)}
-                                            className="px-2 py-1 bg-blue-600 cursor-pointer text-white rounded text-xs whitespace-nowrap"
-                                        >
-                                            Edit
-                                        </button>
-
-                                        <button
-                                            onClick={() => onDelete(p._id)}
-                                            className="px-2 py-1 bg-red-600 cursor-pointer text-white rounded text-xs whitespace-nowrap"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            {/* Expanded Variants Row */}
-                            {expandedVariants[p._id] && (
-                                <tr>
-                                    <td colSpan="9" className="p-3 bg-gray-50 border">
-                                        <div className="text-sm">
-                                            <h4 className="font-semibold mb-2">Variants Details:</h4>
-                                            <div className="space-y-2">
-                                                {p.variants?.map((variant, idx) => (
-                                                    <div key={variant._id || idx} className="border p-2 bg-white rounded">
-                                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                                                            <div>
-                                                                <span className="font-medium">Name:</span> {variant.nameSuffix || 'N/A'}
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-medium">Quantity:</span> {variant.quantity || 'N/A'}
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-medium">Price:</span> ₹{variant.price}
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-medium">Selling:</span> ₹{variant.sellingPrice}
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-medium">Purchase:</span> ₹{variant.purchasePrice}
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-medium">Stock:</span> {variant.stock}
-                                                            </div>
-                                                            <div className="col-span-2">
-                                                                <span className="font-medium">Description:</span> {variant.description || 'N/A'}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                            <div className="max-w-[200px]">
+                                                <div className="text-sm font-medium text-gray-900 truncate" title={p.name}>
+                                                    {p.name}
+                                                </div>
+                                                {p.isFeatured && (
+                                                    <span className="inline-flex items-center mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
+                                                        ★ Featured
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     </td>
+
+                                    {/* Category */}
+                                    <td className="px-6 py-4 text-sm text-gray-600">
+                                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium border border-blue-100">
+                                            {getCategoryName(p.category)}
+                                        </span>
+                                    </td>
+
+                                    {/* Variants Count */}
+                                    <td className="px-6 py-4 text-sm">
+                                        <button
+                                            onClick={() => toggleVariants(p._id)}
+                                            className="text-blue-600 hover:text-blue-800 hover:underline font-medium text-xs flex items-center gap-1"
+                                        >
+                                            {p.variants?.length || 0} Variants
+                                            <span className="text-[10px]">{expandedVariants[p._id] ? '▲' : '▼'}</span>
+                                        </button>
+                                    </td>
+
+                                    {/* Price Range */}
+                                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                        {getPriceDisplay(p)}
+                                    </td>
+
+                                    {/* Total Stock */}
+                                    <td className="px-6 py-4 text-sm text-center">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTotalStock(p) > 10 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            {getTotalStock(p)}
+                                        </span>
+                                    </td>
+
+                                    {/* Status */}
+                                    <td className="px-6 py-4 text-center">
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${p.status === 'active'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-gray-100 text-gray-800'
+                                            }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${p.status === 'active' ? 'bg-green-600' : 'bg-gray-500'}`}></span>
+                                            {p.status}
+                                        </span>
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                onClick={() => onEdit(p)}
+                                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                                title="Edit"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                onClick={() => onDelete(p._id)}
+                                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                                                title="Delete"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
-                            )}
-                        </React.Fragment>
-                    ))}
-                </tbody>
-            </table>
+
+                                {/* Expanded Variants Row */}
+                                {expandedVariants[p._id] && (
+                                    <tr className="bg-gray-50/50">
+                                        <td colSpan="7" className="p-4 border-t border-gray-100 shadow-inner">
+                                            <div className="pl-14">
+                                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Variants Breakdown</h4>
+                                                <div className="bg-white border rounded-lg overflow-hidden">
+                                                    <table className="min-w-full divide-y divide-gray-100">
+                                                        <thead className="bg-gray-50">
+                                                            <tr>
+                                                                <th className="px-4 py-2 text-xs font-medium text-gray-500">Name</th>
+                                                                <th className="px-4 py-2 text-xs font-medium text-gray-500">Price</th>
+                                                                <th className="px-4 py-2 text-xs font-medium text-gray-500">Selling</th>
+                                                                <th className="px-4 py-2 text-xs font-medium text-gray-500">Stock</th>
+                                                                <th className="px-4 py-2 text-xs font-medium text-gray-500">Description</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-gray-100">
+                                                            {p.variants?.map((variant, idx) => (
+                                                                <tr key={variant._id || idx}>
+                                                                    <td className="px-4 py-2 text-sm text-gray-700 font-medium">{variant.nameSuffix || '-'}</td>
+                                                                    <td className="px-4 py-2 text-sm text-gray-500">₹{variant.price}</td>
+                                                                    <td className="px-4 py-2 text-sm text-gray-800 font-medium">₹{variant.sellingPrice}</td>
+                                                                    <td className="px-4 py-2 text-sm">
+                                                                        <span className={`px-1.5 py-0.5 rounded textxs ${variant.stock > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                                                            {variant.stock}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className="px-4 py-2 text-xs text-gray-500 italic max-w-xs truncate">{variant.description || 'No description'}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

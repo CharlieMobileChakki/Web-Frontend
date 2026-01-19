@@ -5,6 +5,7 @@ import { adminGetReviews, adminDeleteReview, adminUpdateReview } from "../../../
 import { FaEdit, FaTrash, FaStar, FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Pagination from "../../../components/admin/Pagination";
 
 const ReviewsManagement = () => {
     const dispatch = useDispatch();
@@ -14,6 +15,10 @@ const ReviewsManagement = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedReview, setSelectedReview] = useState(null);
     const [formData, setFormData] = useState({ rating: 0, comment: "" });
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
 
     useEffect(() => {
         dispatch(adminGetReviews());
@@ -65,6 +70,12 @@ const ReviewsManagement = () => {
             review.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Pagination Logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentReviews = filteredReviews.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
+
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <h2 className="text-[#2c3e50] font-bold mb-6 text-3xl md:text-4xl">Reviews Management</h2>
@@ -105,7 +116,7 @@ const ReviewsManagement = () => {
                                     <td colSpan="6" className="text-center py-8 text-gray-500">No reviews found.</td>
                                 </tr>
                             ) : (
-                                filteredReviews.map((review) => (
+                                currentReviews.map((review) => (
                                     <tr key={review._id} className="hover:bg-gray-50 transition duration-150">
                                         <td className="px-6 py-4 text-sm text-gray-700 font-medium">{review.product?.name || "Unknown Product"}</td>
                                         <td className="px-6 py-4 text-sm text-gray-600">{review.user?.name || "Unknown User"}</td>
@@ -145,6 +156,13 @@ const ReviewsManagement = () => {
                     </table>
                 </div>
             </div>
+
+            {/* Pagination */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
 
             {/* Edit Modal */}
             {editModalOpen && (

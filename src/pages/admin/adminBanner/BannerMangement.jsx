@@ -51,9 +51,12 @@ const BannerManagement = () => {
             setEditData(null);
             setIsModalOpen(true);
           }}
-          className="px-4 py-2 bg-green-700 cursor-pointer text-white rounded hover:bg-green-800 transition"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
         >
-          + Add Banner
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Banner
         </button>
       </div>
 

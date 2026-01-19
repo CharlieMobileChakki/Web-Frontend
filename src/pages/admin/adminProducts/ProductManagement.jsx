@@ -9,6 +9,7 @@ import {
 } from "../../../store/slices/adminSlice/AdminProductSlice";
 
 import SidebarTitle from "../../../components/admin/SidebarTitle";
+import Pagination from "../../../components/admin/Pagination";
 import ProductTable from "./ProductTable";
 import ProductFormModal from "./ProductFormModal";
 import { userproduct } from "../../../store/slices/ProductSlice";
@@ -23,6 +24,10 @@ export const ProductManagement = () => {
     const [Category, setCategory] = useState("all");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
 
     useEffect(() => {
         dispatch(userproduct());
@@ -46,6 +51,12 @@ export const ProductManagement = () => {
         ...p,
         categoryName: getCategoryName(p.category),
     }));
+
+    // Pagination Logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentProducts = productsWithCategory?.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil((productsWithCategory?.length || 0) / itemsPerPage);
 
     const handleAdd = () => {
         setEditData(null);
@@ -84,49 +95,94 @@ export const ProductManagement = () => {
 
 
     return (
-        <div className="p-2 sm:p-4">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-                <SidebarTitle />
+        <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">Products Management</h1>
+                    <p className="text-sm text-gray-500 mt-1">Manage your inventory, prices, and variants</p>
+                </div>
 
-                <button
-                    onClick={handleAdd}
-                    className="px-3 sm:px-4 py-2 cursor-pointer bg-green-700 text-white rounded text-sm sm:text-base whitespace-nowrap w-full sm:w-auto"
-                >
-                    + Add Product
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                        onClick={handleAdd}
+                        className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add New Product
+                    </button>
+                </div>
             </div>
 
-            {/* category filter dropdown */}
-            <select
-                value={Category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full sm:w-auto border p-2 mb-4 rounded text-sm sm:text-base"
-            >
-                <option value="all">All Categories</option>
+            {/* Controls Bar */}
+            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
 
-                {categories?.map((cat) => (
-                    <option key={cat._id} value={cat._id}>
-                        {cat.name}
-                    </option>
-                ))}
-            </select>
+                {/* Search (Placeholder) */}
+                <div className="relative w-full sm:w-96">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        placeholder="Search products..."
+                    />
+                </div>
 
-            {loading && <p>Loading products...</p>}
-            {error && <p className="text-red-600">{error}</p>}
+                {/* Category Filter */}
+                <div className="w-full sm:w-auto">
+                    <select
+                        value={Category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg border bg-white shadow-sm"
+                    >
+                        <option value="all">All Categories</option>
+                        {categories?.map((cat) => (
+                            <option key={cat._id} value={cat._id}>{cat.name}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
 
-            {!loading && !error && (
-                <ProductTable
-                    products={productsWithCategory}
-                    categories={categories}  // FIXED
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
+            {/* Content Area */}
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+            ) : error ? (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong className="font-bold">Error:</strong>
+                    <span className="block sm:inline"> {error}</span>
+                </div>
+            ) : (
+                <div className="space-y-6">
+                    {/* Stats or summary could go here if needed */}
+
+                    <ProductTable
+                        products={currentProducts}
+                        categories={categories}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
+
+                    <div className="mt-4 flex justify-end">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                </div>
             )}
 
             <ProductFormModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                categories={categories}  // FIXED
+                categories={categories}
                 onSave={handleSave}
                 editData={editData}
             />
