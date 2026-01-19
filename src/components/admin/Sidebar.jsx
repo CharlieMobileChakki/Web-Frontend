@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaBars, FaUserShield, FaChartLine,
   FaTags, FaShoppingBag, FaBoxOpen, FaUsers, FaFileAlt,
-  FaImage, FaWarehouse, FaCalendarAlt, FaTruck, FaSignOutAlt, FaEnvelope
+  FaImage, FaWarehouse, FaCalendarAlt, FaTruck, FaSignOutAlt, FaEnvelope, FaStar
 } from "react-icons/fa";
 
 import Logo from "../../assets/adminImg/logo.jpeg";
@@ -23,6 +23,7 @@ const menuItems = [
   { name: "Booking Management", icon: <FaCalendarAlt />, href: "/bookingmanagement" },
   { name: "Driver Management", icon: <FaTruck />, href: "/drivermanagement" },
   { name: "Contact Management", icon: <FaEnvelope />, href: "/contactmanagement" },
+  { name: "Reviews Management", icon: <FaStar />, href: "/reviewsmanagement" },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {

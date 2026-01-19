@@ -72,6 +72,12 @@ const Endpoints = {
 
           // ================= ADDRESS MANAGEMENT =================
           ADMIN_GET_ALL_ADDRESSES: '/api/address/addresses', // GET all addresses
+
+
+          // ================= ADMIN REVIEWS MANAGEMENT =================
+          ADMIN_GET_REVIEWS: '/api/admin/reviews',                  // GET all reviews
+          ADMIN_UPDATE_REVIEW: (id) => `/api/admin/reviews/${id}`,  // PUT update review
+          ADMIN_DELETE_REVIEW: (id) => `/api/admin/reviews/${id}`,  // DELETE review
      },
 
 
@@ -105,7 +111,13 @@ const Endpoints = {
           USERREVIEWSACCESS: (id) => `/api/reviews/${id}`,
           USERCREATEREVIEWS: (id) => `/api/reviews/${id}`,
           USERUPDATEREVIEWS: (id) => `/api/reviews/${id}`,
+          // reviews
+          USERREVIEWSACCESS: (id) => `/api/reviews/${id}`,
+          USERCREATEREVIEWS: (id) => `/api/reviews/${id}`,
+          USERUPDATEREVIEWS: (id) => `/api/reviews/${id}`,
           USERDELETEREVIEWS: (id) => `/api/reviews/${id}`,
+
+
 
           // cart
           USERADDTOCART: '/api/cart/items',

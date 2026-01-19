@@ -445,3 +445,31 @@ export const UserDeleteAddress = async (addressId) => {
   return await api.delete(Endpoints.User.USERDELETEADDRESS(addressId))
 }
 
+
+
+
+
+// ================= ADMIN REVIEWS API =================
+
+// Get all reviews
+export const adminGetAllReviews = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_REVIEWS);
+};
+
+// Update review by ID
+export const adminUpdateReview = async (reviewId, data) => {
+  return await api.put(
+    Endpoints.Admin.ADMIN_UPDATE_REVIEW(reviewId),
+    data
+  );
+};
+
+// Delete review by ID
+export const adminDeleteReview = async (reviewId) => {
+  return await api.delete(
+    Endpoints.Admin.ADMIN_DELETE_REVIEW(reviewId)
+  );
+};
+
+
+

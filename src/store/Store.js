@@ -22,6 +22,7 @@ import adminBlogReducer from './slices/adminSlice/AdminBlogSlice';
 import adminBannerReducer from './slices/adminSlice/AdminBannerSlice';
 import adminBookingReducer from './slices/adminSlice/AdminBookingSlice';
 import adminStockReducer from './slices/adminSlice/AdminStockSlice';
+import adminReviewReducer from './slices/adminSlice/AdminReviewSlice';
 
 
 export const Store = configureStore({
@@ -52,6 +53,7 @@ export const Store = configureStore({
     adminBanner: adminBannerReducer,
     adminBooking: adminBookingReducer,
     adminStock: adminStockReducer,
+    adminReview: adminReviewReducer,
 
   },
 });

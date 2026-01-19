@@ -50,6 +50,7 @@ import DriverDetails from "../pages/admin/adminDriver/DriverDetails";
 import AdminCreation from "../pages/admin/adminCreation/AdminCreation";
 import OrdersManagement from "../pages/admin/adminOrders/OrdersManagement";
 import ContactManagement from "../pages/admin/adminContact/ContactManagement";
+import ReviewsManagement from "../pages/admin/adminReviews/ReviewsManagement";
 
 
 
@@ -111,6 +112,7 @@ const AppRoutes = () => {
           <Route path="/drivermanagement/view/:id" element={<DriverDetails />} />
           <Route path="/admincreation" element={<AdminCreation />} />
           <Route path="/contactmanagement" element={<ContactManagement />} />
+          <Route path="/reviewsmanagement" element={<ReviewsManagement />} />
 
         </Route>
       </Route>
