@@ -58,7 +58,7 @@ const WhyChoose = () => {
             <div className="max-w-7xl mx-auto px-4">
                 {/* Heading */}
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold text-gray-900">
+                    <h2 className="text-gray-900">
                         Why Choose <span className="text-red-600">MobileChakki</span>?
                     </h2>
                     <p className="mt-4 text-gray-600 max-w-2xl mx-auto">

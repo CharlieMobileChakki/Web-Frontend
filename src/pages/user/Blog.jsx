@@ -171,9 +171,9 @@ const Blog = () => {
                                 <p className="text-sm text-gray-500 mb-1">
                                     {post.date} • {post.author}
                                 </p>
-                                <h2 className="text-lg font-semibold text-[#7a5410] mb-2">
+                                <h3 className="text-lg font-semibold text-[#7a5410] mb-2">
                                     {post.title}
-                                </h2>
+                                </h3>
                                 <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
                                 {/* <a
 

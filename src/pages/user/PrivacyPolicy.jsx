@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
       and related services. </p>
 
     ```
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       1. Information We Collect
     </h2>
     <p className="mb-4 text-gray-700">
@@ -27,7 +27,7 @@ const PrivacyPolicy = () => {
       <li>Device and technical data (IP, browser, operating system)</li>
     </ul>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       2. How We Use Your Information
     </h2>
     <p className="mb-4 text-gray-700">
@@ -42,7 +42,7 @@ const PrivacyPolicy = () => {
       <li>To improve our website, app, and services based on customer needs</li>
     </ul>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       3. Data Security
     </h2>
     <p className="mb-4 text-gray-700">
@@ -52,7 +52,7 @@ const PrivacyPolicy = () => {
       We never sell your information to third parties.
     </p>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       4. Sharing of Information
     </h2>
     <p className="mb-4 text-gray-700">
@@ -67,7 +67,7 @@ const PrivacyPolicy = () => {
       </li>
     </ul>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       5. Cookies & Personalization
     </h2>
     <p className="mb-4 text-gray-700">
@@ -77,7 +77,7 @@ const PrivacyPolicy = () => {
       but certain features of our site may not function properly.
     </p>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       6. Children’s Privacy
     </h2>
     <p className="mb-4 text-gray-700">
@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
       personal data, please contact us to remove it.
     </p>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       7. Your Rights
     </h2>
     <p className="mb-4 text-gray-700">
@@ -97,7 +97,7 @@ const PrivacyPolicy = () => {
       communications at any time.
     </p>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       8. Updates to This Policy
     </h2>
     <p className="mb-4 text-gray-700">
@@ -106,7 +106,7 @@ const PrivacyPolicy = () => {
       here with a revised “last updated” date.
     </p>
 
-    <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">
+    <h2 className="text-[#7a5410] mt-6 mb-2">
       9. Contact Us
     </h2>
     <p className="text-gray-700">

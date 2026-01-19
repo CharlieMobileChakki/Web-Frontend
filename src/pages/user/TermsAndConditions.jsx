@@ -14,7 +14,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Services */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">1. Services</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">1. Services</h2>
                 <p className="mb-4 text-gray-700">
                     Mobile Chakki provides doorstep grinding, freshly prepared atta, grains, and
                     spices. We ensure all products are processed with certified safety and hygiene
@@ -22,7 +22,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Eligibility */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">2. Eligibility</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">2. Eligibility</h2>
                 <p className="mb-4 text-gray-700">
                     To use our services, you must be at least 18 years old and capable of entering
                     into a legally binding agreement. By using our platform, you represent that you
@@ -30,7 +30,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Payments */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">3. Payments</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">3. Payments</h2>
                 <p className="mb-4 text-gray-700">
                     Payments can be made via UPI, debit/credit cards, net banking, or cash on
                     delivery (where available). Any payment failure due to incorrect details or
@@ -38,10 +38,10 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Returns & Refunds */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">4. Returns & Refunds</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">4. Returns & Refunds</h2>
                 <p className="mb-4 text-gray-700">
                     Since our products are freshly ground and perishable, <strong>returns are not
-                    accepted</strong>. Refunds are only applicable in cases of:
+                        accepted</strong>. Refunds are only applicable in cases of:
                 </p>
                 <ul className="list-disc ml-6 mb-4 text-gray-700">
                     <li>Wrong item delivered</li>
@@ -54,7 +54,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Delivery */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">5. Delivery</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">5. Delivery</h2>
                 <p className="mb-4 text-gray-700">
                     We aim to deliver products within the estimated time frame. However, delivery
                     times may vary due to traffic, weather, or other unforeseen circumstances.
@@ -63,7 +63,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* User Responsibilities */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">6. User Responsibilities</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">6. User Responsibilities</h2>
                 <p className="mb-4 text-gray-700">
                     Users must provide accurate delivery details, ensure someone is available to
                     receive the order, and store products appropriately after delivery. Mobile
@@ -71,7 +71,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Prohibited Uses */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">7. Prohibited Uses</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">7. Prohibited Uses</h2>
                 <p className="mb-4 text-gray-700">
                     Users agree not to misuse our platform. Prohibited activities include, but are
                     not limited to:
@@ -83,7 +83,7 @@ const TermsAndConditions = () => {
                 </ul>
 
                 {/* Intellectual Property */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">8. Intellectual Property</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">8. Intellectual Property</h2>
                 <p className="mb-4 text-gray-700">
                     All content on this platform, including logos, text, images, and product
                     information, is the property of Mobile Chakki. Unauthorized use or duplication
@@ -91,7 +91,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Limitation of Liability */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">9. Limitation of Liability</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">9. Limitation of Liability</h2>
                 <p className="mb-4 text-gray-700">
                     Mobile Chakki shall not be held liable for indirect, incidental, or
                     consequential damages arising from the use of our services. Our liability in any
@@ -99,7 +99,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Changes to Terms */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">10. Changes to Terms</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">10. Changes to Terms</h2>
                 <p className="mb-4 text-gray-700">
                     Mobile Chakki reserves the right to update or modify these terms at any time.
                     Continued use of the platform after changes indicates acceptance of the revised
@@ -107,7 +107,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 {/* Contact */}
-                <h2 className="text-xl font-semibold text-[#7a5410] mt-6 mb-2">11. Contact</h2>
+                <h2 className="text-[#7a5410] mt-6 mb-2">11. Contact</h2>
                 <p className="text-gray-700">
                     For support, please reach out through our in-app helpline or email us at{" "}
                     <span className="text-[#7a5410] font-medium">support@mobilechakki.com</span>.

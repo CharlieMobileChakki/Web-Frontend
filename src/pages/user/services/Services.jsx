@@ -40,7 +40,7 @@ export const Services = () => {
         </section>
 
         <section className="max-w-5xl mx-auto text-center mb-16">
-          <h2 className="text-3xl font-bold text-[#7a5410] mb-8">Why Choose Mobile Chakki Services?</h2>
+          <h2 className="text-[#7a5410] mb-8">Why Choose Mobile Chakki Services?</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="flex flex-col items-center">
               <Leaf className="text-[#25D366]" size={40} />
@@ -63,7 +63,7 @@ export const Services = () => {
 
         {/* Call to Action (Optional) */}
         <section className="max-w-4xl mx-auto text-center p-8 bg-[#e6d9b5] rounded-2xl shadow-md">
-          <h2 className="text-3xl font-bold text-[#7a5410] mb-4">Ready for a Healthier Lifestyle?</h2>
+          <h2 className="text-[#7a5410] mb-4">Ready for a Healthier Lifestyle?</h2>
           <p className="text-lg text-gray-700 mb-6">
             Download our app today and experience the future of fresh and organic food delivery.
           </p>

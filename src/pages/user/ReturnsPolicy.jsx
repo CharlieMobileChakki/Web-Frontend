@@ -36,7 +36,7 @@ const ReturnsPolicy = () => {
           </p>
 
           {/* Assurance Section */}
-          <h2 className="text-2xl font-semibold text-[#7a5410] mb-4 mt-10">
+          <h2 className="text-[#7a5410] mb-4 mt-10">
             Why Our Customers Trust Us
           </h2>
 
@@ -68,7 +68,7 @@ const ReturnsPolicy = () => {
           </div>
 
           {/* Support Section */}
-          <h2 className="text-2xl font-semibold text-[#7a5410] mt-12 mb-4">
+          <h2 className="text-[#7a5410] mt-12 mb-4">
             In Case You Need Assistance
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
@@ -106,7 +106,7 @@ const ReturnsPolicy = () => {
           </p>
 
           {/* Educational Section */}
-          <h2 className="text-2xl font-semibold text-[#7a5410] mt-12 mb-4">
+          <h2 className="text-[#7a5410] mt-12 mb-4">
             Understanding Our Policy
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-4">

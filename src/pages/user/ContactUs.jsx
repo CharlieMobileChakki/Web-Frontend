@@ -63,7 +63,7 @@ const ContactUs = () => {
       />
       <div className="bg-[#fffaf3] flex flex-col items-center py-10 px-4">
         {/* Heading */}
-        <h2 className="text-3xl font-bold text-[#7a5410] mb-6">Contact Us</h2>
+        <h2 className="text-[#7a5410] mb-6">Contact Us</h2>
 
         <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
           {/* Contact Form */}

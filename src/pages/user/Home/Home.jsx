@@ -2,7 +2,7 @@ import React from "react";
 import HeroSection from "./HeroSection";
 import ProductHome from "./ProductHome";
 import Categories from "./Categories";
-import AboutSection from "./AboutSection";
+import WhoWeAre from "./WhoWeAre";
 // import Features from "./Features";
 // import Testimonials from "./Testimonials"
 import WhyChoose from "./WhyChoose";
@@ -16,7 +16,7 @@ const Home = () => {
       {/* <Features /> */}
       <WhyChoose />
       <ProductHome />
-      <AboutSection />
+      <WhoWeAre />
       {/* <Testimonials /> */}
       <DownloadAppSection />
     </div>

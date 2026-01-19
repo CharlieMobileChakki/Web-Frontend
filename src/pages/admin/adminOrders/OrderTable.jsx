@@ -188,7 +188,7 @@ const OrderTable = ({ orders }) => {
                         {/* Modal Header */}
                         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 sm:p-6 z-10 flex justify-between items-center rounded-t-xl">
                             <div>
-                                <h2 className="text-xl sm:text-2xl font-bold">Order Details</h2>
+                                <h2 className="">Order Details</h2>
                                 <p className="text-blue-100 text-xs sm:text-sm mt-1">Order ID: <span className="font-mono">{selectedOrder._id}</span></p>
                             </div>
                             <button

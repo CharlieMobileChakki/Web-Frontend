@@ -48,7 +48,7 @@ export const UsersManagement = () => {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden relative max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="bg-blue-600 p-4 flex justify-between items-center text-white">
-              <h2 className="text-xl font-bold flex items-center gap-2">
+              <h2 className="flex items-center gap-2">
                 <FaUser /> User Details
               </h2>
               <button

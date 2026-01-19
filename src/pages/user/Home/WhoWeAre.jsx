@@ -2,7 +2,7 @@ import { CheckCircle } from "lucide-react";
 import img1 from '../../../assets/Banner/dtd2.jpg'
 
 
-const AboutSection = () => {
+const WhoWeAre = () => {
 
 
   return (
@@ -19,7 +19,7 @@ const AboutSection = () => {
             Who We Are
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
+          <h2 className="text-gray-900 leading-tight mb-6">
             MobileChakki – <span className="text-[#C6363E] relative">
               Freshness
               {/* <svg className="absolute bottom-0 left-0 w-full h-3 text-red-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -76,4 +76,4 @@ const AboutSection = () => {
   );
 };
 
-export default AboutSection;
+export default WhoWeAre;
