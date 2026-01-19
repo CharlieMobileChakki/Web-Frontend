@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AdminGetAllUsers } from "../../../services/NetworkServices";
+import { AdminGetAllUsers, AdminGetAllAddresses } from "../../../services/NetworkServices";
 
 // Async thunk to fetch all users
 export const adminGetAllUsers = createAsyncThunk(
@@ -16,10 +16,26 @@ export const adminGetAllUsers = createAsyncThunk(
     }
 );
 
+// Async thunk to fetch all addresses
+export const adminGetAllAddresses = createAsyncThunk(
+    "adminUser/getAllAddresses",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await AdminGetAllAddresses();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to fetch addresses"
+            );
+        }
+    }
+);
+
 const adminUserSlice = createSlice({
     name: "adminUser",
     initialState: {
         users: [],
+        addresses: [], // Store all addresses
         loading: false,
         error: null,
         count: 0,
@@ -40,6 +56,10 @@ const adminUserSlice = createSlice({
             .addCase(adminGetAllUsers.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Get all addresses
+            .addCase(adminGetAllAddresses.fulfilled, (state, action) => {
+                state.addresses = action.payload.data || [];
             });
     },
 });

@@ -38,7 +38,7 @@ const Endpoints = {
 
           // ================= ADMIN MANAGEMENT =================
           ADMIN_GET_ALL_ADMINS: '/api/admin/admins',                    // GET all admins
-          ADMIN_CREATE_ADMIN: '/api/admin/admins',                      // POST create admin
+          ADMIN_CREATE_ADMIN: '/api/admin/signup',                      // POST create admin
           ADMIN_UPDATE_ADMIN: (id) => `/api/admin/admins/${id}`,        // PUT update admin
           ADMIN_DELETE_ADMIN: (id) => `/api/admin/admins/${id}`,        // DELETE admin
 
@@ -60,6 +60,18 @@ const Endpoints = {
           ADMIN_GET_DRIVER_BY_ID: (id) => `/api/admin/drivers/${id}`,     // GET driver by id
           ADMIN_UPDATE_DRIVER: (id) => `/api/admin/drivers/${id}`,        // PUT update driver
           ADMIN_DELETE_DRIVER: (id) => `/api/admin/drivers/${id}`,        // DELETE driver
+
+          // ================= BOOKING MANAGEMENT =================
+          ADMIN_GET_ALL_BOOKINGS: '/api/admin/booking/all',          // GET all bookings
+          ADMIN_GET_BOOKING_BY_ID: (id) => `/api/admin/booking/${id}`, // GET booking details
+          ADMIN_UPDATE_BOOKING_STATUS: (id) => `/api/admin/booking/${id}/status`, // PUT update status
+
+          // ================= STOCK MANAGEMENT =================
+          ADMIN_GET_STOCK_STATS: '/api/admin/stock/analytics/stats',    // GET stock stats
+          ADMIN_GET_LOW_STOCK: '/api/admin/stock/analytics/low-stock',  // GET low stock products
+
+          // ================= ADDRESS MANAGEMENT =================
+          ADMIN_GET_ALL_ADDRESSES: '/api/address/addresses', // GET all addresses
      },
 
 
@@ -119,7 +131,7 @@ const Endpoints = {
 
           // booking
           USERCREATEBOOKING: '/api/booking/create', // POST : CREATE BOOKING
-          USERCANCELBOOKING: (id) => `/api/user/bookings/cancel/${id}`, // cancel booking
+          USERCANCELBOOKING: (id) => `/api/booking/cancel/${id}`, // cancel booking
           USERGETBOOKING: '/api/booking/get-bookings', // get booking 
 
 

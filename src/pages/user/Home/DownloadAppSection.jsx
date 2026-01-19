@@ -2,11 +2,11 @@ import React from "react";
 import { FaGooglePlay, FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Smartphone, Zap, Shield, Truck } from "lucide-react";
-import LogoImg from "../../../assets/logo.jpeg";
+import LogoImg from "../../../assets/DOWNLOADAPP.png";
 
 const DownloadAppSection = () => {
     return (
-        <section className="relative py-20 my-16 overflow-hidden">
+        <section className="relative py-20  overflow-hidden">
             {/* Light Brown/Beige Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50"></div>
 

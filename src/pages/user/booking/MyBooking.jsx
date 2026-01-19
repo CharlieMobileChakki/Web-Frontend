@@ -19,8 +19,6 @@ export const MyBooking = () => {
         if (window.confirm("Are you sure you want to cancel this booking?")) {
             try {
                 await dispatch(usercancelbooking(id)).unwrap();
-                // ✅ Instantly update list without refresh
-                dispatch(usergetbookings());
                 toast.success("✅ Booking cancelled successfully");
             } catch (error) {
                 toast.error("❌ Failed to cancel booking");
@@ -31,13 +29,30 @@ export const MyBooking = () => {
     // Filter bookings
     const filteredBookings = bookings?.filter((booking) => {
         if (filter === "all") return true;
-        return booking.status === filter;
+        const status = booking.status?.toLowerCase();
+        if (filter === "active") {
+            return ["active", "pending", "confirmed"].includes(status);
+        }
+        return status === filter;
     });
 
     // Get status badge
     const getStatusBadge = (status) => {
+        const normalizedStatus = status?.toLowerCase();
         const badges = {
             active: {
+                bg: "bg-green-100",
+                text: "text-green-700",
+                border: "border-green-300",
+                icon: <CheckCircle className="w-4 h-4" />,
+            },
+            pending: {
+                bg: "bg-yellow-100",
+                text: "text-yellow-700",
+                border: "border-yellow-300",
+                icon: <Clock className="w-4 h-4" />,
+            },
+            confirmed: {
                 bg: "bg-green-100",
                 text: "text-green-700",
                 border: "border-green-300",
@@ -56,7 +71,7 @@ export const MyBooking = () => {
                 icon: <CheckCircle className="w-4 h-4" />,
             },
         };
-        return badges[status] || badges.active;
+        return badges[normalizedStatus] || badges.active;
     };
 
     // Format date
@@ -101,7 +116,9 @@ export const MyBooking = () => {
                             <div>
                                 <p className="text-sm text-gray-600 mb-1">Active</p>
                                 <p className="text-3xl font-bold text-gray-900">
-                                    {bookings?.filter((b) => b.status === "active").length || 0}
+                                    {bookings?.filter((b) =>
+                                        ["active", "pending", "confirmed"].includes(b.status?.toLowerCase())
+                                    ).length || 0}
                                 </p>
                             </div>
                             <CheckCircle className="w-12 h-12 text-green-500 opacity-20" />
@@ -112,7 +129,7 @@ export const MyBooking = () => {
                             <div>
                                 <p className="text-sm text-gray-600 mb-1">Cancelled</p>
                                 <p className="text-3xl font-bold text-gray-900">
-                                    {bookings?.filter((b) => b.status === "cancelled").length || 0}
+                                    {bookings?.filter((b) => b.status?.toLowerCase() === "cancelled").length || 0}
                                 </p>
                             </div>
                             <XCircle className="w-12 h-12 text-red-500 opacity-20" />
@@ -239,7 +256,7 @@ export const MyBooking = () => {
                                     </div>
 
                                     {/* Card Footer */}
-                                    {booking.status === "active" && (
+                                    {booking.status?.toLowerCase() !== "cancelled" && booking.status?.toLowerCase() !== "completed" && (
                                         <div className="px-5 pb-5">
                                             <button
                                                 onClick={() => handleCancel(booking._id)}

@@ -101,8 +101,16 @@ const BookingSlice = createSlice({
             })
             .addCase(usercancelbooking.fulfilled, (state, action) => {
                 state.loading = false;
-                state.booking = action.payload;
+                state.booking = action.payload; // Holds the cancelled booking details
                 state.success = true;
+
+                // Update the status in the bookings list immediately
+                if (state.bookings && state.bookings.length > 0) {
+                    const index = state.bookings.findIndex(b => b._id === action.payload._id);
+                    if (index !== -1) {
+                        state.bookings[index] = action.payload;
+                    }
+                }
             })
             .addCase(usercancelbooking.rejected, (state, action) => {
                 state.loading = false;

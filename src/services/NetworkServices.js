@@ -205,6 +205,43 @@ export const AdminDeleteDriver = async (id) => {
 };
 
 
+// ================= ADMIN BOOKING MANAGEMENT =================
+
+// GET ALL BOOKINGS
+export const AdminGetAllBookings = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_BOOKINGS);
+};
+
+// GET BOOKING DETAILS BY ID
+export const AdminGetBookingById = async (id) => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_BOOKING_BY_ID(id));
+};
+
+// UPDATE BOOKING STATUS
+export const AdminUpdateBookingStatus = async (id, status) => {
+  return await api.put(Endpoints.Admin.ADMIN_UPDATE_BOOKING_STATUS(id), { status });
+};
+
+// ================= ADMIN ADDRESS MANAGEMENT =================
+
+// GET ALL ADDRESSES
+export const AdminGetAllAddresses = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_ALL_ADDRESSES);
+};
+
+// ================= STOCK MANAGEMENT =================
+
+// GET STOCK STATS
+export const AdminGetStockStats = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_STOCK_STATS);
+};
+
+// GET LOW STOCK PRODUCTS
+export const AdminGetLowStock = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_LOW_STOCK);
+};
+
+
 // .....................USER API'S.......................///////
 // .....................USER API'S.......................///////
 
@@ -359,7 +396,7 @@ export const UserCreateBooking = async (data) => {
 
 // cancel booking
 export const UserCancelBooking = async (id) => {
-  return await api.put(Endpoints.User.USERCANCELBOOKING(id))
+  return await api.patch(Endpoints.User.USERCANCELBOOKING(id))
 }
 
 

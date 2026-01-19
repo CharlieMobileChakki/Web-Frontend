@@ -254,10 +254,10 @@ const OrderTable = ({ orders }) => {
                                     {selectedOrder.shippingAddress ? (
                                         <div className="space-y-1 text-gray-800 text-sm sm:text-base">
                                             <p className="font-medium">{selectedOrder.shippingAddress.street}</p>
-                                            <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} - <span className="font-semibold">{selectedOrder.shippingAddress.postalCode}</span></p>
+                                            <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} - <span className="font-semibold">{selectedOrder.shippingAddress.zipCode}</span></p>
                                             <p>{selectedOrder.shippingAddress.country}</p>
-                                            {selectedOrder.shippingAddress.phone && (
-                                                <p className="mt-2 text-xs sm:text-sm text-green-800"><span className="font-semibold">Contact:</span> {selectedOrder.shippingAddress.phone}</p>
+                                            {(selectedOrder.shippingAddress.phone || selectedOrder.user?.phone) && (
+                                                <p className="mt-2 text-xs sm:text-sm text-green-800"><span className="font-semibold">Contact:</span> {selectedOrder.shippingAddress.phone || selectedOrder.user?.phone}</p>
                                             )}
                                         </div>
                                     ) : (
@@ -292,18 +292,15 @@ const OrderTable = ({ orders }) => {
                                 <div className="space-y-3">
                                     {selectedOrder.orderItems?.map((item, index) => (
                                         <div key={index} className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
-                                            {item.product?.images?.[0] && (
+                                            {item.image && (
                                                 <img
-                                                    src={item.product.images[0]}
-                                                    alt={item.product.name}
+                                                    src={item.image}
+                                                    alt={item.name}
                                                     className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0"
                                                 />
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="font-semibold text-gray-800 text-sm sm:text-base truncate" title={item.product?.name}>{item.product?.name || 'Product'}</h4>
-                                                {item.variant && (
-                                                    <p className="text-xs sm:text-sm text-gray-600 mt-0.5">Variant: <span className="font-medium">{item.variant.weight || 'N/A'}</span></p>
-                                                )}
+                                                <h4 className="font-semibold text-gray-800 text-sm sm:text-base truncate" title={item.name}>{item.name || 'Product'}</h4>
                                                 <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
                                                     <p className="text-xs sm:text-sm text-gray-500 bg-white px-2 py-0.5 rounded border">Qty: {item.quantity}</p>
                                                     <p className="font-bold text-gray-800 text-sm sm:text-base">₹{item.price * item.quantity}</p>

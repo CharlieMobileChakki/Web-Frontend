@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Slider1 from "../../../assets/Banner/b3.jpg";
-import Slider2 from "../../../assets/Banner/b2.png";
+import Slider2 from "../../../assets/Banner/b2.jpg";
 import Slider3 from "../../../assets/Banner/b1.jpg";
 import Slider4 from "../../../assets/Banner/b4.png";
+import bg1 from "../../../assets/Banner/S1.png";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Star, ArrowRight } from "lucide-react";
 
@@ -12,36 +13,37 @@ import { Sparkles, Star, ArrowRight } from "lucide-react";
 const slides = [
   {
     id: 1,
-    title: "Pure & Fresh Atta",
+    title: "Wholesome Gluten-Free Atta",
     subtitle:
-      "Forget all worries of adulteration — freshly ground atta with guaranteed purity, delivering real taste and aroma in every roti.",
+      "Enjoy wholesome gluten-free atta crafted for better digestion and overall wellness. Freshly milled, naturally pure, and perfect for a healthy lifestyle.",
     btnText: "Book Now",
     img: Slider1,
     badge: "100% Pure & Fresh",
   },
   {
     id: 2,
-    title: "Complete Nutrition",
+    title: "Healthy Sugar-Free Atta",
     subtitle:
       "Low GI atta made from a blend of 12 wholesome grains — light on the stomach, well-balanced, and perfect for everyday nutrition.",
     btnText: "Book Now",
     img: Slider2,
     badge: "Premium Quality",
   },
+
   {
     id: 3,
-    title: "A Complete Diet",
+    title: "Fresh Atta at Your Doorstep",
     subtitle:
-      "A nutritious blend of barley, chana, jowar, black wheat, ragi, flaxseed, and 12 grains — rich in fiber, long-lasting energy, and great taste.",
+      "Order freshly ground atta made right at your doorstep in Jaipur. Choose your grains, watch them being milled, and enjoy 100% pure, hygienic, and fresh flour every day.",
     btnText: "Book Now",
     img: Slider3,
-    badge: "Fiber Rich",
+    badge: "Jaipur Only",
   },
   {
     id: 4,
-    title: "Cold Milled Atta",
+    title: "Cold-Milled Atta Technology",
     subtitle:
-      "Cold-milled atta that preserves natural nutrients and flavor — recommended by experts for a healthy and balanced diet.",
+      "Using advanced cold-milling technology, we grind fresh atta at your doorstep in Jaipur—locking in nutrients, flavor, and purity for complete wellness.",
     btnText: "Book Now",
     img: Slider4,
     badge: "Cold Milled Technology",
@@ -61,7 +63,14 @@ const HeroSection = () => {
 
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900">
+    // <div className={`relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900" style={{ background: "url(${bg1}) no-repeat center center/cover" }`}>
+    <div
+      className="relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900"
+      style={{
+        background: `url(${bg1}) no-repeat center center / cover`,
+      }}
+    >
+
 
       {/* Background Texture & Gradients */}
       <div className="absolute inset-0 opacity-40 pointer-events-none">
@@ -70,7 +79,7 @@ const HeroSection = () => {
         <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-yellow-100 rounded-full blur-[80px] opacity-30"></div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-8 pb-16 lg:py-20">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-8 pb-16 lg:py-15">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 min-h-[550px]">
 
           {/* Content Section */}
@@ -138,7 +147,7 @@ const HeroSection = () => {
           </div>
 
           {/* Image Section */}
-          <div className="flex-1 w-full relative perspective-1000">
+          <div className="flex-1 w-full relative perspective-1000 ">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSlide}
@@ -154,7 +163,7 @@ const HeroSection = () => {
                 <motion.img
                   src={slides[activeSlide].img}
                   alt="Mobile Chakki Product"
-                  className="w-full max-w-[400px] md:max-w-[500px] lg:max-w-[600px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                  className="w-full max-w-[400px] rounded-2xl md:max-w-[500px] lg:max-w-[600px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
                   animate={{ y: [0, -15, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 />

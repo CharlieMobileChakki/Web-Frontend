@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
     const [formData, setFormData] = useState({
         name: "",
-        email: "",
+        // email: "",
         phone: "",
-        role: "admin",
+        // role: "admin",
         password: "",
-        status: "active",
+        // status: "active",
     });
 
     const [errors, setErrors] = useState({});
@@ -17,20 +17,20 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
         if (editData) {
             setFormData({
                 name: editData.name || editData.fullName || "",
-                email: editData.email || "",
+                // email: editData.email || "",
                 phone: editData.phone || editData.phoneNumber || "",
-                role: editData.role || "admin",
+                // role: editData.role || "admin",
                 password: "", // Don't show existing password
-                status: editData.status || (editData.isActive ? "active" : "inactive"),
+                // status: editData.status || (editData.isActive ? "active" : "inactive"),
             });
         } else {
             setFormData({
                 name: "",
-                email: "",
+                // email: "",
                 phone: "",
-                role: "admin",
+                // role: "admin",
                 password: "",
-                status: "active",
+                // status: "active",
             });
         }
         setErrors({});
@@ -54,12 +54,13 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
             newErrors.name = "Name is required";
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = "Email is invalid";
+        if (editData) {
+            if (!formData.email.trim()) {
+                newErrors.email = "Email is required";
+            } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                newErrors.email = "Email is invalid";
+            }
         }
-
         if (!formData.phone.trim()) {
             newErrors.phone = "Phone number is required";
         } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
@@ -87,7 +88,9 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
         const submitData = {
             name: formData.name,
             email: formData.email,
+            email: formData.email,
             phone: formData.phone,
+            mobile: formData.phone, // API expects mobile
             role: formData.role,
             status: formData.status,
         };
@@ -129,29 +132,31 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                         )}
                     </div>
 
-                    {/* Email */}
-                    <div>
-                        <label className="block text-gray-700 mb-1">
-                            Email <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={`w-full border p-2 rounded ${errors.email ? "border-red-500" : "border-gray-300"
-                                }`}
-                            placeholder="admin@example.com"
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                        )}
-                    </div>
+                    {/* Email - Only for Edit */}
+                    {editData && (
+                        <div>
+                            <label className="block text-gray-700 mb-1">
+                                Email <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className={`w-full border p-2 rounded ${errors.email ? "border-red-500" : "border-gray-300"
+                                    }`}
+                                placeholder="admin@example.com"
+                            />
+                            {errors.email && (
+                                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Phone */}
                     <div>
                         <label className="block text-gray-700 mb-1">
-                            Phone Number <span className="text-red-500">*</span>
+                            Mobile Number <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="tel"
@@ -160,26 +165,28 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                             onChange={handleChange}
                             className={`w-full border p-2 rounded ${errors.phone ? "border-red-500" : "border-gray-300"
                                 }`}
-                            placeholder="1234567890"
+                            placeholder="Mobile Number"
                         />
                         {errors.phone && (
                             <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                         )}
                     </div>
 
-                    {/* Role */}
-                    <div>
-                        <label className="block text-gray-700 mb-1">Role</label>
-                        <select
-                            name="role"
-                            value={formData.role}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 p-2 rounded"
-                        >
-                            <option value="admin">Admin</option>
-                            <option value="superadmin">Super Admin</option>
-                        </select>
-                    </div>
+                    {/* Role - Only for Edit */}
+                    {editData && (
+                        <div>
+                            <label className="block text-gray-700 mb-1">Role</label>
+                            <select
+                                name="role"
+                                value={formData.role}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 p-2 rounded"
+                            >
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Admin</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Password */}
                     <div>
@@ -206,19 +213,21 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                         )}
                     </div>
 
-                    {/* Status */}
-                    <div>
-                        <label className="block text-gray-700 mb-1">Status</label>
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 p-2 rounded"
-                        >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
+                    {/* Status - Only for Edit */}
+                    {editData && (
+                        <div>
+                            <label className="block text-gray-700 mb-1">Status</label>
+                            <select
+                                name="status"
+                                value={formData.status}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 p-2 rounded"
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Buttons */}
                     <div className="flex justify-end gap-3 pt-2">
