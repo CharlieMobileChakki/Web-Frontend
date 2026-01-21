@@ -222,7 +222,7 @@ const ProductDetailCard = ({
                                     e.stopPropagation();
                                     handleWishlistToggle();
                                 }}
-                                className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur rounded-full p-2.5 shadow-sm border border-gray-100 hover:scale-110 transition-transform duration-300"
+                                className="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur rounded-full p-2.5 shadow-sm border border-gray-100 hover:scale-110 transition-transform duration-300"
                             >
                                 <Heart
                                     size={22}
@@ -232,31 +232,83 @@ const ProductDetailCard = ({
                                 />
                             </button>
 
+                            {/* Previous Image Button (Main) */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentIndex = images.indexOf(mainImage);
+                                    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+                                    setMainImage(images[prevIndex]);
+                                }}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><path d="m15 18-6-6 6-6" /></svg>
+                            </button>
+
+                            {/* Next Image Button (Main) */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentIndex = images.indexOf(mainImage);
+                                    const nextIndex = (currentIndex + 1) % images.length;
+                                    setMainImage(images[nextIndex]);
+                                }}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><path d="m9 18 6-6-6-6" /></svg>
+                            </button>
+
                             <img
                                 src={mainImage}
                                 alt={name}
-                                className="w-full h-64 md:h-[450px] object-contain transition-transform duration-700 ease-in-out group-hover:scale-110"
+                                className="w-full h-64 md:h-[450px] object-contain transition-transform duration-700 ease-in-out hover:scale-105"
                             />
                         </div>
 
-                        {/* Thumbnail Gallery */}
-                        <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                            {images.map((img, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => setMainImage(img)}
-                                    className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img
-                                        ? "border-red-600 ring-2 ring-red-200 scale-105"
-                                        : "border-gray-200 hover:border-red-400"
-                                        }`}
-                                >
-                                    <img
-                                        src={img}
-                                        alt={`${name} - ${idx + 1}`}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                            ))}
+                        {/* Thumbnail Gallery Slider */}
+                        <div className="relative group/thumbs">
+                            {/* Scroll Left Button */}
+                            <button
+                                onClick={() => {
+                                    document.getElementById('thumb-scroll').scrollBy({ left: -100, behavior: 'smooth' });
+                                }}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-1.5 rounded-full shadow-md border border-gray-200 opacity-0 group-hover/thumbs:opacity-100 transition-opacity duration-300 hidden md:block"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                            </button>
+
+                            {/* Thumbnails Container */}
+                            <div
+                                id="thumb-scroll"
+                                className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-1"
+                            >
+                                {images.map((img, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setMainImage(img)}
+                                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${mainImage === img
+                                            ? "border-red-600 ring-2 ring-red-100 scale-105 opacity-100"
+                                            : "border-transparent opacity-70 hover:opacity-100 hover:border-gray-300"
+                                            }`}
+                                    >
+                                        <img
+                                            src={img}
+                                            alt={`${name} - ${idx + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Scroll Right Button */}
+                            <button
+                                onClick={() => {
+                                    document.getElementById('thumb-scroll').scrollBy({ left: 100, behavior: 'smooth' });
+                                }}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-1.5 rounded-full shadow-md border border-gray-200 opacity-0 group-hover/thumbs:opacity-100 transition-opacity duration-300 hidden md:block"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                            </button>
                         </div>
 
 

@@ -1,12 +1,82 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaGooglePlay, FaApple } from "react-icons/fa";
-import { motion } from "framer-motion";
-import { Smartphone, Zap, Shield, Truck } from "lucide-react";
-import LogoImg from "../../../assets/DOWNLOADAPP.png";
+import { motion, AnimatePresence } from "framer-motion";
+import { Smartphone, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import downloadAppImg1 from "../../../assets/download app/1.jpeg";
+import downloadAppImg2 from "../../../assets/download app/2.jpeg";
+import downloadAppImg3 from "../../../assets/download app/3.jpeg";
+import downloadAppImg4 from "../../../assets/download app/4.jpeg";
+import downloadAppImg5 from "../../../assets/download app/5.jpeg";
 
 const DownloadAppSection = () => {
+    // Sample app screenshots - you can replace these with actual screenshots
+    const appImages = [
+        {
+            id: 1,
+            src: downloadAppImg1,
+            alt: "Mobile Chakki Home Screen",
+            title: "Browse Products"
+        },
+        {
+            id: 2,
+            src: downloadAppImg2,
+            alt: "Product Details",
+            title: "Product Details"
+        },
+        {
+            id: 3,
+            src: downloadAppImg3,
+            alt: "Shopping Cart",
+            title: "Easy Checkout"
+        },
+        {
+            id: 4,
+            src: downloadAppImg4,
+            alt: "Order Tracking",
+            title: "Track Orders"
+        },
+        {
+            id: 5,
+            src: downloadAppImg5,
+            alt: "User Profile",
+            title: "Manage Profile"
+        }
+    ];
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+    const [direction, setDirection] = useState(0);
+
+    // Auto-play carousel
+    useEffect(() => {
+        if (!isAutoPlaying) return;
+
+        const interval = setInterval(() => {
+            setDirection(1);
+            setCurrentIndex((prev) => (prev + 1) % appImages.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [isAutoPlaying, appImages.length]);
+
+    const goToNext = () => {
+        setDirection(1);
+        setCurrentIndex((prev) => (prev + 1) % appImages.length);
+        setIsAutoPlaying(false);
+    };
+
+    const goToPrev = () => {
+        setDirection(-1);
+        setCurrentIndex((prev) => (prev - 1 + appImages.length) % appImages.length);
+        setIsAutoPlaying(false);
+    };
+
+    const getImageIndex = (offset) => {
+        return (currentIndex + offset + appImages.length) % appImages.length;
+    };
+
     return (
-        <section className="relative py-20  overflow-hidden">
+        <section className="relative py-20 overflow-hidden">
             {/* Light Brown/Beige Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50"></div>
 
@@ -82,7 +152,6 @@ const DownloadAppSection = () => {
                                 Stay healthy with doorstep delivery!
                             </motion.p>
 
-
                             {/* App Store Buttons */}
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -120,31 +189,110 @@ const DownloadAppSection = () => {
                             </motion.div>
                         </div>
 
-                        {/* Right Image with Floating Animation */}
+                        {/* Right - 3D Carousel */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.4, duration: 0.8 }}
-                            className="flex-1 flex justify-center items-center relative"
+                            className="flex-1 w-full"
                         >
+                            <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center perspective-1000">
+                                {/* Carousel Container */}
+                                {/* All Images Mapped for Continuous Transition */}
+                                {appImages.map((image, index) => {
+                                    // Calculate position relative to current index
+                                    let position = (index - currentIndex) % appImages.length;
+                                    if (position < 0) position += appImages.length;
+                                    // Normalize to -2, -1, 0, 1, 2 range relative to center
+                                    if (position > appImages.length / 2) position -= appImages.length;
 
+                                    // Determine styles based on position
+                                    const isCenter = position === 0;
+                                    const isLeft = position === -1;
+                                    const isRight = position === 1;
+                                    const isHidden = Math.abs(position) >= 2;
 
-                            {/* Floating Logo */}
-                            <motion.div
-                                animate={{ y: [0, -20, 0] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                className="relative z-10"
-                            >
-                                <img
-                                    src={LogoImg}
-                                    alt="Mobile Chakki App"
-                                    className="w-40 md:w-64 lg:w-64 drop-shadow-xl rounded-3xl border-4 border-white/50"
-                                />
+                                    return (
+                                        <motion.div
+                                            key={image.id}
+                                            initial={false}
+                                            animate={{
+                                                x: isCenter ? "0%" : isLeft ? "-80%" : isRight ? "80%" : "0%",
+                                                scale: isCenter ? 1 : isLeft || isRight ? 0.7 : 0.4,
+                                                opacity: isCenter ? 1 : isLeft || isRight ? 0.6 : 0,
+                                                zIndex: isCenter ? 20 : isLeft || isRight ? 10 : 0
+                                            }}
+                                            transition={{
+                                                duration: 0.5,
+                                                ease: "easeInOut"
+                                            }}
+                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer"
+                                            style={{
+                                                width: "320px", // Base width for layout calculations (lg size), responsive scaling handled by scale prop
+                                                pointerEvents: isHidden ? "none" : "auto"
+                                            }}
+                                            onClick={() => {
+                                                if (isLeft) goToPrev();
+                                                if (isRight) goToNext();
+                                            }}
+                                        >
+                                            <div className={`relative transition-all duration-300 ${isCenter ? 'group' : 'group hover:scale-105'}`}>
+                                                <img
+                                                    src={image.src}
+                                                    alt={image.alt}
+                                                    className={`
+                                                            rounded-3xl shadow-2xl transition-all duration-300 object-cover
+                                                            ${isCenter
+                                                            ? "w-48 md:w-64 lg:w-80 border-4 border-white/70"
+                                                            : "w-24 md:w-32 lg:w-40 border-2 border-white/50 grayscale-[50%] group-hover:grayscale-0"
+                                                        }
+                                                        `}
+                                                />
 
-                                {/* Decorative Ring */}
+                                                {/* Glow/Overlay Effects */}
+                                                {isCenter && (
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-amber-500/20 via-transparent to-orange-500/20 rounded-3xl"></div>
+                                                )}
+                                                {(isLeft || isRight) && (
+                                                    <div className="absolute inset-0 bg-black/10 rounded-3xl group-hover:bg-transparent transition-colors duration-300"></div>
+                                                )}
 
-                            </motion.div>
+                                                {/* Title Badge (Center Only) */}
+                                                {isCenter && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: 0.2 }}
+                                                        className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-2 rounded-full shadow-lg text-sm font-bold whitespace-nowrap"
+                                                    >
+                                                        {image.title}
+                                                    </motion.div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+
+                                {/* Navigation Buttons */}
+                                <button
+                                    onClick={goToPrev}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white text-amber-700 p-2 md:p-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
+                                    aria-label="Previous image"
+                                >
+                                    <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                                </button>
+                                <button
+                                    onClick={goToNext}
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white text-amber-700 p-2 md:p-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
+                                    aria-label="Next image"
+                                >
+                                    <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                                </button>
+
+                                {/* Dots Indicator */}
+
+                            </div>
                         </motion.div>
                     </div>
                 </motion.div>
