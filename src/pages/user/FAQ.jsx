@@ -13,12 +13,12 @@ const FAQ = () => {
         {
             question: "What products are available, and which health needs do they address?",
             answer:
-                "Atta/flour (wheat-free, multigrain, diabetes, obesity, blood pressure management formulas), spices, grains, and superfoods—the supply chain is certified and keeps everything fresh.",
+                "Aata/flour (wheat-free, multigrain, diabetes, obesity, blood pressure management formulas), spices, grains, and superfoods—the supply chain is certified and keeps everything fresh.",
         },
         {
             question: "Does Mobile Chakki add gluten or sugar to its products?",
             answer:
-                "No. All specialty products, such as Multigrain or Sugar Control Atta, are wheat-free, sugar-free, and chemical-free.",
+                "No. All specialty products, such as Multigrain or Sugar Control Aata, are wheat-free, sugar-free, and chemical-free.",
         },
         {
             question: "How is the Mobile Chakki delivery and grinding process safe?",

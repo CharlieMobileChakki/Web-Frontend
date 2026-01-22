@@ -30,7 +30,7 @@ const WhoWeAre = () => {
           </h2>
 
           <p className="text-lg text-gray-600 leading-relaxed mb-8">
-            MobileChakki is your go-to app for ordering <strong>high-quality atta, grains, masalas</strong>,
+            MobileChakki is your go-to app for ordering <strong>high-quality Aata, grains, masalas</strong>,
             and other essential food products – delivered with freshness and care, right at your doorstep.
             We believe in purity, and that's why we grind only after you order.
           </p>

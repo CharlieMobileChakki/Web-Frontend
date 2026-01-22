@@ -71,7 +71,7 @@ export default function Footer() {
             </h1>
           </div>
           <p className="text-sm leading-6">
-            MobileChakki is your go-to app for ordering high-quality atta, grains, masalas, and other essential food products, all at the convenience of your fingertips.
+            MobileChakki is your go-to app for ordering high-quality Aata, grains, masalas, and other essential food products, all at the convenience of your fingertips.
           </p>
 
           {/* Social Icons */}

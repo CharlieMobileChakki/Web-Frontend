@@ -36,18 +36,22 @@ export const ProductManagement = () => {
 
     // Get category name by ID
     const getCategoryName = (id) => {
-        const cat = categories?.find((c) => c._id === id);
-        return cat ? cat.name : "Unknownfff";
+        if (!Array.isArray(categories)) return "Unknown";
+        const cat = categories.find((c) => c._id === id);
+        return cat ? cat.name : "Unknown";
     };
 
     // Filter products based on category
+    // Ensure products is an array before filtering
+    const safeProducts = Array.isArray(products) ? products.filter(Boolean) : [];
+
     const filteredProducts =
         Category === "all"
-            ? products
-            : products?.filter((p) => p.category === Category);
+            ? safeProducts
+            : safeProducts.filter((p) => p.category === Category);
 
     // Add categoryName to each product
-    const productsWithCategory = filteredProducts?.map((p) => ({
+    const productsWithCategory = filteredProducts.map((p) => ({
         ...p,
         categoryName: getCategoryName(p.category),
     }));

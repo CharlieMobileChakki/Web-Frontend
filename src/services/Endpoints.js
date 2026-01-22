@@ -37,7 +37,7 @@ const Endpoints = {
           ADMIN_UPDATE_ORDER_STATUS: (id) => `/api/admin/orders/${id}/status`, // PUT update order status
 
           // ================= ADMIN MANAGEMENT =================
-          ADMIN_GET_ALL_ADMINS: '/api/admin/admins',                    // GET all admins
+          ADMIN_GET_ALL_ADMINS: '/api/admin/get-all-admins',                    // GET all admins
           ADMIN_CREATE_ADMIN: '/api/admin/signup',                      // POST create admin
           ADMIN_UPDATE_ADMIN: (id) => `/api/admin/admins/${id}`,        // PUT update admin
           ADMIN_DELETE_ADMIN: (id) => `/api/admin/admins/${id}`,        // DELETE admin

@@ -148,7 +148,7 @@ const DownloadAppSection = () => {
                                 transition={{ delay: 0.4, duration: 0.6 }}
                                 className="text-lg md:text-xl text-gray-600 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
                             >
-                                Order fresh atta, grains, and spices directly from your phone.
+                                Order fresh Aata, grains, and spices directly from your phone.
                                 Stay healthy with doorstep delivery!
                             </motion.p>
 

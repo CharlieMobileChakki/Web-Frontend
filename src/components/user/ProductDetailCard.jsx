@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Heart, Star, ShoppingCart, ShoppingBag } from "lucide-react";
 import ProductRatings from "../../pages/user/products/ProductRatings";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,7 @@ const ProductDetailCard = ({
     const [showFullDesc, setShowFullDesc] = useState(false); // ✅ State for Read More
     const [showZoom, setShowZoom] = useState(false); // Zoom visibility
     const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 }); // Cursor position percentage
+    const imageRef = useRef(null);
 
 
     const navigate = useNavigate();
@@ -209,13 +210,20 @@ const ProductDetailCard = ({
         }
     };
 
-    // 🔍 Handle Mouse Move for Zoom
+
+
     const handleMouseMove = (e) => {
-        const { left, top, width, height } = e.target.getBoundingClientRect();
-        const x = ((e.clientX - left) / width) * 100;
-        const y = ((e.clientY - top) / height) * 100;
+        const rect = imageRef.current.getBoundingClientRect();
+
+        let x = ((e.clientX - rect.left) / rect.width) * 100;
+        let y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        x = Math.max(0, Math.min(100, x));
+        y = Math.max(0, Math.min(100, y));
+
         setZoomPosition({ x, y });
     };
+
 
 
     return (
@@ -226,7 +234,7 @@ const ProductDetailCard = ({
                     {/* LEFT SIDE: IMAGE GALLERY */}
                     <div className="flex flex-col gap-4 md:gap-6">
                         {/* Main Image */}
-                        <div className="relative bg-white border border-gray-100 rounded-3xl overflow-hidden p-6 md:p-10 group cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="relative bg-white border border-gray-100 rounded-3xl p-6 md:p-10 group cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 z-20">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -268,47 +276,56 @@ const ProductDetailCard = ({
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><path d="m9 18 6-6-6-6" /></svg>
                             </button>
 
-                            <img
-                                src={mainImage}
-                                alt={name}
-                                className="w-full h-64 md:h-[450px] object-contain transition-transform duration-700 ease-in-out hover:scale-105"
+
+
+
+                            <div
+                                ref={imageRef}
                                 onMouseMove={handleMouseMove}
                                 onMouseEnter={() => setShowZoom(true)}
                                 onMouseLeave={() => setShowZoom(false)}
-                            />
-                            {/* Zoom Lens */}
-                            {showZoom && (
-                                <div
-                                    className="absolute border border-blue-500/30 bg-blue-500/10 hidden md:block pointer-events-none backdrop-blur-[1px]"
-                                    style={{
-                                        left: `${zoomPosition.x}%`,
-                                        top: `${zoomPosition.y}%`,
-                                        width: "100px",
-                                        height: "100px",
-                                        transform: "translate(-50%, -50%)",
-                                    }}
+                                className="relative"
+                            >
+                                <img
+                                    src={mainImage}
+                                    alt={name}
+                                    className="w-full h-64 md:h-[450px] object-contain"
                                 />
-                            )}
 
-                            {/* Zoom Result Pane */}
-                            {showZoom && (
-                                <div
-                                    className="absolute hidden md:block z-[60] overflow-hidden shadow-2xl border border-gray-200 bg-white"
-                                    style={{
-                                        position: "absolute",
-                                        top: "-10%",
-                                        left: "102%",
-                                        width: "120%",
-                                        height: "120%",
-                                        minWidth: "500px",
-                                        minHeight: "500px",
-                                        backgroundImage: `url(${mainImage})`,
-                                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                                        backgroundSize: "250%",
-                                        backgroundRepeat: "no-repeat",
-                                    }}
-                                />
-                            )}
+                                {/* 🔍 Lens */}
+                                {showZoom && (
+                                    <div
+                                        className="absolute border border-blue-500/40 bg-blue-500/10 pointer-events-none hidden md:block"
+                                        style={{
+                                            left: `${zoomPosition.x}%`,
+                                            top: `${zoomPosition.y}%`,
+                                            width: "120px",
+                                            height: "120px",
+                                            transform: "translate(-50%, -50%)",
+                                        }}
+                                    />
+                                )}
+
+                                {/* 🔬 Zoom Window */}
+                                {showZoom && (
+                                    <div
+                                        className="absolute z-[50] hidden md:block overflow-hidden bg-white border border-gray-200 shadow-2xl rounded-xl"
+                                        style={{
+                                            top: "-10%",
+                                            left: "105%",
+                                            width: "140%",
+                                            height: "120%",
+                                            minWidth: "400px", minHeight: "400px",
+                                            backgroundImage: `url(${mainImage})`,
+                                            backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                            backgroundSize: "250%",
+                                            backgroundRepeat: "no-repeat",
+                                        }}
+                                    />
+                                )}
+                            </div>
+
+
                         </div>
 
                         {/* Thumbnail Gallery Slider */}

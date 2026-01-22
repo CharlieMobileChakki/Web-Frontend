@@ -91,7 +91,7 @@ const AdminCreationSlice = createSlice({
             })
             .addCase(adminGetAllAdmins.fulfilled, (state, action) => {
                 state.loading = false;
-                state.admins = action.payload;
+                state.admins = action.payload.data || [];
             })
             .addCase(adminGetAllAdmins.rejected, (state, action) => {
                 state.loading = false;

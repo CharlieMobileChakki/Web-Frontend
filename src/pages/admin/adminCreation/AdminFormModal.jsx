@@ -4,7 +4,7 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
     const [formData, setFormData] = useState({
         name: "",
         // email: "",
-        phone: "",
+        mobile: "",
         // role: "admin",
         password: "",
         // status: "active",
@@ -18,7 +18,7 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
             setFormData({
                 name: editData.name || editData.fullName || "",
                 // email: editData.email || "",
-                phone: editData.phone || editData.phoneNumber || "",
+                mobile: editData.mobile || editData.mobile || "",
                 // role: editData.role || "admin",
                 password: "", // Don't show existing password
                 // status: editData.status || (editData.isActive ? "active" : "inactive"),
@@ -27,7 +27,7 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
             setFormData({
                 name: "",
                 // email: "",
-                phone: "",
+                mobile: "",
                 // role: "admin",
                 password: "",
                 // status: "active",
@@ -61,10 +61,10 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                 newErrors.email = "Email is invalid";
             }
         }
-        if (!formData.phone.trim()) {
-            newErrors.phone = "Phone number is required";
-        } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-            newErrors.phone = "Phone number must be 10 digits";
+        if (!formData.mobile.trim()) {
+            newErrors.mobile = "mobile number is required";
+        } else if (!/^\d{10}$/.test(formData.mobile.replace(/\D/g, ""))) {
+            newErrors.mobile = "mobile number must be 10 digits";
         }
 
         if (!editData && !formData.password) {
@@ -87,12 +87,7 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
         // Prepare data for submission
         const submitData = {
             name: formData.name,
-            email: formData.email,
-            email: formData.email,
-            phone: formData.phone,
-            mobile: formData.phone, // API expects mobile
-            role: formData.role,
-            status: formData.status,
+            mobile: formData.mobile,
         };
 
         // Only include password if it's provided
@@ -132,26 +127,6 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                         )}
                     </div>
 
-                    {/* Email - Only for Edit */}
-                    {editData && (
-                        <div>
-                            <label className="block text-gray-700 mb-1">
-                                Email <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className={`w-full border p-2 rounded ${errors.email ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="admin@example.com"
-                            />
-                            {errors.email && (
-                                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                            )}
-                        </div>
-                    )}
 
                     {/* Phone */}
                     <div>
@@ -160,33 +135,19 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                         </label>
                         <input
                             type="tel"
-                            name="phone"
-                            value={formData.phone}
+                            name="mobile"
+                            value={formData.mobile}
                             onChange={handleChange}
-                            className={`w-full border p-2 rounded ${errors.phone ? "border-red-500" : "border-gray-300"
+                            className={`w-full border p-2 rounded ${errors.mobile ? "border-red-500" : "border-gray-300"
                                 }`}
                             placeholder="Mobile Number"
                         />
-                        {errors.phone && (
-                            <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                        {errors.mobile && (
+                            <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>
                         )}
                     </div>
 
-                    {/* Role - Only for Edit */}
-                    {editData && (
-                        <div>
-                            <label className="block text-gray-700 mb-1">Role</label>
-                            <select
-                                name="role"
-                                value={formData.role}
-                                onChange={handleChange}
-                                className="w-full border border-gray-300 p-2 rounded"
-                            >
-                                <option value="admin">Admin</option>
-                                <option value="superadmin">Super Admin</option>
-                            </select>
-                        </div>
-                    )}
+
 
                     {/* Password */}
                     <div>
@@ -213,21 +174,7 @@ const AdminFormModal = ({ isOpen, onClose, onSave, editData }) => {
                         )}
                     </div>
 
-                    {/* Status - Only for Edit */}
-                    {editData && (
-                        <div>
-                            <label className="block text-gray-700 mb-1">Status</label>
-                            <select
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                className="w-full border border-gray-300 p-2 rounded"
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                    )}
+
 
                     {/* Buttons */}
                     <div className="flex justify-end gap-3 pt-2">

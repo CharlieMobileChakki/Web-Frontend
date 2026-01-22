@@ -13,18 +13,18 @@ import { Sparkles, Star, ArrowRight } from "lucide-react";
 const slides = [
   {
     id: 1,
-    title: "Wholesome Gluten-Free Atta",
+    title: "Wholesome Gluten-Free Aata",
     subtitle:
-      "Enjoy wholesome gluten-free atta crafted for better digestion and overall wellness. Freshly milled, naturally pure, and perfect for a healthy lifestyle.",
+      "Enjoy wholesome gluten-free Aata crafted for better digestion and overall wellness. Freshly milled, naturally pure, and perfect for a healthy lifestyle.",
     btnText: "Book Now",
     img: Slider1,
     badge: "100% Pure & Fresh",
   },
   {
     id: 2,
-    title: "Healthy Sugar-Free Atta",
+    title: "Healthy Sugar-Free Aata",
     subtitle:
-      "Low GI atta made from a blend of 12 wholesome grains — light on the stomach, well-balanced, and perfect for everyday nutrition.",
+      "Low GI Aata made from a blend of 12 wholesome grains — light on the stomach, well-balanced, and perfect for everyday nutrition.",
     btnText: "Book Now",
     img: Slider2,
     badge: "Premium Quality",
@@ -32,18 +32,18 @@ const slides = [
 
   {
     id: 3,
-    title: "Fresh Atta at Your Doorstep",
+    title: "Fresh Aata at Your Doorstep",
     subtitle:
-      "Order freshly ground atta made right at your doorstep in Jaipur. Choose your grains, watch them being milled, and enjoy 100% pure, hygienic, and fresh flour every day.",
+      "Order freshly ground Aata made right at your doorstep in Jaipur. Choose your grains, watch them being milled, and enjoy 100% pure, hygienic, and fresh flour every day.",
     btnText: "Book Now",
     img: Slider3,
     badge: "Jaipur Only",
   },
   {
     id: 4,
-    title: "Cold-Milled Atta Technology",
+    title: "Cold-Milled Aata Technology",
     subtitle:
-      "Using advanced cold-milling technology, we grind fresh atta at your doorstep in Jaipur—locking in nutrients, flavor, and purity for complete wellness.",
+      "Using advanced cold-milling technology, we grind fresh Aata at your doorstep in Jaipur—locking in nutrients, flavor, and purity for complete wellness.",
     btnText: "Book Now",
     img: Slider4,
     badge: "Cold Milled Technology",

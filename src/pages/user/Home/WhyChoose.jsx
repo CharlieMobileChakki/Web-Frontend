@@ -26,7 +26,7 @@ const WhyChoose = () => {
     const features = [
         {
             icon: Wheat,
-            title: "Fresh Chakki Atta",
+            title: "Fresh Chakki Aata",
             description: "100% whole wheat flour ground fresh with no maida added.",
             color: "bg-orange-500",
         },
@@ -45,7 +45,7 @@ const WhyChoose = () => {
         {
             icon: Truck,
             title: "Doorstep Delivery",
-            description: "Fresh atta delivered straight to your home.",
+            description: "Fresh Aata delivered straight to your home.",
             color: "bg-purple-500",
         },
     ];

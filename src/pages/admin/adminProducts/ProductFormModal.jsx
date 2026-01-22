@@ -166,10 +166,15 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
         });
     };
 
-    const handleSubmit = () => {
-        onSave(form);   // API ko bhej diya
-        resetForm();    // form clear
+    const handleSubmit = async () => {
+        try {
+            await onSave(form);
+            resetForm();
+        } catch (err) {
+            console.log("Save failed", err);
+        }
     };
+
 
 
     return (
