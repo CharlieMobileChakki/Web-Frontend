@@ -65,12 +65,12 @@ const SignUpUser = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     try {
-      await signUpSchema.validateAt("phone", formData);
       setErrors({});
+      await signUpSchema.validateAt("phone", formData);
       // Send both mobile and name as per API docs
       await dispatch(sendOtpSignup({ mobile: formData.phone, name: formData.userName })).unwrap();
       setShowOtp(true);
-      setTimer(300); // Start 5-minute timer (300 seconds)
+      setTimer(60); // Start 1-minute timer (60 seconds)
       setCanResend(false);
     } catch (err) {
       let errorMessage = err.message || err;
@@ -84,11 +84,11 @@ const SignUpUser = () => {
   // 🔄 Resend OTP
   const handleResendOtp = async () => {
     try {
+      setErrors({});
       // Send both mobile and name as per API docs for resend too
       await dispatch(sendOtpSignup({ mobile: formData.phone, name: formData.userName })).unwrap();
-      setTimer(300); // Restart timer
+      setTimer(60); // Restart timer
       setCanResend(false);
-      setErrors({});
     } catch (err) {
       setErrors({ phone: err.message || "Failed to resend OTP. Please try again." });
     }

@@ -44,12 +44,12 @@ const SignInUser = () => {
     e.preventDefault();
 
     try {
-      await signInSchema.validateAt("phone", formData);
       setErrors({})
+      await signInSchema.validateAt("phone", formData);
 
       await dispatch(SendOtpLogin(formData.phone)).unwrap();
       setShowOtp(true);
-      setTimer(300); // Start 5-minute timer (300 seconds)
+      setTimer(60); // Start 1-minute timer (60 seconds)
       setCanResend(false);
     } catch (error) {
       let errorMessage = error?.message || error;
@@ -66,10 +66,10 @@ const SignInUser = () => {
   // 🔄 Resend OTP
   const handleResendOtp = async () => {
     try {
-      await dispatch(SendOtpLogin(formData.phone)).unwrap();
-      setTimer(300); // Restart timer
-      setCanResend(false);
       setErrors({});
+      await dispatch(SendOtpLogin(formData.phone)).unwrap();
+      setTimer(60); // Restart timer
+      setCanResend(false);
     } catch (error) {
       let errorMessage = error?.message || "Failed to resend OTP. Please try again.";
       setErrors({ phone: errorMessage });

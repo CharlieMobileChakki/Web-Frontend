@@ -28,6 +28,8 @@ const ProductDetailCard = ({
     const [isAdded, setIsAdded] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [showFullDesc, setShowFullDesc] = useState(false); // ✅ State for Read More
+    const [showZoom, setShowZoom] = useState(false); // Zoom visibility
+    const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 }); // Cursor position percentage
 
 
     const navigate = useNavigate();
@@ -207,6 +209,14 @@ const ProductDetailCard = ({
         }
     };
 
+    // 🔍 Handle Mouse Move for Zoom
+    const handleMouseMove = (e) => {
+        const { left, top, width, height } = e.target.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        setZoomPosition({ x, y });
+    };
+
 
     return (
         <div className="  mx-auto  ">
@@ -262,7 +272,43 @@ const ProductDetailCard = ({
                                 src={mainImage}
                                 alt={name}
                                 className="w-full h-64 md:h-[450px] object-contain transition-transform duration-700 ease-in-out hover:scale-105"
+                                onMouseMove={handleMouseMove}
+                                onMouseEnter={() => setShowZoom(true)}
+                                onMouseLeave={() => setShowZoom(false)}
                             />
+                            {/* Zoom Lens */}
+                            {showZoom && (
+                                <div
+                                    className="absolute border border-blue-500/30 bg-blue-500/10 hidden md:block pointer-events-none backdrop-blur-[1px]"
+                                    style={{
+                                        left: `${zoomPosition.x}%`,
+                                        top: `${zoomPosition.y}%`,
+                                        width: "100px",
+                                        height: "100px",
+                                        transform: "translate(-50%, -50%)",
+                                    }}
+                                />
+                            )}
+
+                            {/* Zoom Result Pane */}
+                            {showZoom && (
+                                <div
+                                    className="absolute hidden md:block z-[60] overflow-hidden shadow-2xl border border-gray-200 bg-white"
+                                    style={{
+                                        position: "absolute",
+                                        top: "-10%",
+                                        left: "102%",
+                                        width: "120%",
+                                        height: "120%",
+                                        minWidth: "500px",
+                                        minHeight: "500px",
+                                        backgroundImage: `url(${mainImage})`,
+                                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                        backgroundSize: "250%",
+                                        backgroundRepeat: "no-repeat",
+                                    }}
+                                />
+                            )}
                         </div>
 
                         {/* Thumbnail Gallery Slider */}
