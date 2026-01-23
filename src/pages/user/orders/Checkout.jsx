@@ -8,11 +8,85 @@ import AddressModal from "../../../components/user/AddressModal";
 import { toast } from "react-toastify";
 import { CheckCircle, MapPin, CreditCard, ShieldCheck, Truck, ShoppingBag, ChevronRight, Plus } from "lucide-react";
 import BackButton from "../../../components/common/BackButton"; // Import BackButton
+import { load } from "@cashfreepayments/cashfree-js";
+
+
+
 
 const Checkout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+
+
+    const [cashfree, setCashfree] = useState(null);
+
+    useEffect(() => {
+        const initCashfree = async () => {
+            const cf = await load({
+                mode: "production", // testing me "sandbox"
+            });
+            setCashfree(cf);
+        };
+        initCashfree();
+    }, []);
+
+    const handleOnlinePayment = async () => {
+        if (!selectedAddress || !selectedAddress._id) {
+            toast.warning("⚠️ Please select a delivery address.");
+            return;
+        }
+
+        try {
+            const orderData = {
+                orderItems: selectedCartItems.map((item) => ({
+                    product: item.product?._id || item.product || item._id,
+                    variantId: item.variantId || item.variant?._id,
+                    quantity: item.quantity || 1,
+                })),
+                shippingAddress: {
+                    name: selectedAddress.name,
+                    phone: selectedAddress.phone,
+                    address: selectedAddress.address,
+                    city: selectedAddress.city,
+                    postalCode: selectedAddress.postalCode,
+                    country: selectedAddress.country,
+                },
+                shippingPrice: 0,
+                taxPrice: 0,  // ✅ IMPORTANT
+            };
+
+            console.log("📦 Online Order Payload:", orderData);
+
+            const result = await dispatch(userorder(orderData)).unwrap();
+
+            const sessionId = result?.payment_session_id;
+
+            if (!sessionId) {
+                toast.error("❌ Payment session not received from server");
+                return;
+            }
+
+            if (!cashfree) {
+                toast.error("❌ Payment system not ready");
+                return;
+            }
+
+            const checkoutOptions = {
+                paymentSessionId: sessionId,
+                redirectTarget: "_self",
+            };
+
+            cashfree.checkout(checkoutOptions);
+
+        } catch (err) {
+            console.error("❌ Online payment error:", err);
+            toast.error(err?.message || "Unable to start online payment");
+        }
+    };
+
+
+
 
     const { selectedCartItems = [], userAddress: initialAddress, totalAmount = 0 } =
         location.state || {};
@@ -35,54 +109,7 @@ const Checkout = () => {
         }
     }, [initialAddress]);
 
-    const taxPrice = Math.round(totalAmount * 0.09);
-    const shippingPrice = 0; // Free shipping
-    const finalTotal = totalAmount + taxPrice + shippingPrice;
 
-    const handlePlaceOrder = async () => {
-        if (!selectedAddress || !selectedAddress._id) {
-            toast.warning("⚠️ Please select a delivery address.");
-            return;
-        }
-
-        // const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-        const orderData = {
-            // orderId, // ✅ Root level
-            orderItems: selectedCartItems.map((item) => ({
-                product: item.product?._id || item._id,
-                name: item.name || item.product?.name || "",
-                quantity: item.quantity || 1,
-                price: item.price || item.product?.price || 0,
-                sellingPrice: item.sellingPrice || item.product?.sellingPrice || 0,
-                image: item.image || item.product?.images?.[0] || item.product?.image || "",
-                weight: item.weight || item.variant?.quantity || item.variant?.weight || "500g",
-                // orderId: orderId, // ✅ Nested in items (just in case)
-            })),
-            addressId: selectedAddress._id,
-            paymentMethod: "COD",
-            itemsPrice: totalAmount,
-            taxPrice,
-            shippingPrice,
-            totalPrice: finalTotal,
-        };
-
-        try {
-            const result = await dispatch(userorder(orderData)).unwrap();
-            await dispatch(userdeletecart());
-
-            toast.success("✅ Order placed successfully!");
-            navigate("/order-success", {
-                state: {
-                    // orderId: result._id,
-                    orderDetails: result,
-                },
-            });
-        } catch (err) {
-            console.error("❌ Order failed:", err);
-            toast.error(err?.message || "❌ Order failed, please try again.");
-        }
-    };
 
     return (
         <div className="bg-gray-50 min-h-screen py-8 px-4 md:px-8">
@@ -194,18 +221,23 @@ const Checkout = () => {
                             {currentStep === 2 && (
                                 <div className="p-6">
                                     <div className="space-y-4 mb-8">
-                                        <div className="p-4 rounded-xl border-2 border-green-500 bg-green-50 flex items-center justify-between cursor-pointer">
+
+                                        <div
+                                            className="p-4 rounded-xl border-2 border-blue-500 bg-blue-50 flex items-center justify-between cursor-pointer"
+
+                                        >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-5 h-5 rounded-full border-2 border-green-600 flex items-center justify-center">
-                                                    <div className="w-2.5 h-2.5 bg-green-600 rounded-full"></div>
+                                                <div className="w-5 h-5 rounded-full border-2 border-blue-600 flex items-center justify-center">
+                                                    <div className="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-gray-900">Cash on Delivery (COD)</p>
-                                                    <p className="text-sm text-gray-600">Pay when you receive the order</p>
+                                                    <p className="font-bold text-gray-900">Online Payment</p>
+                                                    <p className="text-sm text-gray-600">UPI / Card / Netbanking</p>
                                                 </div>
                                             </div>
-                                            <span className="text-2xl">💵</span>
+                                            <span className="text-2xl">💳</span>
                                         </div>
+
 
                                         <div className="p-4 rounded-xl border border-gray-200 bg-gray-50 flex items-center gap-3 opacity-60 cursor-not-allowed">
                                             <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
@@ -217,10 +249,10 @@ const Checkout = () => {
                                     </div>
 
                                     <button
-                                        onClick={handlePlaceOrder}
+                                        onClick={handleOnlinePayment}
                                         className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl font-bold text-lg hover:from-green-600 hover:to-green-700 shadow-xl shadow-green-100 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
                                     >
-                                        Place Order — ₹{finalTotal} <ChevronRight size={20} />
+                                        Place Order — ₹{totalAmount} <ChevronRight size={20} />
                                     </button>
 
                                     <div className="mt-4 flex items-center justify-center gap-2 text-gray-500 text-xs text-center">
@@ -273,18 +305,16 @@ const Checkout = () => {
                                     <span>Shipping</span>
                                     <span className="text-green-600 font-medium">Free</span>
                                 </div>
-                                <div className="flex justify-between text-base text-gray-600">
-                                    <span>Tax estimate</span>
-                                    <span>₹{taxPrice}</span>
-                                </div>
+
+
 
                                 <div className="border-t border-gray-200 my-3"></div>
 
+                                <p className="text-[10px] text-green-600 font-medium tracking-wide">YOU SAVE EXTRA ON THIS ORDER</p>
                                 <div className="flex justify-between items-end">
                                     <span className="font-bold text-gray-800 text-lg">Total</span>
                                     <div className="text-right">
-                                        <p className="font-extrabold text-2xl text-blue-600">₹{finalTotal}</p>
-                                        <p className="text-[10px] text-green-600 font-medium tracking-wide">YOU SAVE EXTRA ON THIS ORDER</p>
+                                        <p className="font-extrabold text-2xl text-blue-600">₹{totalAmount}</p>
                                     </div>
                                 </div>
                             </div>

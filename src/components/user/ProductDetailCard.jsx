@@ -328,6 +328,7 @@ const ProductDetailCard = ({
 
                         </div>
 
+
                         {/* Thumbnail Gallery Slider */}
                         <div className="relative group/thumbs">
                             {/* Scroll Left Button */}

@@ -82,6 +82,8 @@ const OrderSlice = createSlice({
         orders: [], // all orders list
         loading: false,
         error: null,
+        paymentSession: null,
+
     },
     reducers: {},
 
@@ -96,14 +98,14 @@ const OrderSlice = createSlice({
 
             .addCase(userorder.fulfilled, (state, action) => {
                 state.loading = false;
-                state.orders = action.payload;
+                state.paymentSession = action.payload;
                 state.error = null;
 
             })
 
             .addCase(userorder.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload || "Order failed";
+                state.error = action.payload || "Payment session failed";
             })
 
 

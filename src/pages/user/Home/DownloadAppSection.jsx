@@ -161,7 +161,7 @@ const DownloadAppSection = () => {
                                 className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                             >
                                 <a
-                                    href="https://play.google.com/store"
+                                    href="https://play.google.com/store/apps/details?id=com.mobilechakki"
                                     target="_blank"
                                     rel="noreferrer"
                                     className="group relative flex items-center justify-center gap-3 bg-white text-gray-900 px-6 py-4 rounded-2xl font-bold text-base shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-200"

@@ -111,6 +111,11 @@ export const AdminUpdateOrderStatus = async (id, statusData) => {
   return await api.put(Endpoints.Admin.ADMIN_UPDATE_ORDER_STATUS(id), statusData);
 };
 
+// GET ORDER LABEL
+export const AdminGetOrderLabel = async (id) => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_ORDER_LABEL(id));
+};
+
 // ================= ADMIN MANAGEMENT =================
 
 // GET ALL ADMINS
