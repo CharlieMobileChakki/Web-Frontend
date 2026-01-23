@@ -69,6 +69,12 @@ const PaymentPage = () => {
 
             const sessionId = result?.payment_session_id;
             const orderId = result?.orderId;
+            const mongoOrderId = result?.order?._id;
+
+            // 🔹 Cache the mapping for OrderSuccess page
+            if (orderId && mongoOrderId) {
+                localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
+            }
 
             if (!sessionId) {
                 toast.error("❌ Failed to get payment session");

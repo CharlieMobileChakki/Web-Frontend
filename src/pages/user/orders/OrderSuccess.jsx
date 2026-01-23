@@ -8,20 +8,53 @@ const OrderSuccess = () => {
     const dispatch = useDispatch();
     const [params] = useSearchParams();
 
-    const orderId = params.get("order_id"); // 🔹 URL se aayega
+    const orderIdParam = params.get("order_id");
+    const mappedId = localStorage.getItem(`ORDER_MAP_${orderIdParam}`);
+    const idToFetch = mappedId || orderIdParam;
 
-    const { orderDetails, loading } = useSelector((state) => state.order);
+    const { orderDetails, loading, error } = useSelector((state) => state.order);
 
     useEffect(() => {
-        if (orderId) {
-            dispatch(userorderbyid(orderId));
+        if (idToFetch) {
+            dispatch(userorderbyid(idToFetch));
         }
-    }, [orderId, dispatch]);
+    }, [idToFetch, dispatch]);
 
-    if (loading || !orderDetails) {
+    if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen text-lg font-semibold">
                 Loading your order details...
+            </div>
+        );
+    }
+
+    if (error || !orderDetails) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                    <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Payment Successful!</h2>
+                <p className="text-gray-600 mb-6">
+                    Your order has been placed. However, we couldn't load the details right now.
+                    Please check "My Orders" for status.
+                </p>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
+                    >
+                        Go Home
+                    </button>
+                    <button
+                        onClick={() => navigate("/my-orders")}
+                        className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    >
+                        My Orders
+                    </button>
+                </div>
             </div>
         );
     }
