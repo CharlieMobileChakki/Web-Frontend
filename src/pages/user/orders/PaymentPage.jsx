@@ -40,38 +40,61 @@ const PaymentPage = () => {
             return;
         }
 
-        const orderData = {
-            orderItems: selectedCartItems.map((item) => ({
-                product: item.product?._id || item.product || item._id,
-                variantId: item.variantId || item.variant?._id,
-                quantity: item.quantity || 1,
-            })),
-            shippingAddress: {
-                name: selectedAddress.name,
-                phone: selectedAddress.phone,
-                address: selectedAddress.address || selectedAddress.street,
-                city: selectedAddress.city,
-                postalCode: selectedAddress.postalCode,
-                country: selectedAddress.country,
-            },
-            shippingPrice: 0,
-            taxPrice: taxPrice,
-        };
-        const result = await dispatch(userorder(orderData)).unwrap();
-        const sessionId = result?.payment_session_id;
-        const orderId = result?.orderId;
-        const mongoOrderId = result?.order?._id;
+        try {
+            const orderData = {
+                orderItems: selectedCartItems.map((item) => ({
+                    product: item.product?._id || item.product || item._id,
+                    variantId: item.variantId || item.variant?._id,
+                    quantity: item.quantity || 1,
+                })),
+                shippingAddress: {
+                    name: selectedAddress.name,
+                    phone: selectedAddress.phone,
+                    address: selectedAddress.address || selectedAddress.street,
+                    city: selectedAddress.city,
+                    postalCode: selectedAddress.postalCode,
+                    country: selectedAddress.country,
+                },
+                shippingPrice: 0,
+                taxPrice: taxPrice,
+            };
 
-        if (orderId && mongoOrderId) {
-            localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
+            console.log("📦 Creating order with data:", orderData);
+
+            const result = await dispatch(userorder(orderData)).unwrap();
+
+            console.log("✅ Order creation response:", result);
+
+            const sessionId = result?.payment_session_id;
+            const orderId = result?.orderId;
+            const mongoOrderId = result?.order?._id;
+
+            // Store MongoDB order ID mapping for later use
+            if (orderId && mongoOrderId) {
+                localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
+                console.log(`💾 Stored mapping: ${orderId} -> ${mongoOrderId}`);
+            }
+
+            if (!sessionId) {
+                toast.error("❌ Payment session not received from server");
+                return;
+            }
+
+            if (!cashfree) {
+                toast.error("❌ Payment system not ready");
+                return;
+            }
+
+            // Open Cashfree checkout
+            cashfree.checkout({
+                paymentSessionId: sessionId,
+                redirectTarget: "_self"
+            });
+
+        } catch (err) {
+            console.error("❌ Payment error:", err);
+            toast.error(err?.message || "Unable to initiate payment");
         }
-
-        if (!sessionId || !cashfree) {
-            toast.error("❌ Payment system not ready");
-            return;
-        }
-
-        cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: "_self" });
     };
 
     return (

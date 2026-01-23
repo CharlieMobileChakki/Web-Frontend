@@ -135,6 +135,9 @@ const Endpoints = {
           USERORDERBYID: (id) => `/api/orders/${id}`, //GET
           USERCANCELORDER: (id) => `/api/orders/${id}/cancel`, // PUT cancel order
 
+          // payment verification
+          USERPAYMENTVERIFY: (orderId) => `/api/payment/verify/${orderId}`, // GET verify payment status
+
 
           // wishlist apis
           USERADDWISHLIST: '/api/wishlist/add', // Add Item to Wishlist 

@@ -28,6 +28,7 @@ import ViewCart from "../pages/user/products/ViewCart";
 import Checkout from "../pages/user/orders/Checkout";
 import PaymentPage from "../pages/user/orders/PaymentPage";
 import OrderSuccess from "../pages/user/orders/OrderSuccess";
+import PaymentStatusPage from "../pages/user/orders/PaymentStatus";
 import MyOrders from "../pages/user/orders/MyOrders";
 import OrderDetails from "../pages/user/orders/OrderDetails";
 import MyWishlist from "../pages/user/products/MyWishlist";
@@ -74,7 +75,16 @@ const AppRoutes = () => {
       <Route path="/viewcart" element={<UserLayout>  <ViewCart /></UserLayout>} />
       <Route path="/checkout" element={<UserLayout> <Checkout /> </UserLayout>} />
       <Route path="/order-success" element={<UserLayout>  <OrderSuccess /> </UserLayout>} />
-      <Route path="/payment-status" element={<UserLayout>  <PaymentPage /> </UserLayout>} />
+      <Route path="/payment" element={<UserLayout>  <PaymentPage /> </UserLayout>} />
+      <Route
+        path="/payment-status"
+        element={
+          <UserLayout>
+            <PaymentStatusPage />
+          </UserLayout>
+        }
+      />
+
       {/* 🔹 Cashfree Return Route */}
       {/* <Route path="/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} /> */}
       {/* <Route path="/interface/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} /> */}

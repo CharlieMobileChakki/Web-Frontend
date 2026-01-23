@@ -53,14 +53,24 @@ const Checkout = () => {
                     country: selectedAddress.country,
                 },
                 shippingPrice: 0,
-                taxPrice: 0,  // ✅ IMPORTANT
+                taxPrice: 0,
             };
 
             console.log("📦 Online Order Payload:", orderData);
 
             const result = await dispatch(userorder(orderData)).unwrap();
 
+            console.log("✅ Order creation response:", result);
+
             const sessionId = result?.payment_session_id;
+            const orderId = result?.orderId;
+            const mongoOrderId = result?.order?._id;
+
+            // Store MongoDB order ID mapping for later use
+            if (orderId && mongoOrderId) {
+                localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
+                console.log(`💾 Stored mapping: ${orderId} -> ${mongoOrderId}`);
+            }
 
             if (!sessionId) {
                 toast.error("❌ Payment session not received from server");

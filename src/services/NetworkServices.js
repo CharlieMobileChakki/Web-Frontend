@@ -370,6 +370,11 @@ export const UserCancelOrder = async (id) => {
   return await api.put(Endpoints.User.USERCANCELORDER(id))
 }
 
+// verify payment status
+export const UserVerifyPayment = async (orderId) => {
+  return await api.get(Endpoints.User.USERPAYMENTVERIFY(orderId))
+}
+
 
 // Add Item to Wishlist 
 export const UserAddWishlist = async (data) => {
