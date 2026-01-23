@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import debounce from "lodash/debounce"; // Optimization if needed, but not strictly required here
 import { useDispatch, useSelector } from "react-redux";
-import { userorderbyid } from "../../../store/slices/OrderSlice";
+import { userorderbyid, usergetorder } from "../../../store/slices/OrderSlice";
 
 const OrderSuccess = () => {
     const navigate = useNavigate();
@@ -12,13 +13,27 @@ const OrderSuccess = () => {
     const mappedId = localStorage.getItem(`ORDER_MAP_${orderIdParam}`);
     const idToFetch = mappedId || orderIdParam;
 
-    const { orderDetails, loading, error } = useSelector((state) => state.order);
+    const { orderDetails, orders, loading, error } = useSelector((state) => state.order);
 
     useEffect(() => {
-        if (idToFetch) {
+        if (!idToFetch) return;
+
+        // Check if it's a valid MongoDB ID (24 hex characters)
+        const isMongoId = /^[0-9a-fA-F]{24}$/.test(idToFetch);
+
+        if (isMongoId) {
             dispatch(userorderbyid(idToFetch));
+        } else {
+            // Fallback: If it's a custom ID (MC-ORD...), fetch all orders to find it
+            dispatch(usergetorder());
         }
     }, [idToFetch, dispatch]);
+
+    // Find the order object to display
+    const displayOrder =
+        (orderDetails && (orderDetails._id === idToFetch || orderDetails.orderId === idToFetch))
+            ? orderDetails
+            : orders?.find((o) => o.orderId === idToFetch || o._id === idToFetch);
 
     if (loading) {
         return (
@@ -28,7 +43,7 @@ const OrderSuccess = () => {
         );
     }
 
-    if (error || !orderDetails) {
+    if (error || !displayOrder) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center">
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
@@ -38,8 +53,8 @@ const OrderSuccess = () => {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Payment Successful!</h2>
                 <p className="text-gray-600 mb-6">
-                    Your order has been placed. However, we couldn't load the details right now.
-                    Please check "My Orders" for status.
+                    Your order <span className="font-mono font-medium">{orderIdParam}</span> has been placed.
+                    {displayOrder ? " Loading details..." : " Check your email for details."}
                 </p>
                 <div className="flex gap-4">
                     <button
@@ -60,11 +75,11 @@ const OrderSuccess = () => {
     }
 
     // 🔹 Extract order details safely
-    const totalPrice = orderDetails.totalPrice;
-    const paymentMethod = orderDetails.paymentGateway || "Cashfree";
-    const orderStatus = orderDetails.orderStatus;
-    const itemsPrice = orderDetails.itemsPrice;
-    const taxPrice = orderDetails.taxPrice;
+    const totalPrice = displayOrder.totalPrice;
+    const paymentMethod = displayOrder.paymentGateway || "Cashfree";
+    const orderStatus = displayOrder.orderStatus;
+    const itemsPrice = displayOrder.itemsPrice;
+    const taxPrice = displayOrder.taxPrice;
 
     return (
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50 px-6">
@@ -91,7 +106,7 @@ const OrderSuccess = () => {
                     <div className="mb-4 pb-4 border-b border-gray-200">
                         <p className="text-sm text-gray-500 mb-1">Order ID</p>
                         <p className="text-lg font-semibold text-blue-600 break-all">
-                            {orderDetails.orderId}
+                            {displayOrder.orderId || displayOrder._id}
                         </p>
                     </div>
 

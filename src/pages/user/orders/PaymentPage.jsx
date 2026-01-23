@@ -101,7 +101,7 @@ const PaymentPage = () => {
     };
 
     return (
-        <div className="bg-gray-50 px-6 py-4 min-h-screen">
+        <div className="bg-gray-50 px-6 py-4  ">
             <BackButton />
             <div className="flex flex-col md:flex-row">
 

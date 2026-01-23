@@ -74,10 +74,10 @@ const AppRoutes = () => {
       <Route path="/viewcart" element={<UserLayout>  <ViewCart /></UserLayout>} />
       <Route path="/checkout" element={<UserLayout> <Checkout /> </UserLayout>} />
       <Route path="/order-success" element={<UserLayout>  <OrderSuccess /> </UserLayout>} />
-      <Route path="/payment" element={<UserLayout>  <PaymentPage /> </UserLayout>} />
+      <Route path="/payment-status/:orderId" element={<UserLayout>  <PaymentPage /> </UserLayout>} />
       {/* 🔹 Cashfree Return Route */}
-      <Route path="/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} />
-      <Route path="/interface/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} />
+      {/* <Route path="/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} /> */}
+      {/* <Route path="/interface/payment-status" element={<UserLayout>  <OrderSuccess /> </UserLayout>} /> */}
       <Route path="/my-orders" element={<UserLayout>  <MyOrders /> </UserLayout>} />
       <Route path="/orders/:id" element={<UserLayout>  <OrderDetails />  </UserLayout>} />
       <Route path="/mywishlist" element={<UserLayout> <MyWishlist />  </UserLayout>} />
