@@ -18,24 +18,20 @@ const PaymentPage = () => {
         userAddress: selectedAddress = {},
         totalAmount = 0,
         taxPrice = 0,
-        shippingPrice = 0,
     } = state;
 
-    const finalTotal = totalAmount + taxPrice + shippingPrice;
 
     const [cashfree, setCashfree] = useState(null);
 
-    // 🔹 Init Cashfree SDK
+
     useEffect(() => {
         const initCashfree = async () => {
-            const cf = await load({
-                mode: "sandbox", // 🔹 testing me sandbox, live me "production"
-            });
+            const cf = await load({ mode: "sandbox" });
             setCashfree(cf);
         };
-
         initCashfree();
     }, []);
+
 
     // 🔹 MAIN ONLINE PAYMENT HANDLER
     const handlePayment = async () => {
@@ -44,60 +40,38 @@ const PaymentPage = () => {
             return;
         }
 
-        try {
-            // 🔹 Backend ko wahi payload jo API expect karta hai
-            const orderData = {
-                orderItems: selectedCartItems.map((item) => ({
-                    product: item.product?._id || item._id,
-                    variantId: item.variantId || item.variant?._id,
-                    quantity: item.quantity || 1,
-                })),
-                shippingAddress: {
-                    name: selectedAddress.name,
-                    phone: selectedAddress.phone,
-                    address: selectedAddress.address || selectedAddress.street,
-                    city: selectedAddress.city,
-                    postalCode: selectedAddress.postalCode || selectedAddress.zipCode,
-                    country: selectedAddress.country || "India",
-                },
-                shippingPrice,
-                taxPrice,
-            };
+        const orderData = {
+            orderItems: selectedCartItems.map((item) => ({
+                product: item.product?._id || item.product || item._id,
+                variantId: item.variantId || item.variant?._id,
+                quantity: item.quantity || 1,
+            })),
+            shippingAddress: {
+                name: selectedAddress.name,
+                phone: selectedAddress.phone,
+                address: selectedAddress.address || selectedAddress.street,
+                city: selectedAddress.city,
+                postalCode: selectedAddress.postalCode,
+                country: selectedAddress.country,
+            },
+            shippingPrice: 0,
+            taxPrice: taxPrice,
+        };
+        const result = await dispatch(userorder(orderData)).unwrap();
+        const sessionId = result?.payment_session_id;
+        const orderId = result?.orderId;
+        const mongoOrderId = result?.order?._id;
 
-            // 🔹 CREATE ORDER + PAYMENT SESSION
-            const result = await dispatch(userorder(orderData)).unwrap();
-
-            const sessionId = result?.payment_session_id;
-            const orderId = result?.orderId;
-            const mongoOrderId = result?.order?._id;
-
-            // 🔹 Cache the mapping for OrderSuccess page
-            if (orderId && mongoOrderId) {
-                localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
-            }
-
-            if (!sessionId) {
-                toast.error("❌ Failed to get payment session");
-                return;
-            }
-
-            if (!cashfree) {
-                toast.error("❌ Payment system not ready");
-                return;
-            }
-
-            // 🔹 OPEN CASHFREE CHECKOUT
-            const checkoutOptions = {
-                paymentSessionId: sessionId,
-                redirectTarget: "_self",
-            };
-
-            cashfree.checkout(checkoutOptions);
-
-        } catch (err) {
-            console.error("Payment error:", err);
-            toast.error(err?.message || "❌ Unable to start payment");
+        if (orderId && mongoOrderId) {
+            localStorage.setItem(`ORDER_MAP_${orderId}`, mongoOrderId);
         }
+
+        if (!sessionId || !cashfree) {
+            toast.error("❌ Payment system not ready");
+            return;
+        }
+
+        cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: "_self" });
     };
 
     return (
@@ -123,7 +97,7 @@ const PaymentPage = () => {
                         onClick={handlePayment}
                         className="mt-6 w-full bg-orange-500 text-white py-3 rounded-md hover:bg-orange-600 transition font-semibold"
                     >
-                        Confirm & Pay ₹{finalTotal}
+                        Confirm & Pay ₹{totalAmount}
                     </button>
                 </div>
 
@@ -165,17 +139,10 @@ const PaymentPage = () => {
 
                     {/* Price */}
                     <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                            <span>Subtotal</span>
-                            <span>₹{totalAmount}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span>Tax</span>
-                            <span>₹{taxPrice}</span>
-                        </div>
+
                         <div className="border-t pt-2 flex justify-between font-semibold">
                             <span>Total</span>
-                            <span>₹{finalTotal}</span>
+                            <span>₹{totalAmount}</span>
                         </div>
                     </div>
                 </div>
