@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { UserVerifyPayment } from "../../../services/NetworkServices";
+import { UserPaymentVerify } from "../../../services/NetworkServices";
 import { userdeletecart } from "../../../store/slices/CartSlice";
 
 const PaymentStatusPage = () => {
@@ -25,8 +25,8 @@ const PaymentStatusPage = () => {
                 setVerifying(true);
                 console.log(`🔍 Verifying payment for order: ${orderId}`);
 
-                const response = await UserVerifyPayment(orderId);
-                const { paymentStatus, orderStatus, amount } = response?.data || {};
+                const response = await UserPaymentVerify(orderId);
+                const { paymentStatus, orderId: verifiedOrderId, amount, orderStatus } = response?.data || {};
 
                 console.log("✅ Payment verification response:", response?.data);
 

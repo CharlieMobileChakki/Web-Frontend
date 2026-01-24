@@ -349,8 +349,11 @@ export const UserDeleteCart = async (data) => {
 
 // POST :  ORDER PRODUCT
 export const UserOrder = async (data) => {
-  console.log("🚀 Payload sending to /api/orders:", JSON.stringify(data, null, 2));
   return await api.post(Endpoints.User.USERORDER, data)
+}
+
+export const UserPaymentVerify = async (orderId) => {
+  return await api.get(Endpoints.User.USERPAYMENTVERIFY(orderId))
 }
 
 
@@ -370,10 +373,6 @@ export const UserCancelOrder = async (id) => {
   return await api.put(Endpoints.User.USERCANCELORDER(id))
 }
 
-// verify payment status
-export const UserVerifyPayment = async (orderId) => {
-  return await api.get(Endpoints.User.USERPAYMENTVERIFY(orderId))
-}
 
 
 // Add Item to Wishlist 

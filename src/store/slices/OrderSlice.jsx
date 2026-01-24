@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { UserGetOrder, UserOrder, UserOrderById, UserCancelOrder } from "../../services/NetworkServices";
+import { UserGetOrder, UserOrder, UserOrderById, UserCancelOrder, UserPaymentVerify } from "../../services/NetworkServices";
 
 
 
@@ -22,6 +22,21 @@ export const userorder = createAsyncThunk(
 
 )
 
+
+
+export const userpaymentverify = createAsyncThunk(
+    "order/userpaymentverify",
+    async (orderId, { rejectWithValue }) => {
+        try {
+            const response = await UserPaymentVerify(orderId);
+            return response?.data;
+        } catch (error) {
+            return rejectWithValue(
+                error?.response?.data || "Failed to verify payment"
+            )
+        }
+    }
+)
 
 
 // get order
@@ -83,6 +98,7 @@ const OrderSlice = createSlice({
         loading: false,
         error: null,
         paymentSession: null,
+        paymentVerified: false,
 
     },
     reducers: {},
@@ -108,6 +124,21 @@ const OrderSlice = createSlice({
                 state.error = action.payload || "Payment session failed";
             })
 
+
+
+            // ✅ PAYMENT VERIFY
+            .addCase(userpaymentverify.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(userpaymentverify.fulfilled, (state, action) => {
+                state.loading = false;
+                state.paymentVerified = true;
+            })
+            .addCase(userpaymentverify.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Payment verification failed";
+            })
 
 
             // ✅ GET: all orders
