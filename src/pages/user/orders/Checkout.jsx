@@ -56,15 +56,29 @@ const Checkout = () => {
                 taxPrice: 0,
             };
 
-            console.log("📦 Online Order Payload:", orderData);
+            console.log("📦 Creating order with payload:", orderData);
 
             const result = await dispatch(userorder(orderData)).unwrap();
 
             console.log("✅ Order creation response:", result);
 
+            // Extract response fields according to API documentation
             const sessionId = result?.payment_session_id;
             const orderId = result?.orderId;
             const mongoOrderId = result?.order?._id;
+
+            // Validate response structure
+            if (!orderId) {
+                console.error("❌ Missing orderId in response:", result);
+                toast.error("❌ Order creation failed - Invalid response");
+                return;
+            }
+
+            if (!sessionId) {
+                console.error("❌ Missing payment_session_id in response:", result);
+                toast.error("❌ Payment session not received from server");
+                return;
+            }
 
             // Store MongoDB order ID mapping for later use
             if (orderId && mongoOrderId) {
@@ -72,26 +86,25 @@ const Checkout = () => {
                 console.log(`💾 Stored mapping: ${orderId} -> ${mongoOrderId}`);
             }
 
-            if (!sessionId) {
-                toast.error("❌ Payment session not received from server");
+            if (!cashfree) {
+                toast.error("❌ Payment system not ready - Please refresh the page");
                 return;
             }
 
-            if (!cashfree) {
-                toast.error("❌ Payment system not ready");
-                return;
-            }
+            console.log(`🚀 Initiating Cashfree checkout for order: ${orderId}`);
 
             const checkoutOptions = {
                 paymentSessionId: sessionId,
                 redirectTarget: "_self",
             };
 
+            // Open Cashfree checkout
             cashfree.checkout(checkoutOptions);
 
         } catch (err) {
             console.error("❌ Online payment error:", err);
-            toast.error(err?.message || "Unable to start online payment");
+            const errorMessage = err?.message || err?.error || "Unable to start online payment";
+            toast.error(`❌ ${errorMessage}`);
         }
     };
 
