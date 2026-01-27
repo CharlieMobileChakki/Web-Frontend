@@ -22,6 +22,15 @@ const AdminTable = ({ admins, onEdit, onDelete }) => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Phone
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Role
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Action
+                        </th>
 
                     </tr>
                 </thead>
@@ -36,7 +45,20 @@ const AdminTable = ({ admins, onEdit, onDelete }) => {
 
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900">
-                                    {admin.phone || admin.phoneNumber || "N/A"}
+                                    {admin.mobile || admin.mobile || "N/A"}
+                                </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">
+                                    {admin.role || admin.role || "N/A"}
+                                </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">
+                                    {admin.createdAt
+                                        ? new Date(admin.createdAt).toLocaleDateString()
+                                        : "N/A"}
                                 </div>
                             </td>
 

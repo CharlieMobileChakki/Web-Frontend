@@ -78,7 +78,7 @@ const ReviewsManagement = () => {
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            <h2 className="text-[#2c3e50] font-bold mb-6 text-3xl md:text-4xl">Reviews Management</h2>
+            {/* <h2 className="text-[#2c3e50] font-bold mb-6 text-3xl md:text-4xl">Reviews Management</h2> */}
 
             {/* Search Bar */}
             <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex items-center border border-gray-200">

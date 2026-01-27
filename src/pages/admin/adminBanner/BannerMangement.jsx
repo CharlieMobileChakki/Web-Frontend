@@ -8,7 +8,6 @@ import {
   adminUpdateBanner,
   adminDeleteBanner,
 } from "../../../store/slices/adminSlice/AdminBannerSlice";
-import SidebarTitle from "../../../components/admin/SidebarTitle";
 
 const BannerManagement = () => {
   const dispatch = useDispatch();
@@ -44,7 +43,7 @@ const BannerManagement = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <SidebarTitle />
+        {/* <SidebarTitle /> */}
 
         <button
           onClick={() => {

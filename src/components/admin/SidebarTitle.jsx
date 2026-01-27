@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 const SidebarTitle = () => {
     const location = useLocation();
 
-    // Sidebar ka menu list → yahi mapping ke liye use karenge
+    // Sidebar menu list (single source of truth)
     const menuItems = [
         { name: "Dashboard", href: "/dashboard" },
         { name: "Admin Creation", href: "/admincreation" },
@@ -13,22 +13,35 @@ const SidebarTitle = () => {
         { name: "Products Management", href: "/productmanagement" },
         { name: "Users Management", href: "/usersmanagement" },
         { name: "Blog Management", href: "/blogmanagement" },
-        { name: "Banner Management", href: "/Bannermanagement" },
+        { name: "Banner Management", href: "/bannermanagement" }, // lowercase fix
         { name: "Stock Management", href: "/stockmanagement" },
         { name: "Booking Management", href: "/bookingmanagement" },
         { name: "Driver Management", href: "/drivermanagement" },
         { name: "Contact Management", href: "/contactmanagement" },
-        { name: "Logout", href: "/logout" },
     ];
 
-    // Current route ka matching name nikalna
-    const activeItem = menuItems.find(
-        (item) => item.href === location.pathname
+    const pathname = location.pathname.toLowerCase();
+
+    // Match exact or sub-routes (like /productmanagement/edit/123)
+    const activeItem = menuItems.find((item) =>
+        pathname.startsWith(item.href)
     );
 
     const title = activeItem?.name || "Admin Panel";
 
-    return <h1 className="text-[1rem] md:text-[2rem] font-semibold">{title}</h1>;
+    return (
+        <>
+            {/* Desktop */}
+            <h1 className="hidden lg:block font-bold text-xl text-gray-800 flex-1">
+                {title}
+            </h1>
+
+            {/* Mobile */}
+            <h1 className="lg:hidden font-semibold text-lg flex-1 text-gray-800">
+                {title}
+            </h1>
+        </>
+    );
 };
 
 export default SidebarTitle;

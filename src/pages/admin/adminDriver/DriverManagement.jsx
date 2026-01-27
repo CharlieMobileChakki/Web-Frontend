@@ -71,7 +71,7 @@ const DriverManagement = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <ToastContainer />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1>
+        {/* <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1> */}
         <Link
           to="/drivermanagement/create"
           className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all duration-300 font-medium shadow-md hover:shadow-lg"

@@ -8,7 +8,6 @@ import {
   adminUpdateAdmin,
   adminDeleteAdmin,
 } from "../../../store/slices/adminSlice/AdminCreationSlice";
-import SidebarTitle from "../../../components/admin/SidebarTitle";
 
 const AdminCreation = () => {
   const dispatch = useDispatch();
@@ -46,7 +45,7 @@ const AdminCreation = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <SidebarTitle />
+        {/* <SidebarTitle /> */}
 
         <button
           onClick={() => {

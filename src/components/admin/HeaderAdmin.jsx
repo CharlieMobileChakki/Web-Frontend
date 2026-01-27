@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import SidebarTitle from "./SidebarTitle";
 
 const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
   const location = useLocation();
@@ -73,7 +74,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
       `}
     >
       {/* Main Header Row */}
-      <div className="h-16 flex items-center px-4 lg:px-6">
+      <div className="h-16 flex items-center justify-between px-4 lg:px-6">
         {/* Mobile Menu Toggle */}
         {isMobile && (
           <button
@@ -86,15 +87,10 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
           </button>
         )}
 
-        {/* Page Title - Desktop */}
-        <h1 className="hidden lg:block font-bold text-xl text-gray-800 flex-1">
-          {breadcrumbs[breadcrumbs.length - 1]?.name || "Admin Panel"}
-        </h1>
+        <div className="flex items-center gap-4">
+          <SidebarTitle />
+        </div>
 
-        {/* Page Title - Mobile */}
-        <h1 className="lg:hidden font-semibold text-lg flex-1 text-gray-800">
-          {breadcrumbs[breadcrumbs.length - 1]?.name || "Admin Panel"}
-        </h1>
 
         {/* Right Section */}
         <div className="flex items-center gap-2 lg:gap-4">
@@ -173,11 +169,7 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-2 lg:gap-3 hover:bg-red-50 rounded-lg p-1 lg:p-2 transition-colors"
             >
-              <img
-                src={user.image}
-                alt="user"
-                className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-[#C6A55C] shadow-md"
-              />
+
               <div className="hidden md:block text-left">
                 <p className="font-semibold text-sm text-gray-800">{user.name}</p>
                 <p className="text-xs text-gray-500">{user.email}</p>

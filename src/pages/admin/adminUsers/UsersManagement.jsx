@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adminGetAllUsers, adminGetAllAddresses } from "../../../store/slices/adminSlice/AdminUserSlice";
-import SidebarTitle from "../../../components/admin/SidebarTitle";
 import Pagination from "../../../components/admin/Pagination";
 import UserTable from "./UserTable";
 import { FaUser, FaMapMarkerAlt, FaStar, FaTimes, FaPhone } from "react-icons/fa";
@@ -42,7 +41,7 @@ export const UsersManagement = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Users Management</h1>
+          {/* <h1 className="text-2xl font-bold text-gray-800">Users Management</h1> */}
           <p className="text-sm text-gray-500 mt-1">Manage and monitor user accounts</p>
         </div>
 

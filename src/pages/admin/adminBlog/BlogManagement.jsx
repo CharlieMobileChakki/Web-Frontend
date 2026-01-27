@@ -8,7 +8,6 @@ import {
   adminUpdateBlog,
   adminDeleteBlog,
 } from "../../../store/slices/adminSlice/AdminBlogSlice";
-import SidebarTitle from "../../../components/admin/SidebarTitle";
 
 const BlogManagement = () => {
   const dispatch = useDispatch();
@@ -44,7 +43,7 @@ const BlogManagement = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <SidebarTitle />
+        {/* <SidebarTitle /> */}
 
         <button
           onClick={() => {
