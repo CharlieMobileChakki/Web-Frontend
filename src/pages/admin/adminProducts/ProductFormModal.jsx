@@ -262,7 +262,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                             <p className="text-gray-500 text-sm">Drag & drop images here or <span className="text-blue-600 font-medium">browse</span></p>
                         </div>
 
-                        {form.images.length > 0 && (
+                        {(form.images || []).length > 0 && (
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-4">
                                 {form.images.map((img, index) => (
                                     <div key={index} className="relative group aspect-square">
@@ -294,7 +294,8 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                         </div>
 
                         <div className="space-y-4">
-                            {form.variants.map((variant, index) => (
+                            {(form.variants || []).map((variant, index) => (
+
                                 <div key={index} className="border border-gray-200 p-4 rounded-xl bg-gray-50 relative hover:shadow-sm transition">
                                     <div className="flex justify-between items-center mb-4">
                                         <h4 className="font-medium text-gray-700 bg-gray-200 px-3 py-1 rounded-md text-xs sm:text-sm">Variant #{index + 1}</h4>
