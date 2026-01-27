@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { userorder } from "../../../store/slices/OrderSlice";
-import { userdeletecart } from "../../../store/slices/CartSlice";
 import AddressModal from "../../../components/user/AddressModal";
 import { toast } from "react-toastify";
 import { CheckCircle, MapPin, CreditCard, ShieldCheck, Truck, ShoppingBag, ChevronRight, Plus } from "lucide-react";
@@ -15,7 +14,6 @@ import { load } from "@cashfreepayments/cashfree-js";
 
 const Checkout = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const location = useLocation();
 
 
@@ -44,14 +42,9 @@ const Checkout = () => {
                     variantId: item.variantId || item.variant?._id,
                     quantity: item.quantity || 1,
                 })),
-                shippingAddress: {
-                    name: selectedAddress.name,
-                    phone: selectedAddress.phone,
-                    address: selectedAddress.address,
-                    city: selectedAddress.city,
-                    postalCode: selectedAddress.postalCode,
-                    country: selectedAddress.country,
-                },
+                // ✅ ONLY SEND ADDRESS ID
+                shippingAddress: selectedAddress._id,
+
                 shippingPrice: 0,
                 taxPrice: 0,
             };
