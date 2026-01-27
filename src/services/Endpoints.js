@@ -131,7 +131,7 @@ const Endpoints = {
 
           // order product
           USERORDER: '/api/order/create', // post
-          USERGETORDER: (orderId) => `/api/orders/${orderId}`, // get
+          USERGETORDER: '/api/orders', // get
           USERORDERBYID: (id) => `/api/orders/${id}`, //GET
           USERCANCELORDER: (id) => `/api/orders/${id}/cancel`, // PUT cancel order
 
