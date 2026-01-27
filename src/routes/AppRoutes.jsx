@@ -75,7 +75,7 @@ const AppRoutes = () => {
       <Route path="/viewcart" element={<UserLayout>  <ViewCart /></UserLayout>} />
       <Route path="/checkout" element={<UserLayout> <Checkout /> </UserLayout>} />
       <Route path="/order-success" element={<UserLayout>  <OrderSuccess /> </UserLayout>} />
-      <Route path="/payment" element={<UserLayout>  <PaymentPage /> </UserLayout>} />
+      {/* <Route path="/payment" element={<UserLayout>  <PaymentPage /> </UserLayout>} /> */}
       <Route
         path="/payment-status"
         element={
