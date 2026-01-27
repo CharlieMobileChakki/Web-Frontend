@@ -35,7 +35,7 @@ const Endpoints = {
           // ================= ADMIN ORDERS =================
           ADMIN_GET_ALL_ORDERS: '/api/admin/orders/getAllOrders',          // GET all orders
           ADMIN_UPDATE_ORDER_STATUS: (id) => `/api/admin/orders/${id}/status`, // PUT update order status
-          ADMIN_GET_ORDER_LABEL: (id) => `/api/admin/label/${id}`, // GET order shipping label
+          ADMIN_GET_ORDER_LABEL: (orderId) => `/api/admin/label/${orderId}`, // GET order shipping label
 
           // ================= ADMIN MANAGEMENT =================
           ADMIN_GET_ALL_ADMINS: '/api/admin/get-all-admins',                    // GET all admins

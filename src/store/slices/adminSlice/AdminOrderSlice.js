@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AdminGetAllOrders, AdminUpdateOrderStatus } from "../../../services/NetworkServices";
+import { AdminGetAllOrders, AdminUpdateOrderStatus, AdminGetOrderLabel } from "../../../services/NetworkServices";
 
 // Async thunk to fetch all orders
 export const adminGetAllOrders = createAsyncThunk(
@@ -31,6 +31,22 @@ export const adminUpdateOrderStatus = createAsyncThunk(
     }
 );
 
+
+
+// Get order label by orderId
+export const adminGetOrderLabel = createAsyncThunk(
+    "admin/getOrderLabel",
+    async (orderId, { rejectWithValue }) => {
+        try {
+            const response = await AdminGetOrderLabel(orderId);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to fetch order label"
+            );
+        }
+    }
+)
 const adminOrderSlice = createSlice({
     name: "adminOrder",
     initialState: {
@@ -39,6 +55,9 @@ const adminOrderSlice = createSlice({
         error: null,
         updateLoading: false,
         updateError: null,
+        label: null,
+        labelLoading: false,
+        labelError: null,
     },
     reducers: {
         clearUpdateError: (state) => {
@@ -79,6 +98,19 @@ const adminOrderSlice = createSlice({
             .addCase(adminUpdateOrderStatus.rejected, (state, action) => {
                 state.updateLoading = false;
                 state.updateError = action.payload;
+            })
+            // Get order label
+            .addCase(adminGetOrderLabel.pending, (state) => {
+                state.labelLoading = true;
+                state.labelError = null;
+            })
+            .addCase(adminGetOrderLabel.fulfilled, (state, action) => {
+                state.labelLoading = false;
+                state.label = action.payload.label || action.payload;
+            })
+            .addCase(adminGetOrderLabel.rejected, (state, action) => {
+                state.labelLoading = false;
+                state.labelError = action.payload;
             });
     },
 });

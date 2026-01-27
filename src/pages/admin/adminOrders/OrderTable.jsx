@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adminUpdateOrderStatus } from "../../../store/slices/adminSlice/AdminOrderSlice";
+import { adminUpdateOrderStatus, adminGetOrderLabel } from "../../../store/slices/adminSlice/AdminOrderSlice";
 import { toast } from "react-toastify";
-import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail } from "lucide-react";
+import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail, Download, CheckCircle } from "lucide-react";
 
 const OrderTable = ({ orders }) => {
     const dispatch = useDispatch();
-    const { updateLoading } = useSelector((state) => state.adminOrder);
+    const { updateLoading, label, labelLoading } = useSelector((state) => state.adminOrder);
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
+    const [downloadingLabelId, setDownloadingLabelId] = useState(null);
+    const [downloadedLabels, setDownloadedLabels] = useState(() => {
+        // Load downloaded labels from localStorage
+        const saved = localStorage.getItem('downloadedLabels');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
@@ -86,6 +92,231 @@ const OrderTable = ({ orders }) => {
         setSelectedOrder(null);
     };
 
+    // Handle download label
+    const handleDownloadLabel = async (order) => {
+        setDownloadingLabelId(order._id);
+        try {
+            const result = await dispatch(adminGetOrderLabel(order._id)).unwrap();
+            const labelData = result.label || result;
+
+            // Create printable HTML label
+            const labelHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Shipping Label - ${order.orderId || order._id}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px;
+            background: white;
+        }
+        .label-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #000;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .label { font-weight: bold; }
+        .barcode-section {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            margin: 20px 0;
+        }
+        .barcode-img {
+            max-width: 100%;
+            height: auto;
+        }
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .products-table th,
+        .products-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .products-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+        }
+        @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="label-container">
+        <div class="header">
+            <h1>SHIPPING LABEL</h1>
+            <p>Order ID: ${order.orderId || order._id}</p>
+            <p>Date: ${formatDate(labelData.orderDate || order.createdAt)}</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Seller Information</div>
+            <div class="info-row">
+                <span class="label">Sold By:</span>
+                <span>${labelData.soldBy || 'MobileChakki'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">GSTIN:</span>
+                <span>${labelData.gstin || 'N/A'}</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Delivery Address</div>
+            <div class="info-row">
+                <span class="label">Name:</span>
+                <span>${labelData.deliveryAddress?.name || order.shippingAddress?.name || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Phone:</span>
+                <span>${labelData.deliveryAddress?.phone || order.shippingAddress?.phone || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Address:</span>
+                <span>${labelData.deliveryAddress?.house || ''} ${labelData.deliveryAddress?.street || order.shippingAddress?.address || ''}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">City:</span>
+                <span>${labelData.deliveryAddress?.city || order.shippingAddress?.city || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">State:</span>
+                <span>${labelData.deliveryAddress?.state || order.shippingAddress?.state || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Pincode:</span>
+                <span>${labelData.deliveryAddress?.pincode || order.shippingAddress?.postalCode || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Country:</span>
+                <span>${labelData.deliveryAddress?.country || order.shippingAddress?.country || 'India'}</span>
+            </div>
+        </div>
+
+        ${labelData.barcodeImage ? `
+        <div class="barcode-section">
+            <div class="section-title">Barcode</div>
+            <img src="data:image/png;base64,${labelData.barcodeImage}" alt="Barcode" class="barcode-img" />
+            <p style="margin-top: 10px; font-weight: bold;">${labelData.barcodeNumber || ''}</p>
+        </div>
+        ` : ''}
+
+        <div class="section">
+            <div class="section-title">Products</div>
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${(labelData.products || order.orderItems || []).map(item => `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.quantity}</td>
+                            <td>₹${item.price}</td>
+                            <td>₹${item.price * item.quantity}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <div class="total">
+                Total Amount: ₹${labelData.totalPrice || order.totalPrice}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Payment Information</div>
+            <div class="info-row">
+                <span class="label">Method:</span>
+                <span>${labelData.payment?.method || order.paymentGateway || 'N/A'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Status:</span>
+                <span>${labelData.payment?.status || order.paymentStatus || 'PENDING'}</span>
+            </div>
+        </div>
+
+        <div class="no-print" style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 2px solid #000;">
+            <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+                Print Label
+            </button>
+            <button onclick="window.close()" style="padding: 10px 20px; font-size: 16px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Close
+            </button>
+        </div>
+    </div>
+</body>
+</html>
+            `;
+
+            // Open label in new window
+            const labelWindow = window.open('', '_blank');
+            labelWindow.document.write(labelHTML);
+            labelWindow.document.close();
+
+            // Mark this order as downloaded
+            const updatedDownloaded = [...downloadedLabels, order._id];
+            setDownloadedLabels(updatedDownloaded);
+            localStorage.setItem('downloadedLabels', JSON.stringify(updatedDownloaded));
+
+            toast.success("Label opened in new window");
+        } catch (error) {
+            console.error("Error downloading label:", error);
+            toast.error(error || "Failed to download label");
+        } finally {
+            setDownloadingLabelId(null);
+        }
+    };
+
     return (
         <>
             <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -133,11 +364,16 @@ const OrderTable = ({ orders }) => {
 
                                     {/* Payment Method */}
                                     <td className="px-6 py-4">
-                                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'COD'
-                                            ? 'bg-orange-100 text-orange-700'
-                                            : 'bg-green-100 text-green-700'
+                                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                        ${order.paymentStatus === 'SUCCESS'
+                                                ? 'bg-green-100 text-green-700'
+                                                : order.paymentStatus === "PENDING"
+                                                    ? 'bg-orange-100 text-orange-700'
+                                                    : order.paymentStatus === "FAILED"
+                                                        ? 'bg-red-100 text-red-700'
+                                                        : 'bg-gray-100 text-gray-700'
                                             }`}>
-                                            {order.paymentMethod}
+                                            {order.paymentStatus}
                                         </span>
                                     </td>
 
@@ -170,13 +406,32 @@ const OrderTable = ({ orders }) => {
 
                                     {/* Actions */}
                                     <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => handleViewDetails(order)}
-                                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                                            title="View Details"
-                                        >
-                                            <Eye size={18} />
-                                        </button>
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                onClick={() => handleViewDetails(order)}
+                                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                                title="View Details"
+                                            >
+                                                <Eye size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDownloadLabel(order)}
+                                                disabled={downloadingLabelId === order._id}
+                                                className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
+                                                        ? 'text-green-600 hover:bg-green-50'
+                                                        : 'text-gray-600 hover:bg-gray-50'
+                                                    }`}
+                                                title={downloadedLabels.includes(order._id) ? "Downloaded" : "Download Label"}
+                                            >
+                                                {downloadingLabelId === order._id ? (
+                                                    <div className="animate-spin rounded-full h-[18px] w-[18px] border-b-2 border-green-600"></div>
+                                                ) : downloadedLabels.includes(order._id) ? (
+                                                    <CheckCircle size={18} className="fill-green-600" />
+                                                ) : (
+                                                    <Download size={18} />
+                                                )}
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

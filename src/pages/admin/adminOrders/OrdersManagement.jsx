@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adminGetAllOrders } from "../../../store/slices/adminSlice/AdminOrderSlice";
+import { adminGetAllOrders, adminGetOrderLabel } from "../../../store/slices/adminSlice/AdminOrderSlice";
 import SidebarTitle from "../../../components/admin/SidebarTitle";
 import Pagination from "../../../components/admin/Pagination";
 import OrderTable from "./OrderTable";

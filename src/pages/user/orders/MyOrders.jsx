@@ -193,10 +193,18 @@ const MyOrders = () => {
                                             <div>
                                                 <p className="text-xs text-gray-400 uppercase tracking-wider font-bold mb-1">Payment</p>
                                                 <p className="text-sm font-medium text-gray-700">
-                                                    {order.paymentMethod}
-                                                    <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${order.paymentInfo?.status === "Success" || order.paymentInfo?.status === "Paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-                                                        {order.paymentInfo?.status || order.paymentInfo?.payment_status || "Pending"}
+                                                    <span
+                                                        className={`ml-2 text-xs px-2 py-0.5 rounded-full font-medium
+                                                         ${order.paymentStatus === "SUCCESS"
+                                                                ? "bg-green-100 text-green-700"
+                                                                : order.paymentStatus === "FAILED"
+                                                                    ? "bg-red-100 text-red-700"
+                                                                    : "bg-yellow-100 text-yellow-700" // Pending or others
+                                                            }`}
+                                                    >
+                                                        {order.paymentStatus || "PENDING"}
                                                     </span>
+
                                                 </p>
                                             </div>
 
