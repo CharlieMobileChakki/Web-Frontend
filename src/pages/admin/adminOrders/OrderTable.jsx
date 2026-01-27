@@ -99,200 +99,149 @@ const OrderTable = ({ orders }) => {
             const result = await dispatch(adminGetOrderLabel(order._id)).unwrap();
             const labelData = result.label || result;
 
-            // Create printable HTML label
+            // Create printable HTML label - Dense Thermal Style
             const labelHTML = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Shipping Label - ${order.orderId || order._id}</title>
+    <title>Label ${order.orderId || order._id}</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            padding: 20px;
-            background: white;
+        @page { size: auto; margin: 0mm; }
+        body { font-family: 'Arial Narrow', Arial, sans-serif; margin: 0; padding: 10px; background: #fff; color: #000; }
+        .label-container { 
+            width: 100%; 
+            max-width: 400px; /* Thermal label width */
+            margin: 0 auto; 
+            border: 2px solid #000; 
+            font-size: 11px; 
+            line-height: 1.3;
         }
-        .label-container {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 2px solid #000;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
-        .section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-        }
-        .section-title {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-        }
-        .label { font-weight: bold; }
-        .barcode-section {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border: 2px solid #000;
-            margin: 20px 0;
-        }
-        .barcode-img {
-            max-width: 100%;
-            height: auto;
-        }
-        .products-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .products-table th,
-        .products-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .products-table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-        .total {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f0f0f0;
-        }
+        .header { text-align: center; border-bottom: 2px solid #000; padding: 5px; background: #000; color: #fff; }
+        .header h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
+        .header p { margin: 2px 0 0; font-size: 10px; }
+        
+        .row { display: flex; border-bottom: 1px solid #000; }
+        .col { flex: 1; padding: 4px; border-right: 1px solid #000; }
+        .col:last-child { border-right: none; }
+        
+        .section-title { font-weight: bold; font-size: 10px; text-transform: uppercase; margin-bottom: 2px; text-decoration: underline; }
+        .strong { font-weight: bold; }
+        
+        .address-box { padding: 4px; border-bottom: 1px solid #000; }
+        
+        .barcode-box { text-align: center; padding: 5px; border-bottom: 1px solid #000; }
+        .barcode-img { max-width: 90%; height: 50px; }
+        
+        .items-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .items-table th { text-align: left; border-bottom: 1px solid #000; padding: 2px; font-weight: bold; }
+        .items-table td { padding: 2px; vertical-align: top; }
+        .text-right { text-align: right; }
+        
+        .totals { border-top: 1px solid #000; padding: 4px; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .grand-total { font-weight: bold; font-size: 14px; border-top: 1px dashed #000; margin-top: 2px; padding-top: 2px; }
+        
+        .footer { text-align: center; font-size: 9px; padding: 2px; font-style: italic; }
+        
+        .noprint { margin-top: 10px; text-align: center; }
+        .btn { padding: 5px 10px; cursor: pointer; background: #000; color: #fff; border: none; margin: 0 5px; font-size: 12px; }
+        
         @media print {
+            .noprint { display: none; }
             body { padding: 0; }
-            .no-print { display: none; }
+            .label-container { border: none; max-width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="label-container">
         <div class="header">
-            <h1>SHIPPING LABEL</h1>
-            <p>Order ID: ${order.orderId || order._id}</p>
-            <p>Date: ${formatDate(labelData.orderDate || order.createdAt)}</p>
+            <h2>Shipping Label</h2>
+            <p>Order #${order.orderId || order._id}</p>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <div class="section-title">Sold By</div>
+                <div class="strong">${labelData.soldBy || 'MobileChakki'}</div>
+                ${labelData.gstin ? `<div>GSTIN: ${labelData.gstin}</div>` : ''}
+            </div>
+            <div class="col">
+                <div class="section-title">Date</div>
+                <div>${new Date(labelData.orderDate || order.createdAt).toLocaleDateString()}</div>
+                <div>${new Date(labelData.orderDate || order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+            </div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Seller Information</div>
-            <div class="info-row">
-                <span class="label">Sold By:</span>
-                <span>${labelData.soldBy || 'MobileChakki'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">GSTIN:</span>
-                <span>${labelData.gstin || 'N/A'}</span>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Delivery Address</div>
-            <div class="info-row">
-                <span class="label">Name:</span>
-                <span>${labelData.deliveryAddress?.name || order.shippingAddress?.name || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Phone:</span>
-                <span>${labelData.deliveryAddress?.phone || order.shippingAddress?.phone || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Address:</span>
-                <span>${labelData.deliveryAddress?.house || ''} ${labelData.deliveryAddress?.street || order.shippingAddress?.address || ''}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">City:</span>
-                <span>${labelData.deliveryAddress?.city || order.shippingAddress?.city || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">State:</span>
-                <span>${labelData.deliveryAddress?.state || order.shippingAddress?.state || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Pincode:</span>
-                <span>${labelData.deliveryAddress?.pincode || order.shippingAddress?.postalCode || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Country:</span>
-                <span>${labelData.deliveryAddress?.country || order.shippingAddress?.country || 'India'}</span>
+        <div class="address-box">
+            <div class="section-title">Ship To</div>
+            <div class="strong">${labelData.deliveryAddress?.name || order.shippingAddress?.name || 'N/A'}</div>
+            <div>Ph: ${labelData.deliveryAddress?.phone || order.shippingAddress?.phone || 'N/A'}</div>
+            <div style="margin-top: 2px;">
+                ${labelData.deliveryAddress?.house || ''} ${labelData.deliveryAddress?.street || order.shippingAddress?.address || ''}, 
+                ${labelData.deliveryAddress?.city || order.shippingAddress?.city || ''}, 
+                ${labelData.deliveryAddress?.state || order.shippingAddress?.state || ''} - 
+                <span class="strong">${labelData.deliveryAddress?.pincode || order.shippingAddress?.postalCode || ''}</span>
             </div>
         </div>
 
         ${labelData.barcodeImage ? `
-        <div class="barcode-section">
-            <div class="section-title">Barcode</div>
+        <div class="barcode-box">
             <img src="data:image/png;base64,${labelData.barcodeImage}" alt="Barcode" class="barcode-img" />
-            <p style="margin-top: 10px; font-weight: bold;">${labelData.barcodeNumber || ''}</p>
+            <div style="font-size: 9px; letter-spacing: 2px; margin-top: 2px;">${labelData.barcodeNumber || ''}</div>
         </div>
         ` : ''}
 
-        <div class="section">
-            <div class="section-title">Products</div>
-            <table class="products-table">
+        <div style="padding: 4px; border-bottom: 1px solid #000;">
+            <table class="items-table">
                 <thead>
                     <tr>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total</th>
+                        <th style="width: 55%;">Item</th>
+                        <th style="width: 15%; text-align: center;">Qty</th>
+                        <th style="width: 30%; text-align: right;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${(labelData.products || order.orderItems || []).map(item => `
                         <tr>
                             <td>${item.name}</td>
-                            <td>${item.quantity}</td>
-                            <td>₹${item.price}</td>
-                            <td>₹${item.price * item.quantity}</td>
+                            <td style="text-align: center;">${item.quantity}</td>
+                            <td class="text-right">₹${item.price * item.quantity}</td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
-            <div class="total">
-                Total Amount: ₹${labelData.totalPrice || order.totalPrice}
+        </div>
+
+        <div class="totals">
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span>₹${labelData.itemsPrice || order.itemsPrice || (labelData.totalPrice || order.totalPrice)}</span>
+            </div>
+            ${(labelData.taxPrice || order.taxPrice) > 0 ? `
+            <div class="total-row">
+                <span>Tax:</span>
+                <span>₹${labelData.taxPrice || order.taxPrice}</span>
+            </div>` : ''}
+            <div class="total-row grand-total">
+                <span>TOTAL AMOUNT:</span>
+                <span>₹${labelData.totalPrice || order.totalPrice}</span>
+            </div>
+            <div class="total-row" style="margin-top: 4px; font-size: 10px;">
+                <span>Payment: ${labelData.payment?.method || order.paymentGateway || 'Prepaid'}</span>
+                <span style="font-weight: bold; text-transform: uppercase;">${labelData.payment?.status || order.paymentStatus || 'PENDING'}</span>
             </div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Payment Information</div>
-            <div class="info-row">
-                <span class="label">Method:</span>
-                <span>${labelData.payment?.method || order.paymentGateway || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Status:</span>
-                <span>${labelData.payment?.status || order.paymentStatus || 'PENDING'}</span>
-            </div>
+        <div class="footer">
+            Thank you for shopping with MobileChakki!
         </div>
+    </div>
 
-        <div class="no-print" style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 2px solid #000;">
-            <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
-                Print Label
-            </button>
-            <button onclick="window.close()" style="padding: 10px 20px; font-size: 16px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                Close
-            </button>
-        </div>
+    <div class="noprint">
+        <button onclick="window.print()" class="btn">Print Label</button>
+        <button onclick="window.close()" class="btn">Close</button>
     </div>
 </body>
 </html>
@@ -418,8 +367,8 @@ const OrderTable = ({ orders }) => {
                                                 onClick={() => handleDownloadLabel(order)}
                                                 disabled={downloadingLabelId === order._id}
                                                 className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
-                                                        ? 'text-green-600 hover:bg-green-50'
-                                                        : 'text-gray-600 hover:bg-gray-50'
+                                                    ? 'text-green-600 hover:bg-green-50'
+                                                    : 'text-gray-600 hover:bg-gray-50'
                                                     }`}
                                                 title={downloadedLabels.includes(order._id) ? "Downloaded" : "Download Label"}
                                             >
