@@ -1,18 +1,20 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import SidebarTitle from "./SidebarTitle";
+import { useSelector } from "react-redux";
 
-const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
+const HeaderAdmin = ({ isOpen, isMobile, setIsOpen }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [notifications] = useState([
     { id: 1, message: "New order received", time: "5 min ago", unread: true },
     { id: 2, message: "Product stock low", time: "1 hour ago", unread: true },
     { id: 3, message: "New user registered", time: "2 hours ago", unread: false },
   ]);
+
+  const { admin } = useSelector((state) => state.adminAuth);
+  console.log(admin, "admin");
 
   const userMenuRef = useRef(null);
   const notificationRef = useRef(null);
@@ -52,18 +54,8 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    navigate("/admin/login");
-  };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log("Searching for:", searchQuery);
-      // Implement search functionality
-    }
-  };
+
 
   return (
     <header
@@ -171,41 +163,15 @@ const HeaderAdmin = ({ user, isOpen, isMobile, setIsOpen }) => {
             >
 
               <div className="hidden md:block text-left">
-                <p className="font-semibold text-sm text-gray-800">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                {/* <p className="font-semibold text-sm text-gray-800">{user?.name || "username"}</p> */}
+                <p className="font-semibold text-sm text-gray-800">{"Undefined"}</p>
+
+
               </div>
-              <svg
-                className={`hidden md:block w-4 h-4 text-gray-600 transition-transform ${showUserMenu ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+
             </button>
 
-            {/* User Dropdown Menu */}
-            {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
-                <div className="px-4 py-3 border-b bg-gradient-to-r from-red-50 to-orange-50">
-                  <p className="font-semibold text-gray-800">{user.name}</p>
-                  <p className="text-xs text-gray-600">{user.email}</p>
-                </div>
 
-                <div className="border-t">
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-2 w-full hover:bg-red-50 transition-colors text-left"
-                  >
-                    <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span className="text-sm text-red-600 font-medium">Logout</span>
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

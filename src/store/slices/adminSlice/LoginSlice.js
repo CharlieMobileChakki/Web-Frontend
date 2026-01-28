@@ -31,15 +31,19 @@ const LoginSlice = createSlice({
 
   reducers: {
     logout: (state) => {
-      state.user = null;
       state.token = null;
       clearLocalData();
     },
 
     // ✅ Manual update (used when profile updates)
     updateUser: (state, action) => {
-      state.user = action.payload;
-      localStorage.setItem("AdminToken", JSON.stringify(action.payload)); // 🔥 Sync immediately
+      const { token } = action.payload;
+      state.token = token;
+
+
+
+      localStorage.setItem("AdminToken", token); // token string 
+      // 🔥 Sync immediately
     },
   },
 
@@ -53,9 +57,10 @@ const LoginSlice = createSlice({
       .addCase(adminLogin.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
+        state.token = action.payload.token;
 
-        state.token = action.payload.token; // Correct
-        localStorage.setItem("AdminToken", action.payload.token);
+        localStorage.setItem("AdminToken", action.payload.token); // token string 
+
       })
 
 

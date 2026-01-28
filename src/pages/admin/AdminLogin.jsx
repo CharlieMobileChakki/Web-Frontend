@@ -4,6 +4,7 @@ import { Phone, Key } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../store/slices/adminSlice/LoginSlice";
 import { adminLoginSchema } from "../../utils/validations/ValidationSchemas"; // <-- schema import
+import { adminGetAllAdmins } from "../../store/slices/adminSlice/AdminCreationSlice";
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -48,6 +49,8 @@ const AdminLogin = () => {
 
       const result = await dispatch(adminLogin(formData)).unwrap();
       localStorage.setItem("AdminToken", result.token);
+
+      dispatch(adminGetAllAdmins())
 
       navigate("/dashboard");
 
