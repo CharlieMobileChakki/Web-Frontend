@@ -68,7 +68,7 @@ export const Services = () => {
             Download our app today and experience the future of fresh and organic food delivery.
           </p>
           <a
-            href="#"
+            href="https://play.google.com/store/apps/details?id=com.mobilechakki"
             className="inline-block bg-[#7a5410] text-white font-bold py-3 px-8 rounded-full hover:bg-[#b08943] transition duration-300"
           >
             Download the App

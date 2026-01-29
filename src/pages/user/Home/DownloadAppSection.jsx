@@ -43,6 +43,23 @@ const DownloadAppSection = () => {
         }
     ];
 
+
+
+    const [hideSideImages, setHideSideImages] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const w = window.innerWidth;
+            // 1024 to 1280 ke beech hide side images
+            setHideSideImages(w >= 1024 && w < 1280);
+            setHideSideImages(w >= 300 && w < 500);
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [direction, setDirection] = useState(0);
@@ -105,7 +122,7 @@ const DownloadAppSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
-                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg border border-amber-200/50 p-8 md:p-12"
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg border border-amber-200/50 p-6 md:p-12"
                 >
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
 
@@ -197,9 +214,13 @@ const DownloadAppSection = () => {
                             transition={{ delay: 0.4, duration: 0.8 }}
                             className="flex-1 w-full"
                         >
+
                             <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center perspective-1000">
                                 {/* Carousel Container */}
                                 {/* All Images Mapped for Continuous Transition */}
+
+
+
                                 {appImages.map((image, index) => {
                                     // Calculate position relative to current index
                                     let position = (index - currentIndex) % appImages.length;
@@ -212,6 +233,13 @@ const DownloadAppSection = () => {
                                     const isLeft = position === -1;
                                     const isRight = position === 1;
                                     const isHidden = Math.abs(position) >= 2;
+
+
+                                    const shouldHideThis =
+                                        hideSideImages && (isLeft || isRight || isHidden);
+
+                                    if (shouldHideThis) return null;
+
 
                                     return (
                                         <motion.div
@@ -227,9 +255,8 @@ const DownloadAppSection = () => {
                                                 duration: 0.5,
                                                 ease: "easeInOut"
                                             }}
-                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer"
+                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer w-[260px] sm:w-[280px] md:w-[320px]"
                                             style={{
-                                                width: "320px", // Base width for layout calculations (lg size), responsive scaling handled by scale prop
                                                 pointerEvents: isHidden ? "none" : "auto"
                                             }}
                                             onClick={() => {
@@ -244,8 +271,8 @@ const DownloadAppSection = () => {
                                                     className={`
                                                             rounded-3xl shadow-2xl transition-all duration-300 object-cover
                                                             ${isCenter
-                                                            ? "w-48 md:w-64 lg:w-80 border-4 border-white/70"
-                                                            : "w-24 md:w-32 lg:w-40 border-2 border-white/50 grayscale-[50%] group-hover:grayscale-0"
+                                                            ? "w-48 sm:w-56 md:w-64 lg:w-80 border-4 border-white/70"
+                                                            : "w-24 sm:w-28 md:w-32 lg:w-40 border-2 border-white/50 grayscale-[50%] group-hover:grayscale-0"
                                                         }
                                                         `}
                                                 />
