@@ -2,12 +2,30 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { adminUpdateContactStatus, adminDeleteContact, adminGetAllContacts } from "../../../store/slices/adminSlice/AdminContactSlice";
 import { toast } from "react-toastify";
-import { MessageSquare } from "lucide-react";
-
+// import { MessageSquare } from "lucide-react";
+import { MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
 const ContactTable = ({ contacts }) => {
     const dispatch = useDispatch();
     const [editingId, setEditingId] = useState(null);
     const [statusForm, setStatusForm] = useState({ status: '', adminRemark: '' });
+
+
+
+    // ✅ Pagination
+    const itemsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(contacts.length / itemsPerPage);
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentContacts = contacts.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+        setEditingId(null); // page change pe edit close
+    };
+
 
     // Format date helper
     const formatDate = (dateString) => {
@@ -70,6 +88,7 @@ const ContactTable = ({ contacts }) => {
                 <table className="w-full whitespace-nowrap text-left">
                     <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">SR No.</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mobile</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Message</th>
@@ -81,10 +100,14 @@ const ContactTable = ({ contacts }) => {
                     </thead>
 
                     <tbody className="divide-y divide-gray-100">
-                        {contacts?.map((contact) => (
+                        {/* {contacts?.map((contact) => ( */}
+                        {currentContacts?.map((contact, index) => (
                             <React.Fragment key={contact._id}>
                                 <tr className="hover:bg-gray-50 transition duration-150">
                                     {/* Name */}
+                                    <td className="px-6 py-4">
+                                        <div className="font-medium text-gray-900"> {startIndex + index + 1}</div>
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div className="font-medium text-gray-900">{contact.name}</div>
                                     </td>
@@ -204,6 +227,40 @@ const ContactTable = ({ contacts }) => {
                     </tbody>
                 </table>
             </div>
+
+
+            {/* ✅ Pagination UI */}
+            {contacts.length > itemsPerPage && (
+                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+                    <p className="text-sm text-gray-600">
+                        Showing <b>{startIndex + 1}</b> to{" "}
+                        <b>{Math.min(startIndex + itemsPerPage, contacts.length)}</b> of{" "}
+                        <b>{contacts.length}</b> results
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className="text-sm font-semibold text-gray-700">
+                            Page {currentPage} / {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {contacts?.length === 0 && (
                 <div className="text-center py-12 text-gray-500">

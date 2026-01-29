@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CategoryTable from "./CategoryTable";
-import Pagination from "../../../components/admin/Pagination";
 import CategoryFormModal from "./CategoryFormModal";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,16 +16,6 @@ const CategoryAdmin = () => {
   // console.log(categories,"ghhhhhhhhhhhhhhhhhhhhhhhhhdf")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-
-  // Pagination Logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCategories = categories?.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil((categories?.length || 0) / itemsPerPage);
 
   useEffect(() => {
     dispatch(adminGetCategories());
@@ -121,17 +110,10 @@ const CategoryAdmin = () => {
       {!loading && !error && (
         <div className="space-y-6">
           <CategoryTable
-            categories={currentCategories}
+            categories={categories}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-          <div className="mt-4 flex justify-end">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
         </div>
       )}
 

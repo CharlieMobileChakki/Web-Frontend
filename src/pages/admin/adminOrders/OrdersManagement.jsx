@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adminGetAllOrders } from "../../../store/slices/adminSlice/AdminOrderSlice";
-import Pagination from "../../../components/admin/Pagination";
 import OrderTable from "./OrderTable";
 
 export const OrdersManagement = () => {
   const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state) => state.adminOrder);
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-
-  // Pagination Logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orders?.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil((orders?.length || 0) / itemsPerPage);
 
   useEffect(() => {
     dispatch(adminGetAllOrders());
@@ -73,14 +62,7 @@ export const OrdersManagement = () => {
 
       {!loading && !error && (
         <div className="space-y-6">
-          <OrderTable orders={currentOrders} />
-          <div className="mt-4 flex justify-end">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+          <OrderTable orders={orders} />
         </div>
       )}
     </div>

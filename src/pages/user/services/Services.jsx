@@ -22,19 +22,29 @@ export const Services = () => {
           <div className="bg-white p-8 shadow-lg rounded-2xl border border-[#e6d9b5] flex flex-col items-center text-center">
             <Truck className="text-[#b08943]" size={50} />
             <h3 className="text-2xl font-semibold mt-6 text-[#7a5410]">
-              Doorstep Grain Grinding
+              Grinding services
             </h3>
             <p className="text-gray-700 mt-4 leading-relaxed">
-              Experience the freshest flour with our unique mobile chakki service. Our EV vans come directly to your home, grinding your chosen grains live in front of you. This ensures maximum freshness, nutrient retention, and complete transparency in the process.
+              Experience the freshness of live grinding with our Mobile Chakki EV van service.
+              We come directly to your home and grind your selected grains in front of you,
+              ensuring complete transparency, hygiene, and purity.
+              <br /><br />
+              This process helps retain natural nutrients and taste, giving you fresh atta
+              that is healthier, chemical-free, and made exactly the way your family likes it.
             </p>
           </div>
           <div className="bg-white p-8 shadow-lg rounded-2xl border border-[#e6d9b5] flex flex-col items-center text-center">
             <ShoppingBag className="text-[#b08943]" size={50} />
             <h3 className="text-2xl font-semibold mt-6 text-[#7a5410]">
-              Organic Food Delivery
+              Door-to-Door
             </h3>
             <p className="text-gray-700 mt-4 leading-relaxed">
-              Beyond grinding, we deliver a wide range of high-quality organic products directly to your door. From chemical-free atta and grains to pure spices and health blends, we ensure every item meets stringent purity and quality standards for a healthier lifestyle.
+              Along with grinding services, we provide doorstep delivery of premium quality
+              organic and natural products. From pure atta, grains, pulses, and spices to
+              healthy blends, every product is carefully sourced and hygienically packed.
+              <br /><br />
+              Our mission is to make healthy living easy for you by delivering trusted
+              grocery essentials on time—fresh, safe, and directly to your door.
             </p>
           </div>
         </section>

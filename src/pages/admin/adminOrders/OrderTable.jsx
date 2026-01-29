@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adminUpdateOrderStatus, adminGetOrderLabel, adminGetAllOrders } from "../../../store/slices/adminSlice/AdminOrderSlice";
 import { toast } from "react-toastify";
-import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail, Download, CheckCircle } from "lucide-react";
+import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail, Download, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrderTable = ({ orders }) => {
     const dispatch = useDispatch();
@@ -16,6 +16,19 @@ const OrderTable = ({ orders }) => {
     });
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+
+    const itemsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(orders.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentOrders = orders.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+    };
 
     // Order status options (matching complete API specification)
     const statusOptions = [
@@ -274,6 +287,7 @@ const OrderTable = ({ orders }) => {
                     <table className="w-full whitespace-nowrap text-left">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
+                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">SR No.</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Items</th>
@@ -286,8 +300,15 @@ const OrderTable = ({ orders }) => {
                         </thead>
 
                         <tbody className="divide-y divide-gray-100">
-                            {orders?.map((order) => (
+                            {currentOrders?.map((order, index) => (
                                 <tr key={order._id} className="hover:bg-gray-50 transition duration-150">
+                                    {/* SR No. */}
+                                    <td className="px-6 py-4">
+                                        <div className="font-mono text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-200 inline-block">
+                                            {startIndex + index + 1}
+                                        </div>
+                                    </td>
+
                                     {/* Order ID */}
                                     <td className="px-6 py-4">
                                         <div className="font-mono text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-200 inline-block">
@@ -364,30 +385,14 @@ const OrderTable = ({ orders }) => {
                                             >
                                                 <Eye size={18} />
                                             </button>
-                                            {/* <button
-                                                onClick={() => handleDownloadLabel(order)}
-                                                disabled={downloadingLabelId === order._id}
-                                                className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
-                                                    ? 'text-green-600 hover:bg-green-50'
-                                                    : 'text-gray-600 hover:bg-gray-50'
-                                                    }`}
-                                                title={downloadedLabels.includes(order._id) ? "Downloaded" : "Download Label"}
-                                            >
-                                                {downloadingLabelId === order._id ? (
-                                                    <div className="animate-spin rounded-full h-[18px] w-[18px] border-b-2 border-green-600"></div>
-                                                ) : downloadedLabels.includes(order._id) ? (
-                                                    <CheckCircle size={18} className="fill-green-600" />
-                                                ) : (
-                                                    <Download size={18} />
-                                                )}
-                                            </button> */}
+
                                             {order.paymentStatus === "SUCCESS" && (
                                                 <button
                                                     onClick={() => handleDownloadLabel(order)}
                                                     disabled={downloadingLabelId === order._id}
                                                     className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
-                                                            ? "text-green-600 hover:bg-green-50"
-                                                            : "text-gray-600 hover:bg-gray-50"
+                                                        ? "text-green-600 hover:bg-green-50"
+                                                        : "text-gray-600 hover:bg-gray-50"
                                                         }`}
                                                     title={
                                                         downloadedLabels.includes(order._id)
@@ -420,6 +425,41 @@ const OrderTable = ({ orders }) => {
                     </div>
                 )}
             </div>
+
+
+            {/* ✅ Pagination UI */}
+            {orders.length > itemsPerPage && (
+                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+                    <p className="text-sm text-gray-600">
+                        Showing <b>{startIndex + 1}</b> to{" "}
+                        <b>{Math.min(startIndex + itemsPerPage, orders.length)}</b> of{" "}
+                        <b>{orders.length}</b> results
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className="text-sm font-semibold text-gray-700">
+                            Page {currentPage} / {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                </div>
+            )}
+
 
             {/* Order Details Modal */}
             {showDetailsModal && selectedOrder && (
