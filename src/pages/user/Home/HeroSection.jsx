@@ -19,6 +19,10 @@ const slides = [
     btnText: "Book Now",
     img: Slider1,
     badge: "100% Pure & Fresh",
+    floatingBadge: {
+      small: "Freshness",
+      big: "Guaranteed",
+    },
   },
   {
     id: 2,
@@ -28,6 +32,10 @@ const slides = [
     btnText: "Book Now",
     img: Slider2,
     badge: "Premium Quality",
+    floatingBadge: {
+      small: "Low GI",
+      big: "Healthy Choice",
+    },
   },
 
   {
@@ -38,6 +46,10 @@ const slides = [
     btnText: "Book Now",
     img: Slider3,
     badge: "Jaipur Only",
+    floatingBadge: {
+      small: "Doorstep Service",
+      big: "Fresh Grinding",
+    },
   },
   {
     id: 4,
@@ -47,6 +59,10 @@ const slides = [
     btnText: "Book Now",
     img: Slider4,
     badge: "Cold Milled Technology",
+    floatingBadge: {
+      small: "Cold Milling",
+      big: "Nutrients Locked",
+    },
   },
 ];
 
@@ -180,8 +196,13 @@ const HeroSection = () => {
                       <Sparkles size={20} />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Freshness</p>
-                      <p className="text-sm font-bold text-gray-900">Guaranteed</p>
+                      <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">
+                        {slides[activeSlide]?.floatingBadge?.small}
+                      </p>
+                      <p className="text-sm font-bold text-gray-900">
+                        {slides[activeSlide]?.floatingBadge?.big}
+                      </p>
+
                     </div>
                   </div>
                 </motion.div>
@@ -205,13 +226,7 @@ const HeroSection = () => {
           ))}
         </div>
 
-        {/* Side Arrows */}
-        {/* <button onClick={prevSlide} className="hidden lg:flex absolute top-1/2 left-4 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full items-center justify-center text-amber-900 shadow-lg border border-amber-100 transition-all hover:scale-110 z-20">
-          <ChevronLeft size={24} />
-        </button>
-        <button onClick={nextSlide} className="hidden lg:flex absolute top-1/2 right-4 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full items-center justify-center text-amber-900 shadow-lg border border-amber-100 transition-all hover:scale-110 z-20">
-          <ChevronRight size={24} />
-        </button> */}
+
 
       </div>
     </div>

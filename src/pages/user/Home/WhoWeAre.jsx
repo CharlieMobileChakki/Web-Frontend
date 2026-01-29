@@ -15,9 +15,12 @@ const WhoWeAre = () => {
 
         {/* Left Content */}
         <div className="">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 font-semibold text-sm mb-6">
-            Who We Are
-          </div>
+          {/* <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 font-semibold text-sm mb-6">
+
+            MobileChakki – <span className="text-[#C6363E] relative"> Taza </span>
+            Aata, Ghar Tak
+
+          </div> */}
 
           <h2 className="text-gray-900 leading-tight mb-6">
             MobileChakki – <span className="text-[#C6363E] relative">

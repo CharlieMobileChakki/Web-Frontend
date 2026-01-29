@@ -1,11 +1,6 @@
 import React from "react";
-import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
 
-// Payment Method Logos
-import Visa from "../../assets/footer/Visa.png";
-import MasterCard from "../../assets/footer/Mastercard.svg";
-import PayPal from "../../assets/footer/PayPal.svg";
-import paytm from "../../assets/footer/paytm.png";
 import Bg from "../../assets/Banner/S1.png";
 
 
@@ -54,9 +49,10 @@ export default function Footer() {
 
   // Social Media Links
   const socialLinks = [
-    { icon: <FaFacebook className="text-black hover:text-gray-700" />, url: "#" },
-    { icon: <FaInstagram className="text-black hover:text-gray-700" />, url: "#" },
-    { icon: <FaTwitter className="text-black hover:text-gray-700" />, url: "#" },
+    { icon: <FaFacebook className="text-black hover:text-gray-700" />, url: "https://www.facebook.com/mobilechakki" },
+    { icon: <FaInstagram className="text-black hover:text-gray-700" />, url: "https://www.instagram.com/mobilechakki" },
+    { icon: <FaTwitter className="text-black hover:text-gray-700" />, url: "https://www.twitter.com/mobilechakki" },
+    { icon: <FaLinkedin className="text-black hover:text-gray-700" />, url: "https://www.linkedin.com/company/theaatawala/posts" },
   ];
 
   return (
@@ -108,14 +104,7 @@ export default function Footer() {
         {/* Copyright */}
         <span>© {new Date().getFullYear()} Mobile Chakki. All Rights Reserved.</span>
 
-        {/* Payment Methods */}
-        <div className="flex items-center gap-4">
-          <span className="hidden md:inline text-gray-900">We Accept:</span>
-          <img src={Visa} alt="Visa" className="h-4 w-auto" />
-          <img src={paytm} alt="paytm" className="h-10 w-auto" />
-          <img src={PayPal} alt="PayPal" className="h-5 w-auto" />
-          <img src={MasterCard} alt="MasterCard" className="h-6 w-auto" />
-        </div>
+
       </div>
     </footer>
   );

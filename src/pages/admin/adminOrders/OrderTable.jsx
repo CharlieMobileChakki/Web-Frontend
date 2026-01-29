@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adminUpdateOrderStatus, adminGetOrderLabel } from "../../../store/slices/adminSlice/AdminOrderSlice";
+import { adminUpdateOrderStatus, adminGetOrderLabel, adminGetAllOrders } from "../../../store/slices/adminSlice/AdminOrderSlice";
 import { toast } from "react-toastify";
 import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail, Download, CheckCircle } from "lucide-react";
 
@@ -53,6 +53,7 @@ const OrderTable = ({ orders }) => {
         try {
             const result = await dispatch(adminUpdateOrderStatus({ orderId, status: newStatus })).unwrap();
             toast.success(result.message || "Order status updated successfully!");
+            dispatch(adminGetAllOrders());
         } catch (error) {
             toast.error(error || "Failed to update order status");
         } finally {
@@ -363,7 +364,7 @@ const OrderTable = ({ orders }) => {
                                             >
                                                 <Eye size={18} />
                                             </button>
-                                            <button
+                                            {/* <button
                                                 onClick={() => handleDownloadLabel(order)}
                                                 disabled={downloadingLabelId === order._id}
                                                 className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
@@ -379,7 +380,31 @@ const OrderTable = ({ orders }) => {
                                                 ) : (
                                                     <Download size={18} />
                                                 )}
-                                            </button>
+                                            </button> */}
+                                            {order.paymentStatus === "SUCCESS" && (
+                                                <button
+                                                    onClick={() => handleDownloadLabel(order)}
+                                                    disabled={downloadingLabelId === order._id}
+                                                    className={`p-1.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${downloadedLabels.includes(order._id)
+                                                            ? "text-green-600 hover:bg-green-50"
+                                                            : "text-gray-600 hover:bg-gray-50"
+                                                        }`}
+                                                    title={
+                                                        downloadedLabels.includes(order._id)
+                                                            ? "Downloaded"
+                                                            : "Download Label"
+                                                    }
+                                                >
+                                                    {downloadingLabelId === order._id ? (
+                                                        <div className="animate-spin rounded-full h-[18px] w-[18px] border-b-2 border-green-600"></div>
+                                                    ) : downloadedLabels.includes(order._id) ? (
+                                                        <CheckCircle size={18} className="fill-green-600" />
+                                                    ) : (
+                                                        <Download size={18} />
+                                                    )}
+                                                </button>
+                                            )}
+
                                         </div>
                                     </td>
                                 </tr>
