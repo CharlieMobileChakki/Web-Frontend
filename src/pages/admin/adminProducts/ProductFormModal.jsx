@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import UploadToCloudinary from "../../../components/admin/UploadToCloudinary";
+import { adminProductSchema } from "../../../utils/validations/ValidationSchemas";
 
 const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => {
 
@@ -21,6 +22,8 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
             }
         ],
     });
+
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (editData) {
@@ -165,16 +168,33 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
             ],
         });
     };
-
     const handleSubmit = async () => {
         try {
+            setErrors({});
+            await adminProductSchema.validate(form, { abortEarly: false });
             await onSave(form);
             resetForm();
         } catch (err) {
-            console.log("Save failed", err);
+            if (err.inner) {
+                const validationErrors = {};
+                err.inner.forEach(e => {
+                    if (e.path) {
+                        // Check if path is like variants[0].quantity
+                        const pathMatch = e.path.match(/variants\[(\d+)\]\.(.+)/);
+                        if (pathMatch) {
+                            const index = pathMatch[1];
+                            const field = pathMatch[2];
+                            validationErrors[`variants_${index}_${field}`] = e.message;
+                        } else {
+                            validationErrors[e.path] = e.message;
+                        }
+                    }
+                });
+                setErrors(validationErrors);
+            }
+            console.log("Validation failed", err);
         }
     };
-
 
 
     return (
@@ -206,6 +226,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
                                     placeholder="Enter product name"
                                 />
+                                {errors.name && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
@@ -220,6 +243,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                         <option key={cat._id} value={cat._id}>{cat.name}</option>
                                     ))}
                                 </select>
+                                {errors.category && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -232,6 +258,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
+
                             </div>
                             <div className="flex items-center mt-2 md:mt-6 lg:mt-8 md:col-span-3 lg:col-span-1">
                                 <label className="flex items-center cursor-pointer relative">
@@ -242,6 +269,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                         onChange={handleChange}
                                         className="sr-only peer"
                                     />
+                                    {errors.isFeatured && (
+                                        <p className="text-red-500 text-xs mt-1">{errors.isFeatured}</p>
+                                    )}
                                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                     <span className="ml-3 text-sm font-medium text-gray-900">Featured Product</span>
                                 </label>
@@ -259,6 +289,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                 onChange={handleProductImageUpload}
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             />
+                            {errors.images && (
+                                <p className="text-red-500 text-xs mt-1">{errors.images}</p>
+                            )}
                             <p className="text-gray-500 text-sm">Drag & drop images here or <span className="text-blue-600 font-medium">browse</span></p>
                         </div>
 
@@ -276,6 +309,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                         </button>
                                     </div>
                                 ))}
+                                {errors.images && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.images}</p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -320,6 +356,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                                 placeholder="e.g. 500"
                                             />
+                                            {errors[`variants_${index}_quantity`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_quantity`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-1">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Unit</label>
@@ -330,6 +369,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                                 placeholder="g, kg"
                                             />
+                                            {errors[`variants_${index}_nameSuffix`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_nameSuffix`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-1">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Stock</label>
@@ -340,6 +382,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                                 placeholder="0"
                                             />
+                                            {errors[`variants_${index}_stock`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_stock`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-1">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Price (MRP)</label>
@@ -349,6 +394,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                             />
+                                            {errors[`variants_${index}_price`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_price`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-1 md:col-span-2 lg:col-span-1">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Selling Price</label>
@@ -358,6 +406,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 onChange={(e) => handleVariantChange(index, 'sellingPrice', e.target.value)}
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                             />
+                                            {errors[`variants_${index}_sellingPrice`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_sellingPrice`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-1 md:col-span-2 lg:col-span-1">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Purchase Price</label>
@@ -367,6 +418,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 onChange={(e) => handleVariantChange(index, 'purchasePrice', e.target.value)}
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                             />
+                                            {errors[`variants_${index}_purchasePrice`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_purchasePrice`]}</p>
+                                            )}
                                         </div>
                                         <div className="col-span-2 md:col-span-4 lg:col-span-6">
                                             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
@@ -377,6 +431,9 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                                 className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
                                                 placeholder="Variant details..."
                                             />
+                                            {errors[`variants_${index}_description`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_description`]}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

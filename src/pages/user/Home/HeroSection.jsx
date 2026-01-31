@@ -6,6 +6,7 @@ import Slider2 from "../../../assets/Banner/b2.jpg";
 import Slider3 from "../../../assets/Banner/b1.jpg";
 import Slider4 from "../../../assets/Banner/b4.png";
 import bg1 from "../../../assets/Banner/S1.jpeg";
+import bg2 from "../../../assets/Banner/S1.png";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Star, ArrowRight } from "lucide-react";
 
@@ -83,10 +84,15 @@ const HeroSection = () => {
     <div
       className="relative w-full overflow-hidden bg-[#FDFBF7] font-sans selection:bg-amber-100 selection:text-amber-900"
       style={{
-        background: `url(${bg1}) no-repeat center center / cover`,
+        background: `url(${bg2}) no-repeat center center / cover`, // default: small screens
       }}
     >
-
+      <div
+        className="hidden md:block absolute inset-0"
+        style={{
+          background: `url(${bg1}) no-repeat center center / cover`,
+        }}
+      />
 
       {/* Background Texture & Gradients */}
       <div className="absolute inset-0 opacity-40 pointer-events-none">
