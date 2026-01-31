@@ -7,9 +7,9 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-  
+
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
-   
+
 const CategorySalesPieChart = ({ data }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
@@ -25,7 +25,7 @@ const CategorySalesPieChart = ({ data }) => {
             dataKey="value"
           >
             {data.map((entry, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
+              <Cell key={index} fill={COLORS[index % COLORS.length || 0]} />
             ))}
           </Pie>
           <Tooltip />

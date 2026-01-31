@@ -5,7 +5,7 @@ import Slider1 from "../../../assets/Banner/b3.jpg";
 import Slider2 from "../../../assets/Banner/b2.jpg";
 import Slider3 from "../../../assets/Banner/b1.jpg";
 import Slider4 from "../../../assets/Banner/b4.png";
-import bg1 from "../../../assets/Banner/S1.png";
+import bg1 from "../../../assets/Banner/S1.jpeg";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Star, ArrowRight } from "lucide-react";
 

@@ -37,7 +37,7 @@ const HeaderAdmin = ({ isOpen, isMobile, setIsOpen }) => {
   };
 
   const breadcrumbs = generateBreadcrumbs();
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter(n => n.unread).length || 0;
 
   // Close dropdowns when clicking outside
   useEffect(() => {
