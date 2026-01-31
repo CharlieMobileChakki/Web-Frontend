@@ -3,7 +3,8 @@ import { useDispatch } from "react-redux";
 import { adminUpdateContactStatus, adminDeleteContact, adminGetAllContacts } from "../../../store/slices/adminSlice/AdminContactSlice";
 import { toast } from "react-toastify";
 // import { MessageSquare } from "lucide-react";
-import { MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare } from "lucide-react";
+import Pagination from "../../../components/admin/Pagination";
 const ContactTable = ({ contacts }) => {
     const dispatch = useDispatch();
     const [editingId, setEditingId] = useState(null);
@@ -230,37 +231,13 @@ const ContactTable = ({ contacts }) => {
 
 
             {/* ✅ Pagination UI */}
-            {contacts.length > itemsPerPage && (
-                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                    <p className="text-sm text-gray-600">
-                        Showing <b>{startIndex + 1}</b> to{" "}
-                        <b>{Math.min(startIndex + itemsPerPage, contacts.length)}</b> of{" "}
-                        <b>{contacts.length}</b> results
-                    </p>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-
-                        <span className="text-sm font-semibold text-gray-700">
-                            Page {currentPage} / {totalPages}
-                        </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={contacts.length || 0}
+                itemsPerPage={itemsPerPage}
+            />
 
             {contacts?.length === 0 && (
                 <div className="text-center py-12 text-gray-500">

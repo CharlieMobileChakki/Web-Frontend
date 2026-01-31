@@ -1,34 +1,55 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, PackageOpen } from "lucide-react";
+import Pagination from "../../../components/admin/Pagination";
 
-const ProductTable = ({ products, categories, onEdit, onDelete }) => {
-    const [expandedNameId, setExpandedNameId] = useState(null);
+const ProductTable = ({ products = [], categories = [], onEdit, onDelete }) => {
     const nameRefs = useRef({});
     const [isNameOverflow, setIsNameOverflow] = useState({});
     const [expandedVariants, setExpandedVariants] = useState({});
-
     const getCategoryName = (id) => {
         const cat = categories?.find((c) => c._id === id);
         return cat ? cat.name : "Unknown";
     };
 
-
-
     // ✅ Pagination
     const itemsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil((products?.length || 0) / itemsPerPage) || 1;
 
-    const totalPages = Math.ceil(products.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+    const currentProducts = (products || []).slice(startIndex, startIndex + itemsPerPage);
+
 
     const handlePageChange = (page) => {
         if (page < 1 || page > totalPages) return;
         setCurrentPage(page);
-        setEditingId(null); // page change pe edit close
     };
 
+
+
+    // products change hone par page reset
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [products]);
+
+    useEffect(() => {
+        const checkOverflow = () => {
+            const nameOverflowStatus = {};
+
+            currentProducts.forEach((p) => {
+                if (!p || !p._id) return;
+                const nameEl = nameRefs.current[p._id];
+                if (nameEl)
+                    nameOverflowStatus[p._id] =
+                        nameEl.scrollHeight > nameEl.clientHeight;
+            });
+
+            setIsNameOverflow(nameOverflowStatus);
+        };
+
+        checkOverflow();
+    }, [currentPage]);
 
     useEffect(() => {
         const checkOverflow = () => {
@@ -247,42 +268,13 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
             </div>
 
             {/* ✅ Pagination UI */}
-            {products.length > itemsPerPage && (
-                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                    <p className="text-sm text-gray-600">
-                        Showing <b>{startIndex + 1}</b> to{" "}
-                        <b>{Math.min(startIndex + itemsPerPage, products.length)}</b> of{" "}
-                        <b>{products.length}</b> results
-                    </p>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-
-                        <span className="text-sm font-semibold text-gray-700">
-                            Page {currentPage} / {totalPages}
-                        </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                        >
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
-
-
-            <div>
-                ....
-            </div>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={products?.length || 0}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+            />
 
 
 

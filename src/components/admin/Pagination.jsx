@@ -1,62 +1,48 @@
 import React from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    if (totalPages <= 1) return null;
+const Pagination = ({
+    currentPage = 1,
+    totalPages = 1,
+    totalItems = 0,
+    itemsPerPage = 10,
+    onPageChange,
+}) => {
+    if (totalItems <= itemsPerPage) return null;
 
-    const getPageNumbers = () => {
-        const pages = [];
-        const maxVisiblePages = 5;
-
-        let start = Math.max(1, currentPage - 2);
-        let end = Math.min(totalPages, start + maxVisiblePages - 1);
-
-        if (end - start < maxVisiblePages - 1) {
-            start = Math.max(1, end - maxVisiblePages + 1);
-        }
-
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
-        return pages;
-    };
+    const startIndex = (currentPage - 1) * itemsPerPage;
 
     return (
-        <div className="flex items-center justify-center space-x-2 mt-6">
-            <button
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`p-2 rounded-md border ${currentPage === 1
-                        ? "text-gray-300 border-gray-200 cursor-not-allowed"
-                        : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-blue-600 transition"
-                    }`}
-            >
-                <FaChevronLeft size={14} />
-            </button>
+        <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+            {/* Left: Showing text */}
+            <p className="text-sm text-gray-600">
+                Showing <b>{startIndex + 1}</b> to{" "}
+                <b>{Math.min(startIndex + itemsPerPage, totalItems)}</b> of{" "}
+                <b>{totalItems}</b> results
+            </p>
 
-            {getPageNumbers().map((page) => (
+            {/* Right: Pagination */}
+            <div className="flex items-center gap-2">
                 <button
-                    key={page}
-                    onClick={() => onPageChange(page)}
-                    className={`px-3 py-1 rounded-md border text-sm font-medium transition ${currentPage === page
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-blue-600"
-                        }`}
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {page}
+                    <ChevronLeft size={18} />
                 </button>
-            ))}
 
-            <button
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`p-2 rounded-md border ${currentPage === totalPages
-                        ? "text-gray-300 border-gray-200 cursor-not-allowed"
-                        : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-blue-600 transition"
-                    }`}
-            >
-                <FaChevronRight size={14} />
-            </button>
+                <span className="text-sm font-semibold text-gray-700">
+                    Page {currentPage} / {totalPages}
+                </span>
+
+                <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <ChevronRight size={18} />
+                </button>
+            </div>
         </div>
     );
 };

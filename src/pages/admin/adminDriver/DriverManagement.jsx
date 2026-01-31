@@ -100,6 +100,9 @@ const DriverManagement = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  S.No
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -118,8 +121,13 @@ const DriverManagement = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredDrivers.length > 0 ? (
-                filteredDrivers.map((driver) => (
+                filteredDrivers.map((driver, index) => (
                   <tr key={driver._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {index + 1}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {driver.driverName}

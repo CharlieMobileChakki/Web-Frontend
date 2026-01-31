@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Users } from "lucide-react";
+import Pagination from "../../../components/admin/Pagination";
 
 const UserTable = ({ users, onView }) => {
     // Format date helper
+
+    // ✅ Pagination
+    const itemsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil((users?.length || 0) / itemsPerPage) || 1;
+
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentUsers = (users || []).slice(startIndex, startIndex + itemsPerPage);
+
+
+    const handlePageChange = (page) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+    };
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-IN', {
@@ -48,6 +65,7 @@ const UserTable = ({ users, onView }) => {
                 <table className="w-full whitespace-nowrap text-left">
                     <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">S.No</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mobile</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Role</th>
@@ -59,9 +77,10 @@ const UserTable = ({ users, onView }) => {
                     </thead>
 
                     <tbody className="divide-y divide-gray-100">
-                        {users?.map((user) => (
+                        {currentUsers?.map((user, index) => (
                             <tr key={user._id} className="hover:bg-gray-50 transition duration-150">
                                 {/* Name */}
+                                <td className="px-6 py-4">{startIndex + index + 1}</td>
                                 <td className="px-6 py-4">
                                     <div className="font-medium text-gray-900">{user.name}</div>
                                 </td>
@@ -116,6 +135,16 @@ const UserTable = ({ users, onView }) => {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={users?.length || 0}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+            />
+
+
 
             {users?.length === 0 && (
                 <div className="text-center py-12 text-gray-500">

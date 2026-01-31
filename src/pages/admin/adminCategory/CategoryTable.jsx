@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { FolderOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import { FolderOpen } from "lucide-react";
+import Pagination from "../../../components/admin/Pagination";
 
 const CategoryTable = ({
     categories,
@@ -130,37 +131,13 @@ const CategoryTable = ({
 
 
             {/* ✅ Pagination UI */}
-            {categories.length > itemsPerPage && (
-                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                    <p className="text-sm text-gray-600">
-                        Showing <b>{startIndex + 1}</b> to{" "}
-                        <b>{Math.min(startIndex + itemsPerPage, categories.length)}</b> of{" "}
-                        <b>{categories.length}</b> results
-                    </p>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-
-                        <span className="text-sm font-semibold text-gray-700">
-                            Page {currentPage} / {totalPages}
-                        </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={categories?.length || 0}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+            />
 
 
 

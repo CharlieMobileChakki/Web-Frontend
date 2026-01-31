@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import Pagination from "../../../components/admin/Pagination";
 
 const AdminTable = ({ admins, onEdit, onDelete }) => {
     // Pagination State
@@ -111,37 +112,13 @@ const AdminTable = ({ admins, onEdit, onDelete }) => {
             </div>
 
             {/* Pagination UI */}
-            {admins?.length > itemsPerPage && (
-                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                    <p className="text-sm text-gray-600">
-                        Showing <b>{startIndex + 1}</b> to{" "}
-                        <b>{Math.min(startIndex + itemsPerPage, admins.length)}</b> of{" "}
-                        <b>{admins.length}</b> results
-                    </p>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <FaChevronLeft size={14} />
-                        </button>
-
-                        <span className="text-sm font-semibold text-gray-700">
-                            Page {currentPage} / {totalPages}
-                        </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <FaChevronRight size={14} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={admins.length}
+                itemsPerPage={itemsPerPage}
+            />
         </div>
     );
 };

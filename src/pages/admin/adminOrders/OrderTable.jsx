@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { adminUpdateOrderStatus, adminGetOrderLabel, adminGetAllOrders } from "../../../store/slices/adminSlice/AdminOrderSlice";
 import { toast } from "react-toastify";
 import { Eye, X, Package, User, MapPin, CreditCard, Calendar, Phone, Mail, Download, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import Pagination from "../../../components/admin/Pagination";
 
 const OrderTable = ({ orders }) => {
     const dispatch = useDispatch();
@@ -428,37 +429,13 @@ const OrderTable = ({ orders }) => {
 
 
             {/* ✅ Pagination UI */}
-            {orders.length > itemsPerPage && (
-                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                    <p className="text-sm text-gray-600">
-                        Showing <b>{startIndex + 1}</b> to{" "}
-                        <b>{Math.min(startIndex + itemsPerPage, orders.length)}</b> of{" "}
-                        <b>{orders.length}</b> results
-                    </p>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-
-                        <span className="text-sm font-semibold text-gray-700">
-                            Page {currentPage} / {totalPages}
-                        </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={orders.length}
+                itemsPerPage={itemsPerPage}
+            />
 
 
             {/* Order Details Modal */}

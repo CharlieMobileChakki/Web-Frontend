@@ -8,7 +8,6 @@ import {
     adminDeleteProduct,
 } from "../../../store/slices/adminSlice/AdminProductSlice";
 
-import Pagination from "../../../components/admin/Pagination";
 import ProductTable from "./ProductTable";
 import ProductFormModal from "./ProductFormModal";
 import { userproduct } from "../../../store/slices/ProductSlice";
@@ -25,8 +24,6 @@ export const ProductManagement = () => {
     const [editData, setEditData] = useState(null);
 
     // Pagination State
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
 
     useEffect(() => {
         dispatch(userproduct());
@@ -54,12 +51,6 @@ export const ProductManagement = () => {
         ...p,
         categoryName: getCategoryName(p.category),
     }));
-
-    // Pagination Logic
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentProducts = productsWithCategory?.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil((productsWithCategory?.length || 0) / itemsPerPage);
 
     const handleAdd = () => {
         setEditData(null);
@@ -166,19 +157,13 @@ export const ProductManagement = () => {
                     {/* Stats or summary could go here if needed */}
 
                     <ProductTable
-                        products={currentProducts}
+                        products={productsWithCategory}
                         categories={categories}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                     />
 
-                    <div className="mt-4 flex justify-end">
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    </div>
+
                 </div>
             )}
 

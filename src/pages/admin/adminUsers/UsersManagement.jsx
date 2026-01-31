@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adminGetAllUsers, adminGetAllAddresses } from "../../../store/slices/adminSlice/AdminUserSlice";
-import Pagination from "../../../components/admin/Pagination";
+
 import UserTable from "./UserTable";
 import { FaUser, FaMapMarkerAlt, FaStar, FaTimes, FaPhone } from "react-icons/fa";
 
@@ -11,15 +11,6 @@ export const UsersManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-
-  // Pagination Logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentUsers = users?.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil((users?.length || 0) / itemsPerPage);
 
   useEffect(() => {
     dispatch(adminGetAllUsers());
@@ -82,14 +73,8 @@ export const UsersManagement = () => {
 
       {!loading && !error && (
         <div className="space-y-6">
-          <UserTable users={currentUsers} allAddresses={addresses} onView={handleViewDetails} />
-          <div className="mt-4 flex justify-end">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+          <UserTable users={users} allAddresses={addresses} onView={handleViewDetails} />
+
         </div>
       )}
 
