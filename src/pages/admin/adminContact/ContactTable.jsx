@@ -175,7 +175,7 @@ const ContactTable = ({ contacts }) => {
                                 {/* Edit Form Row */}
                                 {editingId === contact._id && (
                                     <tr className="bg-blue-50">
-                                        <td colSpan="7" className="p-6 border-t border-gray-200">
+                                        <td colSpan="8" className="p-6 border-t border-gray-200">
                                             <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
                                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Contact Status</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

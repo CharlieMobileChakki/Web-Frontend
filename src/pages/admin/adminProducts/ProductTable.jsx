@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight, PackageOpen } from "lucide-react";
 
 const ProductTable = ({ products, categories, onEdit, onDelete }) => {
     const [expandedNameId, setExpandedNameId] = useState(null);
@@ -12,27 +13,29 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
     };
 
 
-    // useEffect(() => {
-    //     const checkOverflow = () => {
-    //         const nameOverflowStatus = {};
 
-    //         products?.forEach((p) => {
-    //             const nameEl = nameRefs.current[p._id];
-    //             if (nameEl) nameOverflowStatus[p._id] = nameEl.scrollHeight > nameEl.clientHeight;
-    //         });
+    // ✅ Pagination
+    const itemsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
 
-    //         setIsNameOverflow(nameOverflowStatus);
-    //     };
+    const totalPages = Math.ceil(products.length / itemsPerPage);
 
-    //     checkOverflow();
-    // }, [products]);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+        setEditingId(null); // page change pe edit close
+    };
+
 
     useEffect(() => {
         const checkOverflow = () => {
             const nameOverflowStatus = {};
 
-            if (Array.isArray(products)) {
-                products.forEach((p) => {
+            if (Array.isArray(currentProducts)) {
+                currentProducts.forEach((p) => {
                     if (!p || !p._id) return;
                     const nameEl = nameRefs.current[p._id];
                     if (nameEl) nameOverflowStatus[p._id] = nameEl.scrollHeight > nameEl.clientHeight;
@@ -87,6 +90,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
                 <table className="w-full whitespace-nowrap text-left">
                     <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">SR NO.</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Variants</th>
@@ -98,11 +102,16 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
                     </thead>
 
                     <tbody className="divide-y divide-gray-100">
-                        {products?.map((p) => {
+                        {currentProducts.map((p, index) => {
                             if (!p || !p._id) return null;
                             return (
                                 <React.Fragment key={p._id}>
                                     <tr className="hover:bg-gray-50 transition duration-150">
+                                        {/* SR No */}
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                            {startIndex + index + 1}
+                                        </td>
+
                                         {/* Product: Image + Name */}
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
@@ -195,7 +204,7 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
                                     {/* Expanded Variants Row */}
                                     {expandedVariants[p._id] && (
                                         <tr className="bg-gray-50/50">
-                                            <td colSpan="7" className="p-4 border-t border-gray-100 shadow-inner">
+                                            <td colSpan="8" className="p-4 border-t border-gray-100 shadow-inner">
                                                 <div className="pl-14">
                                                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Variants Breakdown</h4>
                                                     <div className="bg-white border rounded-lg overflow-hidden">
@@ -236,6 +245,46 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
                     </tbody>
                 </table>
             </div>
+
+            {/* ✅ Pagination UI */}
+            {products.length > itemsPerPage && (
+                <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+                    <p className="text-sm text-gray-600">
+                        Showing <b>{startIndex + 1}</b> to{" "}
+                        <b>{Math.min(startIndex + itemsPerPage, products.length)}</b> of{" "}
+                        <b>{products.length}</b> results
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className="text-sm font-semibold text-gray-700">
+                            Page {currentPage} / {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {products.length === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                    <PackageOpen size={48} className="mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">No products found</p>
+                </div>
+            )}
         </div>
     );
 };
