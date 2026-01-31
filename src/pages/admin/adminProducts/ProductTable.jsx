@@ -279,6 +279,13 @@ const ProductTable = ({ products, categories, onEdit, onDelete }) => {
                 </div>
             )}
 
+
+            <div>
+                ....
+            </div>
+
+
+
             {products.length === 0 && (
                 <div className="text-center py-12 text-gray-500">
                     <PackageOpen size={48} className="mx-auto mb-3 text-gray-300" />
