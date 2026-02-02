@@ -9,7 +9,7 @@ import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../stor
 import { toast } from "react-toastify";
 import { checkAuth } from "../../utils/checkAuth";
 import MilletManImg from "../../assets/blog/10.jpeg";
-
+import { SiAmazon, SiFlipkart } from "react-icons/si";
 const ProductDetailCard = ({
     id,
     images = ["https://via.placeholder.com/400"],
@@ -538,6 +538,71 @@ const ProductDetailCard = ({
                                 >
                                     Read More →
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* E-commerce Platform Links Section - COD Available */}
+                        <div className="mt-6 p-5 bg-gradient-to-br from-blue-50 to-orange-50 rounded-2xl border border-gray-200 shadow-sm">
+                            <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <span className="text-xl">🛒</span>
+                                Also Available On (COD Available)
+                            </h3>
+
+                            <div className="flex flex-col gap-3">
+                                {/* Flipkart Link */}
+                                <a
+                                    href="https://www.flipkart.com/food-products/flour-and-sooji/mobile-chakki~brand/pr?sid=eat,e6o&marketplace=FLIPKART&otracker=product_breadCrumbs_MOBILE+CHAKKI+Flour+and+Sooji"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-between p-3 bg-white rounded-xl border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all duration-300 group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                                            <SiFlipkart className="w-7 h-7" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900 text-sm">Flipkart</p>
+                                            <p className="text-xs text-green-600 font-semibold">✓ COD Available</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-semibold text-blue-600 group-hover:text-blue-700">View Product</span>
+                                        <svg className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </a>
+
+                                {/* Amazon Link */}
+                                <a
+                                    href="https://www.amazon.in/stores/MobileChakki/page/5C11B840-BBE5-4281-B887-8B395C05BD06?lp_asin=B0FB3MD233&ref_=ast_bln&store_ref=bl_ast_dp_brandLogo_sto"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-200 hover:border-orange-400 hover:shadow-md transition-all duration-300 group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-[#FF9900] rounded-lg flex items-center justify-center">
+                                            <SiAmazon className="w-7 h-7" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900 text-sm">Amazon</p>
+                                            <p className="text-xs text-green-600 font-semibold">✓ COD Available</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-semibold text-orange-600 group-hover:text-orange-700">View Product</span>
+                                        <svg className="w-4 h-4 text-orange-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </a>
+                            </div>
+
+                            {/* Info Note */}
+                            <div className="mt-3 p-2 bg-green-50 rounded-lg border border-green-200">
+                                <p className="text-xs text-green-800 text-center font-medium">
+                                    💡 Cash on Delivery available on both platforms
+                                </p>
                             </div>
                         </div>
                     </div>
