@@ -67,6 +67,18 @@ const Endpoints = {
           ADMIN_GET_BOOKING_BY_ID: (id) => `/api/admin/booking/${id}`, // GET booking details
           ADMIN_UPDATE_BOOKING_STATUS: (id) => `/api/admin/booking/${id}/status`, // PUT update status
 
+          // ================= BOOKING CATEGORY MANAGEMENT =================
+          ADMIN_CREATE_BOOKING_CATEGORY: '/api/admin/booking/create-booking-category',  // POST create booking category
+          ADMIN_GET_BOOKING_CATEGORIES: '/api/admin/booking/booking-categories',        // GET all booking categories
+          ADMIN_UPDATE_BOOKING_CATEGORY: (id) => `/api/admin/booking/update-booking-category/${id}`, // PATCH update booking category
+          ADMIN_DELETE_BOOKING_CATEGORY: (id) => `/api/admin/booking/delete-booking-category/${id}`, // DELETE booking category
+
+          // ================= BOOKING PRODUCT MANAGEMENT =================
+          ADMIN_CREATE_BOOKING_PRODUCT: '/api/admin/booking/create-booking-product',    // POST create booking product
+          ADMIN_UPDATE_BOOKING_PRODUCT: (id) => `/api/admin/booking/update-booking-product/${id}`, // PATCH update booking product
+          ADMIN_GET_BOOKING_PRODUCTS: '/api/admin/booking/get-all-booking-products', // GET all booking products
+          ADMIN_DELETE_BOOKING_PRODUCT: (id) => `/api/admin/booking/delete-booking-product/${id}`, // DELETE booking product
+
           // ================= STOCK MANAGEMENT =================
           ADMIN_GET_STOCK_STATS: '/api/admin/stock/analytics/stats',    // GET stock stats
           ADMIN_GET_LOW_STOCK: '/api/admin/stock/analytics/low-stock',  // GET low stock products

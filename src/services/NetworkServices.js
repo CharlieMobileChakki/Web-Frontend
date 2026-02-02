@@ -227,6 +227,50 @@ export const AdminUpdateBookingStatus = async (id, status) => {
   return await api.put(Endpoints.Admin.ADMIN_UPDATE_BOOKING_STATUS(id), { status });
 };
 
+// ================= BOOKING CATEGORY MANAGEMENT =================
+
+// CREATE BOOKING CATEGORY
+export const AdminCreateBookingCategory = async (data) => {
+  return await api.post(Endpoints.Admin.ADMIN_CREATE_BOOKING_CATEGORY, data);
+};
+
+// GET ALL BOOKING CATEGORIES
+export const AdminGetBookingCategories = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_BOOKING_CATEGORIES);
+};
+
+// UPDATE BOOKING CATEGORY
+export const AdminUpdateBookingCategory = async (id, data) => {
+  return await api.patch(Endpoints.Admin.ADMIN_UPDATE_BOOKING_CATEGORY(id), data);
+};
+
+// DELETE BOOKING CATEGORY
+export const AdminDeleteBookingCategory = async (id) => {
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_BOOKING_CATEGORY(id));
+};
+
+// GET ALL BOOKING PRODUCTS
+export const AdminGetBookingProducts = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_BOOKING_PRODUCTS);
+};
+
+// ================= BOOKING PRODUCT MANAGEMENT =================
+
+// CREATE BOOKING PRODUCT
+export const AdminCreateBookingProduct = async (data) => {
+  return await api.post(Endpoints.Admin.ADMIN_CREATE_BOOKING_PRODUCT, data);
+};
+
+// UPDATE BOOKING PRODUCT
+export const AdminUpdateBookingProduct = async (id, data) => {
+  return await api.patch(Endpoints.Admin.ADMIN_UPDATE_BOOKING_PRODUCT(id), data);
+};
+
+// DELETE BOOKING PRODUCT
+export const AdminDeleteBookingProduct = async (id) => {
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_BOOKING_PRODUCT(id));
+};
+
 // ================= ADMIN ADDRESS MANAGEMENT =================
 
 // GET ALL ADDRESSES
