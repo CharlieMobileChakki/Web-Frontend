@@ -228,13 +228,13 @@ const ProductDetailCard = ({
 
     return (
         <div className="  mx-auto  ">
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-xl overflow-visible">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 p-4 md:p-10">
 
-                    {/* LEFT SIDE: IMAGE GALLERY */}
-                    <div className="flex flex-col gap-4 md:gap-6">
+                    {/* LEFT SIDE: IMAGE GALLERY - STICKY */}
+                    <div className="flex flex-col gap-4 md:gap-6 lg:sticky lg:top-20 lg:self-start lg:h-fit">
                         {/* Main Image */}
-                        <div className="relative bg-white border border-gray-100 rounded-3xl p-6 md:p-10 group cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 z-20">
+                        <div className="relative bg-white border border-gray-100 rounded-3xl p-6 md:p-2 group cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 z-20">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -330,7 +330,7 @@ const ProductDetailCard = ({
 
 
                         {/* Thumbnail Gallery Slider */}
-                        <div className="relative group/thumbs">
+                        <div className="relative group/thumbs ">
                             {/* Scroll Left Button */}
                             <button
                                 onClick={() => {
@@ -344,7 +344,7 @@ const ProductDetailCard = ({
                             {/* Thumbnails Container */}
                             <div
                                 id="thumb-scroll"
-                                className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-1"
+                                className="flex gap-2 pt-1 md:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-1"
                             >
                                 {images.map((img, idx) => (
                                     <button
@@ -378,6 +378,31 @@ const ProductDetailCard = ({
 
                         {/* Spacer for fixed bottom buttons on mobile */}
                         <div className="h-16 md:hidden"></div>
+
+
+
+                        {/* Compact Millet Man Section */}
+                        <div className="mt-6 p-4 bg-orange-50/50 rounded-2xl border border-orange-100 flex gap-4 items-center">
+                            <img
+                                src={MilletManImg}
+                                alt="Dr. Khader Vali"
+                                className="w-20 h-20 rounded-xl object-cover shrink-0"
+                            />
+                            <div>
+                                <h3 className="text-sm font-bold text-[#A98C43] mb-1">
+                                    Millets by Dr. Khader Vali
+                                </h3>
+                                <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                                    Known as the Millet Man of India, highlighting the health benefits of organic millets.
+                                </p>
+                                <button
+                                    onClick={() => navigate("/blog")}
+                                    className="text-xs font-bold text-red-600 flex items-center gap-1 hover:underline cursor-pointer"
+                                >
+                                    Read More →
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* RIGHT SIDE: PRODUCT INFO */}
@@ -518,28 +543,7 @@ const ProductDetailCard = ({
 
 
 
-                        {/* Compact Millet Man Section */}
-                        <div className="mt-6 p-4 bg-orange-50/50 rounded-2xl border border-orange-100 flex gap-4 items-center">
-                            <img
-                                src={MilletManImg}
-                                alt="Dr. Khader Vali"
-                                className="w-20 h-20 rounded-xl object-cover shrink-0"
-                            />
-                            <div>
-                                <h3 className="text-sm font-bold text-[#A98C43] mb-1">
-                                    Millets by Dr. Khader Vali
-                                </h3>
-                                <p className="text-xs text-gray-600 mb-2 line-clamp-2">
-                                    Known as the Millet Man of India, highlighting the health benefits of organic millets.
-                                </p>
-                                <button
-                                    onClick={() => navigate("/blog")}
-                                    className="text-xs font-bold text-red-600 flex items-center gap-1 hover:underline cursor-pointer"
-                                >
-                                    Read More →
-                                </button>
-                            </div>
-                        </div>
+
 
                         {/* E-commerce Platform Links Section - COD Available */}
                         <div className="mt-6 p-5 bg-gradient-to-br from-blue-50 to-orange-50 rounded-2xl border border-gray-200 shadow-sm">
