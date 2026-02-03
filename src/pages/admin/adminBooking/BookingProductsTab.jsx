@@ -17,8 +17,12 @@ import {
     CancelButton,
     UpdateButton,
 } from "../../../components/common/AddButton";
+import { adminBookingProductSchema } from "../../../utils/validations/ValidationSchemas";
 
 const BookingProductsTab = () => {
+    const [editVariantIndex, setEditVariantIndex] = useState(null);
+    const [errors, setErrors] = useState({});
+
     const dispatch = useDispatch();
     const { products = [], categories = [], loading } = useSelector(
         (state) => state.adminBooking
@@ -58,6 +62,8 @@ const BookingProductsTab = () => {
         prod.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+
+
     const handleOpenModal = (product = null) => {
         if (product) {
             setIsEditMode(true);
@@ -86,39 +92,72 @@ const BookingProductsTab = () => {
         }
         setIsModalOpen(true);
     };
+    const [replaceImageIndex, setReplaceImageIndex] = useState(null);
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
         setUploading(true);
+
         const url = await UploadToCloudinary(file);
+
         if (url) {
-            setFormData((prev) => ({ ...prev, images: [...prev.images, url] }));
-            toast.success("Image uploaded");
+            setFormData((prev) => {
+                const updatedImages = [...prev.images];
+
+                // ✅ Replace mode
+                if (replaceImageIndex !== null) {
+                    updatedImages[replaceImageIndex] = url;
+                } else {
+                    // ✅ Add mode
+                    updatedImages.push(url);
+                }
+
+                return { ...prev, images: updatedImages };
+            });
+
+            toast.success(replaceImageIndex !== null ? "Image replaced" : "Image added");
         }
+
         setUploading(false);
+
+        // reset
+        setReplaceImageIndex(null);
+        e.target.value = ""; // important (same file select issue fix)
     };
+
 
     const handleAddVariant = () => {
         if (!newVariant.quantity || !newVariant.price || !newVariant.sellingPrice) {
             toast.error("Fill required variant fields");
             return;
         }
-        setFormData((prev) => ({
-            ...prev,
-            variants: [
-                ...prev.variants,
-                {
-                    ...newVariant,
-                    quantity: Number(newVariant.quantity),
-                    price: Number(newVariant.price),
-                    sellingPrice: Number(newVariant.sellingPrice),
-                    purchasePrice: Number(newVariant.purchasePrice || 0),
-                    stock: Number(newVariant.stock || 0),
-                    lowStockThreshold: Number(newVariant.lowStockThreshold || 0),
-                },
-            ],
-        }));
+
+        const payload = {
+            ...newVariant,
+            quantity: Number(newVariant.quantity),
+            price: Number(newVariant.price),
+            sellingPrice: Number(newVariant.sellingPrice),
+            purchasePrice: Number(newVariant.purchasePrice || 0),
+            stock: Number(newVariant.stock || 0),
+            lowStockThreshold: Number(newVariant.lowStockThreshold || 0),
+        };
+
+        setFormData((prev) => {
+            // ✅ If editing variant
+            if (editVariantIndex !== null) {
+                const updated = [...prev.variants];
+                updated[editVariantIndex] = payload;
+
+                return { ...prev, variants: updated };
+            }
+
+            // ✅ Else add new variant
+            return { ...prev, variants: [...prev.variants, payload] };
+        });
+
+        // Reset input
         setNewVariant({
             quantity: "",
             nameSuffix: "",
@@ -129,7 +168,13 @@ const BookingProductsTab = () => {
             stock: "",
             lowStockThreshold: "",
         });
+
+        // reset edit index
+        setEditVariantIndex(null);
+
+        toast.success(editVariantIndex !== null ? "Variant updated" : "Variant added");
     };
+
 
     const handleRemoveVariant = (idx) => {
         setFormData((prev) => ({
@@ -138,23 +183,37 @@ const BookingProductsTab = () => {
         }));
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.category) return toast.error("Select category");
-        if (formData.variants.length === 0)
-            return toast.error("Add at least one variant");
 
         try {
+            // ✅ Yup validation
+            setErrors({}); // clear old erro
+            await adminBookingProductSchema.validate(formData, { abortEarly: false });
+
             if (isEditMode) {
-                await dispatch(adminUpdateBookingProduct(formData)).unwrap();
+                await dispatch(
+                    adminUpdateBookingProduct({
+                        id: formData._id,
+                        data: formData,
+                    })
+                ).unwrap();
                 toast.success("Product Updated Successfully");
             } else {
                 await dispatch(adminCreateBookingProduct(formData)).unwrap();
                 toast.success("Product Created Successfully");
             }
+
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err || "Save failed");
+            // Yup errors
+            if (err?.inner?.length) {
+                err.inner.forEach((e) => toast.error(e.message));
+                setErrors({}); // clear old erro
+                return;
+            }
+            toast.error(err?.message || err || "Save failed");
         }
     };
 
@@ -189,12 +248,20 @@ const BookingProductsTab = () => {
         },
         {
             header: "Category",
-            render: (item) => (
-                <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                    {typeof item.category === "object" ? item.category.name : "N/A"}
-                </span>
-            ),
+            render: (item) => {
+                const categoryName =
+                    typeof item.category === "object"
+                        ? item.category?.name
+                        : categories.find((c) => c._id === item.category)?.name;
+
+                return (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-blue-100 text-blue-700">
+                        {categoryName || "NA"}
+                    </span>
+                );
+            },
         },
+
         {
             header: "Status",
             render: (item) => (
@@ -231,7 +298,10 @@ const BookingProductsTab = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <AddButton onClick={handleOpenModal} title="Add Product" />
+                <div className="flex items-center gap-2">
+
+                    <AddButton onClick={() => handleOpenModal()} title="Add Product" />
+                </div>
             </div>
 
             <AdminTable
@@ -248,7 +318,7 @@ const BookingProductsTab = () => {
                 title={isEditMode ? "Update Booking Product" : "Create Booking Product"}
                 maxWidth="max-w-4xl"
             >
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Grid Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-4">
@@ -265,6 +335,11 @@ const BookingProductsTab = () => {
                                         setFormData({ ...formData, name: e.target.value })
                                     }
                                 />
+                                {errors.name && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -286,6 +361,11 @@ const BookingProductsTab = () => {
                                         </option>
                                     ))}
                                 </select>
+                                {errors.category && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.category}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="flex gap-4">
@@ -341,12 +421,29 @@ const BookingProductsTab = () => {
                                 Product Images
                             </label>
                             <div className="grid grid-cols-3 gap-3">
+
                                 {formData.images.map((img, idx) => (
                                     <div key={idx} className="relative aspect-square group">
-                                        <img
-                                            src={img}
-                                            className="w-full h-full object-cover rounded-xl border border-gray-200 shadow-sm"
-                                        />
+
+                                        {/* ✅ click to replace */}
+                                        <label
+                                            className="block w-full h-full cursor-pointer"
+                                            onClick={() => setReplaceImageIndex(idx)}
+                                            title="Click to replace image"
+                                        >
+                                            <img
+                                                src={img}
+                                                className="w-full h-full object-cover rounded-xl border border-gray-200 shadow-sm"
+                                            />
+
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                onChange={handleImageUpload}
+                                            />
+                                        </label>
+
+                                        {/* ❌ remove */}
                                         <button
                                             type="button"
                                             onClick={() =>
@@ -362,6 +459,7 @@ const BookingProductsTab = () => {
                                     </div>
                                 ))}
 
+
                                 <label
                                     className={`aspect-square border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-blue-400 transition-all ${uploading ? "opacity-50" : ""
                                         }`}
@@ -376,6 +474,11 @@ const BookingProductsTab = () => {
                                         onChange={handleImageUpload}
                                     />
                                 </label>
+                                {errors.images && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.images}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -385,12 +488,13 @@ const BookingProductsTab = () => {
                         <div className="flex items-center gap-2 text-slate-700 border-b border-slate-200 pb-3 mb-4">
                             <FaLayerGroup size={14} />
                             <h3 className="text-sm font-bold uppercase tracking-wider">
-                                Product Variants (Weights/Sizes)
+                                Product Variants (Weights)
                             </h3>
                         </div>
 
                         {/* Variant Input Row */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 items-end">
+                            {/* Qty */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     Qty
@@ -404,8 +508,14 @@ const BookingProductsTab = () => {
                                         setNewVariant({ ...newVariant, quantity: e.target.value })
                                     }
                                 />
+                                {errors.variants?.[editVariantIndex]?.quantity && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].quantity}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* Suffix */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     Suffix
@@ -419,99 +529,122 @@ const BookingProductsTab = () => {
                                         setNewVariant({ ...newVariant, nameSuffix: e.target.value })
                                     }
                                 />
+                                {errors.variants?.[editVariantIndex]?.nameSuffix && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].nameSuffix}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* MRP */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     MRP (₹)
                                 </label>
                                 <input
                                     type="number"
-                                    placeholder="100"
+                                    placeholder="0"
                                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
                                     value={newVariant.price || ""}
-                                    onChange={(e) =>
-                                        setNewVariant({ ...newVariant, price: e.target.value })
-                                    }
+                                    onChange={(e) => setNewVariant({ ...newVariant, price: e.target.value })}
                                 />
+                                {errors.variants?.[editVariantIndex]?.price && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].price}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* Purchase */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     Purchase (₹)
                                 </label>
                                 <input
                                     type="number"
-                                    placeholder="60"
+                                    placeholder="0"
                                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
                                     value={newVariant.purchasePrice || ""}
                                     onChange={(e) =>
-                                        setNewVariant({
-                                            ...newVariant,
-                                            purchasePrice: e.target.value,
-                                        })
+                                        setNewVariant({ ...newVariant, purchasePrice: e.target.value })
                                     }
                                 />
+                                {errors.variants?.[editVariantIndex]?.purchasePrice && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].purchasePrice}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* Selling */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     Selling (₹)
                                 </label>
                                 <input
                                     type="number"
-                                    placeholder="80"
+                                    placeholder="0"
                                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
                                     value={newVariant.sellingPrice || ""}
                                     onChange={(e) =>
-                                        setNewVariant({
-                                            ...newVariant,
-                                            sellingPrice: e.target.value,
-                                        })
+                                        setNewVariant({ ...newVariant, sellingPrice: e.target.value })
                                     }
                                 />
+                                {errors.variants?.[editVariantIndex]?.sellingPrice && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].sellingPrice}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* Stock */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
                                     Stock
                                 </label>
                                 <input
                                     type="number"
-                                    placeholder="50"
+                                    placeholder="0"
                                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
                                     value={newVariant.stock || ""}
-                                    onChange={(e) =>
-                                        setNewVariant({ ...newVariant, stock: e.target.value })
-                                    }
+                                    onChange={(e) => setNewVariant({ ...newVariant, stock: e.target.value })}
                                 />
+                                {errors.variants?.[editVariantIndex]?.stock && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].stock}
+                                    </p>
+                                )}
                             </div>
 
-                            <div className="col-span-2 sm:col-span-4 lg:col-span-1">
+                            {/* ✅ Description full width */}
+                            <div className="col-span-2 sm:col-span-4 lg:col-span-6">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">
-                                    Desc
+                                    Description
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Fresh ground"
-                                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                                <textarea
+                                    rows={3}
+                                    placeholder="type here"
+                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs resize-none"
                                     value={newVariant.description || ""}
                                     onChange={(e) =>
-                                        setNewVariant({
-                                            ...newVariant,
-                                            description: e.target.value,
-                                        })
+                                        setNewVariant({ ...newVariant, description: e.target.value })
                                     }
                                 />
+                                {errors.variants?.[editVariantIndex]?.description && (
+                                    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-1">
+                                        {errors.variants[editVariantIndex].description}
+                                    </p>
+                                )}
+
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={handleAddVariant}
-                                className="h-9 bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors text-xs font-bold"
-                            >
-                                Add Slot
-                            </button>
+                            {/* ✅ Button down */}
+                            <div className="col-span-2 sm:col-span-4 lg:col-span-6 flex justify-end pt-2">
+                                <AddButton
+                                    onClick={handleAddVariant}
+                                    title={editVariantIndex !== null ? "Update Slot" : "Add Slot"}
+                                />
+                            </div>
                         </div>
 
                         {/* Variant Chips/List */}
@@ -519,7 +652,22 @@ const BookingProductsTab = () => {
                             {formData.variants.map((v, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center gap-4 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
+                                    className={`flex items-center gap-4 bg-white px-4 py-2 rounded-xl border shadow-sm cursor-pointer
+                                     ${editVariantIndex === i ? "border-blue-500" : "border-slate-200"}
+                                        `}
+                                    onClick={() => {
+                                        setEditVariantIndex(i);
+                                        setNewVariant({
+                                            quantity: v.quantity?.toString() || "",
+                                            nameSuffix: v.nameSuffix || "",
+                                            description: v.description || "",
+                                            purchasePrice: v.purchasePrice?.toString() || "",
+                                            price: v.price?.toString() || "",
+                                            sellingPrice: v.sellingPrice?.toString() || "",
+                                            stock: v.stock?.toString() || "",
+                                            lowStockThreshold: v.lowStockThreshold?.toString() || "",
+                                        });
+                                    }}
                                 >
                                     <div className="space-y-0.5">
                                         <p className="text-xs font-bold text-slate-800">
@@ -527,13 +675,29 @@ const BookingProductsTab = () => {
                                             {v.nameSuffix}
                                         </p>
                                         <p className="text-[10px] text-slate-400 font-medium">
-                                            ₹{v.sellingPrice}{" "}
-                                            <span className="line-through">₹{v.price}</span>
+                                            ₹{v.sellingPrice} <span className="line-through">₹{v.price}</span>
                                         </p>
                                     </div>
+
                                     <button
                                         type="button"
-                                        onClick={() => handleRemoveVariant(i)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRemoveVariant(i);
+                                            if (editVariantIndex === i) {
+                                                setEditVariantIndex(null);
+                                                setNewVariant({
+                                                    quantity: "",
+                                                    nameSuffix: "",
+                                                    description: "",
+                                                    purchasePrice: "",
+                                                    price: "",
+                                                    sellingPrice: "",
+                                                    stock: "",
+                                                    lowStockThreshold: "",
+                                                });
+                                            }
+                                        }}
                                         className="text-slate-300 hover:text-red-500 transition-colors"
                                     >
                                         <FaTimes size={12} />
@@ -541,6 +705,7 @@ const BookingProductsTab = () => {
                                 </div>
                             ))}
                         </div>
+
                     </div>
 
                     <div className="flex gap-4 pt-4 sticky bottom-0 bg-white">
@@ -549,13 +714,12 @@ const BookingProductsTab = () => {
                             title="Cancel"
                         />
 
-                        <button
+
+                        <UpdateButton
                             type="submit"
-                            className="w-full flex items-center justify-center gap-2 sm:w-auto px-6 py-2 bg-gradient-to-r from-[#DA352D] to-[#C6363E] text-white rounded-lg hover:from-[#C6363E] hover:to-[#B42D25] transition-all shadow-lg shadow-blue-500/20 font-bold"
-                        >
-                            <FaPlus size={14} />
-                            {isEditMode ? "Update Product" : "Create Product"}
-                        </button>
+                            title={isEditMode ? "Update Product" : "Create Product"}
+                            disabled={loading}
+                        />
                     </div>
                 </form>
             </CommonModal>

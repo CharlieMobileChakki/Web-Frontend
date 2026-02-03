@@ -12,6 +12,7 @@ import CommonModal from "../../../components/admin/CommonModal";
 import UploadToCloudinary from "../../../components/admin/UploadToCloudinary";
 import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
 import { AddButton, CancelButton, UpdateButton } from "../../../components/common/AddButton";
+import { adminBookingCategorySchema } from "../../../utils/validations/ValidationSchemas";
 
 const BookingCategoriesTab = () => {
     const dispatch = useDispatch();
@@ -78,23 +79,36 @@ const BookingCategoriesTab = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
+            const payload = {
+                ...formData,
+                minimumOrderAmount: Number(formData.minimumOrderAmount),
+            };
+
+            // ✅ Yup validation
+            await adminBookingCategorySchema.validate(payload, { abortEarly: false });
+
             if (isEditMode) {
-                await dispatch(adminUpdateBookingCategory({
-                    id: formData._id,
-                    data: { ...formData, minimumOrderAmount: Number(formData.minimumOrderAmount) }
-                })).unwrap();
+                await dispatch(
+                    adminUpdateBookingCategory({
+                        id: formData._id,
+                        data: payload,
+                    })
+                ).unwrap();
                 toast.success("Category updated successfully");
             } else {
-                await dispatch(adminCreateBookingCategory({
-                    ...formData,
-                    minimumOrderAmount: Number(formData.minimumOrderAmount)
-                })).unwrap();
+                await dispatch(adminCreateBookingCategory(payload)).unwrap();
                 toast.success("Category created successfully");
             }
+
             setIsModalOpen(false);
         } catch (err) {
-            toast.error(err || "Operation failed");
+            if (err?.inner?.length) {
+                err.inner.forEach((e) => toast.error(e.message));
+                return;
+            }
+            toast.error(err?.message || err || "Operation failed");
         }
     };
 
@@ -143,7 +157,7 @@ const BookingCategoriesTab = () => {
                 </div>
 
                 <AddButton
-                    onClick={handleOpenModal}
+                    onClick={() => handleOpenModal()}
                     title="Add Category"
                 />
             </div>

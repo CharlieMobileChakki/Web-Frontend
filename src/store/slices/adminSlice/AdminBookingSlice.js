@@ -162,13 +162,11 @@ export const adminCreateBookingProduct = createAsyncThunk(
 );
 
 
-
 // UPDATE BOOKING PRODUCT
 export const adminUpdateBookingProduct = createAsyncThunk(
     "adminBooking/updateProduct",
-    async (id, data, { rejectWithValue }) => {
+    async ({ id, data }, { rejectWithValue }) => {
         try {
-
             const response = await AdminUpdateBookingProduct(id, data);
             return response.data;
         } catch (error) {
@@ -178,6 +176,7 @@ export const adminUpdateBookingProduct = createAsyncThunk(
         }
     }
 );
+
 
 // DELETE BOOKING PRODUCT
 export const adminDeleteBookingProduct = createAsyncThunk(

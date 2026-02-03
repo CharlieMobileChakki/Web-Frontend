@@ -194,3 +194,123 @@ export const adminProductSchema = Yup.object().shape({
     )
     .min(1, "At least one variant is required"),
 });
+
+
+
+
+/* -------------------- 🔹 Admin Booking Product Schema -------------------- */
+/* -------------------- 🔹 Admin Booking Product Schema -------------------- */
+
+
+export const adminBookingProductSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Product name is required")
+    .min(2, "Product name must be at least 2 characters")
+    .max(100, "Product name must not exceed 100 characters"),
+
+  category: Yup.string().required("Category is required"),
+
+  status: Yup.string().oneOf(["active", "inactive"], "Invalid status"),
+
+  isFeatured: Yup.boolean(),
+
+  images: Yup.array()
+    .of(Yup.string().url("Each image must be a valid URL"))
+    .min(1, "At least one product image is required"),
+
+  variants: Yup.array()
+    .of(
+      Yup.object().shape({
+        quantity: Yup.number()
+          .typeError("Quantity must be a number")
+          .required("Quantity is required")
+          .min(1, "Quantity must be at least 1"),
+
+        nameSuffix: Yup.string()
+          .required("Suffix is required")
+          .max(20, "Suffix cannot exceed 20 characters"),
+
+        description: Yup.string()
+          .required("Description is required")
+          .min(5, "Description must be at least 5 characters")
+          .max(500, "Description must not exceed 500 characters"),
+
+        price: Yup.number()
+          .typeError("MRP must be a number")
+          .required("MRP is required")
+          .min(0, "MRP cannot be negative"),
+
+        sellingPrice: Yup.number()
+          .typeError("Selling price must be a number")
+          .required("Selling price is required")
+          .min(0, "Selling price cannot be negative")
+          .test(
+            "sellingPrice-less-than-price",
+            "Selling price must be less than or equal to MRP",
+            function (value) {
+              const { price } = this.parent;
+              if (value === undefined || price === undefined) return true;
+              return Number(value) <= Number(price);
+            }
+          ),
+
+        purchasePrice: Yup.number()
+          .typeError("Purchase price must be a number")
+          .required("Purchase price is required")
+          .min(0, "Purchase price cannot be negative"),
+
+        stock: Yup.number()
+          .typeError("Stock must be a number")
+          .required("Stock is required")
+          .min(0, "Stock cannot be negative"),
+
+        lowStockThreshold: Yup.number()
+          .typeError("Low stock threshold must be a number")
+          .min(0, "Low stock threshold cannot be negative")
+          .nullable(),
+      })
+    )
+    .min(1, "At least one variant is required"),
+});
+
+
+
+
+
+export const adminBookingVariantSchema = Yup.object().shape({
+  quantity: Yup.number().required("Quantity required").min(1),
+  nameSuffix: Yup.string().required("Suffix required"),
+  description: Yup.string().required("Description required").min(5),
+  price: Yup.number().required("MRP required").min(0),
+  sellingPrice: Yup.number().required("Selling price required").min(0),
+  purchasePrice: Yup.number().required("Purchase price required").min(0),
+  stock: Yup.number().required("Stock required").min(0),
+});
+
+
+
+
+
+/* -------------------- 🔹 Admin Booking Schema -------------------- */
+/* -------------------- 🔹 Admin Booking Schema -------------------- */
+
+export const adminBookingCategorySchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Category name is required")
+    .min(2, "Category name must be at least 2 characters")
+    .max(60, "Category name must not exceed 60 characters"),
+
+  minimumOrderAmount: Yup.number()
+    .typeError("Minimum order amount must be a number")
+    .required("Minimum order amount is required")
+    .min(0, "Minimum order amount cannot be negative"),
+
+  images: Yup.array()
+    .of(Yup.string().url("Each image must be a valid URL"))
+    .min(1, "At least one category image is required"),
+});
+
+
+
+
+
