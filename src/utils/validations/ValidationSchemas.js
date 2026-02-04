@@ -303,7 +303,7 @@ export const adminBookingCategorySchema = Yup.object().shape({
   minimumOrderAmount: Yup.number()
     .typeError("Minimum order amount must be a number")
     .required("Minimum order amount is required")
-    .min(0, "Minimum order amount cannot be negative"),
+    .min(550, "Minimum order amount cannot be less than 550"),
 
   images: Yup.array()
     .of(Yup.string().url("Each image must be a valid URL"))

@@ -9,23 +9,33 @@ const AdminTable = ({
     onEdit,
     onDelete,
     onView,
+    currentPage, // ✅ Control from URL
+    onPageChange, // ✅ URL updater
 }) => {
-    // ✅ Pagination Logic (same as you want)
     const itemsPerPage = 6;
-    const [currentPage, setCurrentPage] = useState(1);
+    const [internalPage, setInternalPage] = useState(1);
 
-    // Reset to page 1 when data changes (e.g. searching)
+    // Derived active page: controlled prop OR internal fallback
+    const activePage = currentPage !== undefined ? currentPage : internalPage;
+
+    // Reset internal page if data length changes (only if uncontrolled)
     React.useEffect(() => {
-        setCurrentPage(1);
-    }, [data.length]);
+        if (currentPage === undefined) {
+            setInternalPage(1);
+        }
+    }, [data.length, currentPage]);
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const startIndex = (activePage - 1) * itemsPerPage;
     const currentData = data.slice(startIndex, startIndex + itemsPerPage);
 
     const handlePageChange = (page) => {
         if (page < 1 || page > totalPages) return;
-        setCurrentPage(page);
+        if (onPageChange) {
+            onPageChange(page);
+        } else {
+            setInternalPage(page);
+        }
     };
 
     return (
@@ -80,7 +90,7 @@ const AdminTable = ({
                                 <tr key={item._id || idx} className="hover:bg-gray-50/50 transition-colors group">
                                     {/* ✅ Serial number across pages */}
                                     <td className="px-6 py-4 text-xs font-bold text-gray-400">
-                                        {(currentPage - 1) * itemsPerPage + idx + 1}
+                                        {(activePage - 1) * itemsPerPage + idx + 1}
                                     </td>
 
                                     {columns.map((col, colIdx) => (
@@ -135,7 +145,7 @@ const AdminTable = ({
 
             {totalPages > 1 && (
                 <Pagination
-                    currentPage={currentPage}
+                    currentPage={activePage}
                     totalPages={totalPages}
                     totalItems={data.length}
                     itemsPerPage={itemsPerPage}

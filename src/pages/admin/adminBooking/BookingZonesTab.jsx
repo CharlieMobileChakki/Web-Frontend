@@ -1,7 +1,18 @@
 import React from "react";
 import { FaMapMarkedAlt } from "react-icons/fa";
 
-const BookingZonesTab = () => {
+const BookingZonesTab = ({ searchParams, setSearchParams }) => {
+    // Although under development, we keep the page logic for consistency
+    const currentPage = Number(searchParams.get("zonesPage")) || 1;
+
+    const handlePageChange = (page) => {
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            params.set("zonesPage", String(page));
+            return params;
+        });
+    };
+
     return (
         <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl border border-gray-100 shadow-sm">
             <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6">

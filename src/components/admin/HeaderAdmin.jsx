@@ -14,7 +14,7 @@ const HeaderAdmin = ({ isOpen, isMobile, setIsOpen }) => {
   ]);
 
   const { admin } = useSelector((state) => state.adminAuth);
-  console.log(admin, "admin");
+  // console.log(admin, "admin");
 
   const userMenuRef = useRef(null);
   const notificationRef = useRef(null);

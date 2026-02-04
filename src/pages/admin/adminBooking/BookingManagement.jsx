@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   adminGetAllBookings,
@@ -10,10 +10,44 @@ import BookingCategoriesTab from "./BookingCategoriesTab";
 import BookingProductsTab from "./BookingProductsTab";
 import BookingZonesTab from "./BookingZonesTab";
 import { FaSync, FaCalendarCheck, FaLayerGroup, FaBoxOpen, FaMapMarkedAlt } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
 
 const BookingManagement = () => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState("orders");
+  const [searchParams, setSearchParams] = useSearchParams();
+  // ✅ URL se activeTab read
+  const activeTab = searchParams.get("tab") || "orders";
+
+  // ✅ first time load pe default tab set (optional but recommended)
+  useEffect(() => {
+    if (!searchParams.get("tab")) {
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("tab", "orders");
+        if (!params.get("ordersPage")) params.set("ordersPage", "1");
+        return params;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ✅ tab change handler (URL update)
+  const handleTabChange = (tabId) => {
+    setSearchParams(() => {
+      const params = new URLSearchParams();
+
+      // ✅ only keep active tab
+      params.set("tab", tabId);
+
+      // ✅ only active tab page param
+      if (tabId === "orders") params.set("ordersPage", "1");
+      if (tabId === "products") params.set("productsPage", "1");
+      if (tabId === "categories") params.set("categoriesPage", "1");
+      if (tabId === "zones") params.set("zonesPage", "1");
+
+      return params;
+    });
+  };
 
   const tabs = [
     { id: "orders", label: "Booking Orders", icon: <FaCalendarCheck /> },
@@ -53,7 +87,7 @@ const BookingManagement = () => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`flex-1 flex items-center justify-center gap-2.5 py-4 rounded-[1.75rem] text-sm font-black transition-all duration-300 ${activeTab === tab.id
               ? "bg-[#d13636] text-white shadow-xl shadow-slate-900/20 scale-[1.02]"
               : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
@@ -69,10 +103,31 @@ const BookingManagement = () => {
 
       {/* Tab Content */}
       <div className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
-        {activeTab === "orders" && <BookingOrdersTab />}
-        {activeTab === "categories" && <BookingCategoriesTab />}
-        {activeTab === "products" && <BookingProductsTab />}
-        {activeTab === "zones" && <BookingZonesTab />}
+        {activeTab === "orders" && (
+          <BookingOrdersTab
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
+        )}
+        {activeTab === "categories" && (
+          <BookingCategoriesTab
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
+        )}
+        {activeTab === "products" && (
+          <BookingProductsTab
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
+        )}
+        {activeTab === "zones" && (
+          <BookingZonesTab
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
+        )}
+
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import AdminTable from "../../../components/admin/AdminTable";
 import CommonModal from "../../../components/admin/CommonModal";
 import { FaSearch, FaUser, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 
-const BookingOrdersTab = () => {
+const BookingOrdersTab = ({ searchParams, setSearchParams }) => {
     const dispatch = useDispatch();
     const { bookings = [], loading } = useSelector((state) => state.adminBooking);
 
@@ -18,6 +18,8 @@ const BookingOrdersTab = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
 
+    // ✅ URL se page read
+    const currentPage = Number(searchParams.get("ordersPage")) || 1;
 
     useEffect(() => {
         dispatch(adminGetAllBookings());
@@ -29,6 +31,26 @@ const BookingOrdersTab = () => {
     );
 
 
+    // ✅ search change -> page 1 set (Only when user types)
+    useEffect(() => {
+        if (searchTerm) {
+            setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                params.set("ordersPage", "1");
+                return params;
+            }, { replace: true });
+        }
+    }, [searchTerm, setSearchParams]);
+
+
+    // ✅ pagination handler -> URL update
+    const handlePageChange = (page) => {
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            params.set("ordersPage", String(page));
+            return params;
+        });
+    };
     const handleViewDetails = (booking) => {
         setSelectedBooking(booking);
         setIsModalOpen(true);
@@ -93,11 +115,21 @@ const BookingOrdersTab = () => {
                 </div>
             </div>
 
+            {/* <AdminTable
+                columns={columns}
+                data={filteredBookings}
+                loading={loading}
+                onView={handleViewDetails}
+            /> */}
             <AdminTable
                 columns={columns}
                 data={filteredBookings}
                 loading={loading}
                 onView={handleViewDetails}
+                // ✅ URL controlled pagination
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+                itemsPerPage={6}
             />
 
             <CommonModal

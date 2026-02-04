@@ -14,7 +14,7 @@ import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
 import { AddButton, CancelButton, UpdateButton } from "../../../components/common/AddButton";
 import { adminBookingCategorySchema } from "../../../utils/validations/ValidationSchemas";
 
-const BookingCategoriesTab = () => {
+const BookingCategoriesTab = ({ searchParams, setSearchParams }) => {
     const dispatch = useDispatch();
     const { categories = [], loading } = useSelector((state) => state.adminBooking);
 
@@ -22,6 +22,30 @@ const BookingCategoriesTab = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    // ✅ URL Pagination
+    const currentPage = Number(searchParams.get("categoriesPage")) || 1;
+
+    const handlePageChange = (page) => {
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            params.set("categoriesPage", String(page));
+            return params;
+        });
+    };
+
+    // ✅ Search Reset
+    useEffect(() => {
+        if (searchTerm) {
+            setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                params.set("categoriesPage", "1");
+                return params;
+            }, { replace: true });
+        }
+    }, [searchTerm, setSearchParams]);
+
     const [formData, setFormData] = useState({
         name: "",
         minimumOrderAmount: "",
@@ -55,19 +79,54 @@ const BookingCategoriesTab = () => {
         setIsModalOpen(true);
     };
 
+    // const handleImageUpload = async (e) => {
+    //     const file = e.target.files[0];
+    //     if (!file) return;
+
+    //     setUploading(true);
+    //     const url = await UploadToCloudinary(file);
+    //     if (url) {
+    //         setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
+    //         toast.success("Image uploaded successfully");
+    //     } else {
+    //         toast.error("Image upload failed");
+    //     }
+    //     setUploading(false);
+    // };
+    const [replaceImageIndex, setReplaceImageIndex] = useState(null);
+
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         setUploading(true);
+
         const url = await UploadToCloudinary(file);
+
         if (url) {
-            setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
-            toast.success("Image uploaded successfully");
-        } else {
-            toast.error("Image upload failed");
+            setFormData((prev) => {
+                const updatedImages = [...prev.images];
+
+                // ✅ Replace mode
+                if (replaceImageIndex !== null) {
+                    updatedImages[replaceImageIndex] = url;
+                } else {
+                    // ✅ Add mode
+                    updatedImages.push(url);
+                }
+
+                return { ...prev, images: updatedImages };
+            });
+
+            toast.success(replaceImageIndex !== null ? "Image replaced" : "Image added");
         }
+
         setUploading(false);
+
+        // reset
+        setReplaceImageIndex(null);
+        e.target.value = ""; // important (same file select issue fix)
     };
 
     const handleRemoveImage = (index) => {
@@ -77,9 +136,21 @@ const BookingCategoriesTab = () => {
         }));
     };
 
+    const getYupErrors = (err) => {
+        const newErrors = {};
+        if (err?.inner?.length) {
+            err.inner.forEach((e) => {
+                newErrors[e.path] = e.message;
+            });
+        }
+        return newErrors;
+    };
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setErrors({}); // ✅ reset errors
         try {
             const payload = {
                 ...formData,
@@ -105,7 +176,9 @@ const BookingCategoriesTab = () => {
             setIsModalOpen(false);
         } catch (err) {
             if (err?.inner?.length) {
-                err.inner.forEach((e) => toast.error(e.message));
+                const fieldErrors = getYupErrors(err);
+                setErrors(fieldErrors); // ✅ bottom errors set
+
                 return;
             }
             toast.error(err?.message || err || "Operation failed");
@@ -169,6 +242,8 @@ const BookingCategoriesTab = () => {
                 loading={loading}
                 onEdit={handleOpenModal}
                 onDelete={handleDelete}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
             />
 
             {/* Modal */}
@@ -186,8 +261,11 @@ const BookingCategoriesTab = () => {
                             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                             value={formData.name || ""}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="e.g. Aata Pesaai"
+                            placeholder="Category Name"
                         />
+                        {errors.name && (
+                            <p className="text-red-500 text-xs font-semibold mt-1">{errors.name}</p>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Minimum Order Amount (₹)</label>
@@ -196,14 +274,20 @@ const BookingCategoriesTab = () => {
                             required
                             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                             value={formData.minimumOrderAmount || ""}
-                            onChange={(e) => setFormData({ ...formData, minimumOrderAmount: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, minimumOrderAmount: e.target.value });
+                                setErrors((prev) => ({ ...prev, minimumOrderAmount: "" })); // ✅ clear error
+                            }}
                             placeholder="550"
                         />
+                        {errors.minimumOrderAmount && (
+                            <p className="text-red-500 text-xs font-semibold mt-1">{errors.minimumOrderAmount}</p>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Category Images</label>
                         <div className="grid grid-cols-4 gap-3 mb-3">
-                            {formData.images.map((img, idx) => (
+                            {/* {formData.images.map((img, idx) => (
                                 <div key={idx} className="relative aspect-square group">
                                     <img src={img} className="w-full h-full object-cover rounded-xl border border-gray-100" />
                                     <button
@@ -214,12 +298,52 @@ const BookingCategoriesTab = () => {
                                         <FaTimes size={10} />
                                     </button>
                                 </div>
+                            ))} */}
+
+                            {formData.images.map((img, idx) => (
+                                <div key={idx} className="relative aspect-square group">
+
+                                    {/* ✅ click to replace */}
+                                    <label
+                                        className="block w-full h-full cursor-pointer"
+                                        onClick={() => setReplaceImageIndex(idx)}
+                                        title="Click to replace image"
+                                    >
+                                        <img
+                                            src={img}
+                                            className="w-full h-full object-cover rounded-xl border border-gray-200 shadow-sm"
+                                        />
+
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={handleImageUpload}
+                                        />
+                                    </label>
+
+                                    {/* ❌ remove */}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setFormData({
+                                                ...formData,
+                                                images: formData.images.filter((_, i) => i !== idx),
+                                            })
+                                        }
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg scale-0 group-hover:scale-100 transition-all"
+                                    >
+                                        <FaTimes size={10} />
+                                    </button>
+                                </div>
                             ))}
                             <label className={`aspect-square border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                                 <FaPlus className="text-gray-400 mb-1" />
                                 <span className="text-[10px] text-gray-500 font-bold uppercase">{uploading ? 'Wait...' : 'Add'}</span>
                                 <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
                             </label>
+                            {errors.images && (
+                                <p className="text-red-500 text-xs font-semibold mt-1">{errors.images}</p>
+                            )}
                         </div>
                     </div>
                     <div className="pt-4 flex gap-3">
