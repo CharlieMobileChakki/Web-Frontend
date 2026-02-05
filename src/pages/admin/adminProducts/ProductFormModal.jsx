@@ -19,6 +19,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                 sellingPrice: "",
                 purchasePrice: "",
                 stock: "",
+                lowStockThreshold: "",
             }
         ],
         marketplaceOptions: [],
@@ -43,6 +44,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                         sellingPrice: v.sellingPrice || "",
                         purchasePrice: v.purchasePrice || "",
                         stock: v.stock || "",
+                        lowStockThreshold: v.lowStockThreshold || "",
                         _id: v._id,
                     }))
                     : [
@@ -54,6 +56,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                             sellingPrice: "",
                             purchasePrice: "",
                             stock: "",
+                            lowStockThreshold: "",
                         }
                     ],
                 marketplaceOptions: editData.marketplaceOptions?.length > 0
@@ -81,8 +84,10 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                         sellingPrice: "",
                         purchasePrice: "",
                         stock: "",
+                        lowStockThreshold: "",
                     }
                 ],
+                marketplaceOptions: [],
             });
         }
     }, [editData]);
@@ -119,6 +124,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                     sellingPrice: "",
                     purchasePrice: "",
                     stock: "",
+                    lowStockThreshold: "",
                 }
             ]
         });
@@ -195,6 +201,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                     sellingPrice: "",
                     purchasePrice: "",
                     stock: "",
+                    lowStockThreshold: "",
                 }
             ],
             marketplaceOptions: [], // ✅ FIX
@@ -424,6 +431,19 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
                                             />
                                             {errors[`variants_${index}_stock`] && (
                                                 <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_stock`]}</p>
+                                            )}
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">Low Stock Alert</label>
+                                            <input
+                                                type="number"
+                                                value={variant.lowStockThreshold}
+                                                onChange={(e) => handleVariantChange(index, 'lowStockThreshold', e.target.value)}
+                                                className="w-full border border-gray-300 px-2 py-1.5 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm mt-1"
+                                                placeholder="e.g. 10"
+                                            />
+                                            {errors[`variants_${index}_lowStockThreshold`] && (
+                                                <p className="text-red-500 text-xs mt-1">{errors[`variants_${index}_lowStockThreshold`]}</p>
                                             )}
                                         </div>
                                         <div className="col-span-1">

@@ -14,9 +14,9 @@ import {
 // GET PRODUCTS
 export const adminGetProducts = createAsyncThunk(
   "adminProducts/getAll",
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const res = await AdminGetProducts();
+      const res = await AdminGetProducts(params);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -71,6 +71,7 @@ const AdminProductSlice = createSlice({
     products: [],
     totalPages: 1,
     currentPage: 1,
+    totalRecords: 0,
     loading: false,
     error: null,
   },
@@ -86,10 +87,11 @@ const AdminProductSlice = createSlice({
       })
       .addCase(adminGetProducts.fulfilled, (state, action) => {
         state.loading = false;
-        // Extract products from nested data structure
-        state.products = action.payload?.data?.products || [];
-        state.totalPages = action.payload?.data?.totalPages || 1;
-        state.currentPage = action.payload?.data?.currentPage || 1;
+        // The API response matches: { success, page, limit, totalPages, totalRecords, data: [...] }
+        state.products = action.payload?.data || [];
+        state.totalPages = action.payload?.totalPages || 1;
+        state.currentPage = action.payload?.page || 1;
+        state.totalRecords = action.payload?.totalRecords || 0;
       })
       .addCase(adminGetProducts.rejected, (state, action) => {
         state.loading = false;

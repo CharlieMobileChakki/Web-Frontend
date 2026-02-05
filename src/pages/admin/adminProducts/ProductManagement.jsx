@@ -6,6 +6,7 @@ import {
     adminCreateProduct,
     adminUpdateProduct,
     adminDeleteProduct,
+    adminGetProducts,
 } from "../../../store/slices/adminSlice/AdminProductSlice";
 
 import ProductTable from "./ProductTable";
@@ -13,47 +14,41 @@ import ProductFormModal from "./ProductFormModal";
 import { userproduct } from "../../../store/slices/ProductSlice";
 import { adminGetCategories } from "../../../store/slices/adminSlice/AdminCategorySlice";
 import { getAllPlatforms } from "../../../store/slices/adminSlice/PlatformSlice";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const ProductManagement = () => {
     const dispatch = useDispatch();
+    // Get page from URL or default
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = parseInt(searchParams.get("page") || "1");
+    const [Category, setCategory] = useState("all");
+    const limit = 10;
 
-    const { data: products, loading, error } = useSelector((state) => state.products);
+    const { products, loading, error, totalPages, currentPage, totalRecords } = useSelector((state) => state.adminProducts);
     const { categories } = useSelector((state) => state.adminCategory);
     const { platform: platforms, loading: platformsLoading } = useSelector((state) => state.adminPlatform);
 
-    const [Category, setCategory] = useState("all");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
 
-    // Pagination State
-
     useEffect(() => {
-        dispatch(userproduct());
+        dispatch(adminGetProducts({ page, limit, category: Category === "all" ? "" : Category }));
         dispatch(adminGetCategories());
         dispatch(getAllPlatforms());
-    }, [dispatch]);
+    }, [dispatch, page, Category]);
 
-    // Get category name by ID
-    const getCategoryName = (id) => {
-        if (!Array.isArray(categories)) return "Unknown";
-        const cat = categories.find((c) => c._id === id);
-        return cat ? cat.name : "Unknown";
+    // Handle URL updates
+    const handlePageChange = (newPage) => {
+        setSearchParams({ page: newPage });
     };
 
-    // Filter products based on category
-    // Ensure products is an array before filtering
-    const safeProducts = Array.isArray(products) ? products.filter(Boolean) : [];
+    const handleCategoryChange = (newCategory) => {
+        setCategory(newCategory);
+        setSearchParams({ page: "1" });
+    };
 
-    const filteredProducts =
-        Category === "all"
-            ? safeProducts
-            : safeProducts.filter((p) => p.category === Category);
-
-    // Add categoryName to each product
-    const productsWithCategory = filteredProducts.map((p) => ({
-        ...p,
-        categoryName: getCategoryName(p.category),
-    }));
+    // Ensure products is an array
+    const safeProducts = Array.isArray(products) ? products : [];
 
     const handleAdd = () => {
         setEditData(null);
@@ -68,7 +63,7 @@ export const ProductManagement = () => {
     };
     const handleDelete = async (id) => {
         await dispatch(adminDeleteProduct(id)).unwrap();
-        await dispatch(userproduct()).unwrap();
+        dispatch(adminGetProducts({ page, limit, category: Category === "all" ? "" : Category }));
     };
 
     const handleSave = async (data) => {
@@ -80,7 +75,7 @@ export const ProductManagement = () => {
             }
 
             // API complete hone ke baad hi run hoga
-            await dispatch(userproduct()).unwrap();
+            dispatch(adminGetProducts({ page, limit, category: Category === "all" ? "" : Category }));
 
             setIsModalOpen(false);
 
@@ -96,7 +91,7 @@ export const ProductManagement = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-
+                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Product Management</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage your inventory, prices, and variants</p>
                 </div>
 
@@ -120,7 +115,7 @@ export const ProductManagement = () => {
                 <div className="relative w-full sm:w-96">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 112 8z" clipRule="evenodd" />
                         </svg>
                     </div>
                     <input
@@ -134,7 +129,7 @@ export const ProductManagement = () => {
                 <div className="w-full sm:w-auto">
                     <select
                         value={Category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        onChange={(e) => handleCategoryChange(e.target.value)}
                         className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg border bg-white shadow-sm"
                     >
                         <option value="all">All Categories</option>
@@ -157,16 +152,28 @@ export const ProductManagement = () => {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {/* Stats or summary could go here if needed */}
+                    {/* Status/Params Display */}
+                    <div className="flex flex-wrap gap-2 items-center">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Filters:</span>
+                        <div className="flex flex-wrap gap-2">
+                            <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium border border-blue-100 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                Page: {page}
+                            </span>
+                        </div>
+                    </div>
 
                     <ProductTable
-                        products={productsWithCategory}
+                        products={safeProducts}
                         categories={categories}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        totalRecords={totalRecords}
+                        itemsPerPage={limit}
                     />
-
-
                 </div>
             )}
 
@@ -179,7 +186,7 @@ export const ProductManagement = () => {
                 onSave={handleSave}
                 editData={editData}
             />
-        </div>
+        </div >
     );
 };
 

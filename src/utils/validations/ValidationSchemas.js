@@ -190,9 +190,22 @@ export const adminProductSchema = Yup.object().shape({
           .typeError("Stock must be a number")
           .required("Stock is required")
           .min(0, "Stock cannot be negative"),
+
+        lowStockThreshold: Yup.number()
+          .typeError("Low stock threshold must be a number")
+          .min(0, "Threshold cannot be negative")
+          .nullable(),
       })
     )
     .min(1, "At least one variant is required"),
+
+  marketplaceOptions: Yup.array().of(
+    Yup.object().shape({
+      platform: Yup.string().required("Platform is required"),
+      productUrl: Yup.string().url("Invalid URL").required("URL is required"),
+      isActive: Yup.boolean(),
+    })
+  ),
 });
 
 

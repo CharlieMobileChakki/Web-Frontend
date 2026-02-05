@@ -17,10 +17,10 @@ const Endpoints = {
           ADMINDELETECATEGORY: (id) => `/api/admin/categories/${id}`,// DELETE category
 
           // ================= ADMIN PRODUCTS CRUD =================
-          ADMINGETPRODUCTS: '/api/products',                       // GET all products
-          ADMINCREATEPRODUCT: '/api/admin/products',                     // POST create product
-          ADMINUPDATEPRODUCT: (id) => `/api/admin/products/${id}`,       // PUT update product
-          ADMINDELETEPRODUCT: (id) => `/api/admin/products/${id}`,       // DELETE product
+          ADMINGETPRODUCTS: '/api/admin/get-all-product',                       // GET all products
+          ADMINCREATEPRODUCT: '/api/admin/create-product',                     // POST create product
+          ADMINUPDATEPRODUCT: (id) => `/api/admin/update-product/${id}`,       // PUT update product
+          ADMINDELETEPRODUCT: (id) => `/api/admin/delete-product/${id}`,       // DELETE product
 
           // ================= ADMIN USERS =================
           ADMIN_GET_ALL_USERS: '/api/admin/users/all-users',            // GET all users
@@ -122,8 +122,8 @@ const Endpoints = {
           USERGETALLCATEGORY: '/api/categories',
 
           // products
-          USERGETPRODUCT: '/api/products',
-          USERGETPRODUCTDETAILS: (id) => `/api/products/${id}`,
+          USERGETPRODUCT: '/api/get-all-products',
+          USERGETPRODUCTDETAILS: (id) => `/api/product/detail/${id}`,
 
           // contact us
           CONTACTUS: '/api/contact',

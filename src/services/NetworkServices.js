@@ -41,8 +41,12 @@ export const DeleteCategory = async (id) => {
 // ================= ADMIN PRODUCTS CRUD =================
 
 // GET ALL PRODUCTS
-export const AdminGetProducts = async () => {
-  return await api.get(Endpoints.Admin.ADMINGETPRODUCTS);
+export const AdminGetProducts = async (params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const url = queryParams
+    ? `${Endpoints.Admin.ADMINGETPRODUCTS}?${queryParams}`
+    : Endpoints.Admin.ADMINGETPRODUCTS;
+  return await api.get(url);
 };
 
 // CREATE PRODUCT
@@ -52,7 +56,7 @@ export const AdminCreateProduct = async (data) => {
 
 // UPDATE PRODUCT
 export const AdminUpdateProduct = async (id, data) => {
-  return await api.put(Endpoints.Admin.ADMINUPDATEPRODUCT(id), data);
+  return await api.patch(Endpoints.Admin.ADMINUPDATEPRODUCT(id), data);
 };
 
 // DELETE PRODUCT
