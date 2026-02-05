@@ -51,6 +51,7 @@ import AdminCreation from "../pages/admin/adminCreation/AdminCreation";
 import OrdersManagement from "../pages/admin/adminOrders/OrdersManagement";
 import ContactManagement from "../pages/admin/adminContact/ContactManagement";
 import ReviewsManagement from "../pages/admin/adminReviews/ReviewsManagement";
+import PlatformManagement from "../pages/admin/adminPlatform/PlatformManagement";
 
 
 
@@ -121,6 +122,7 @@ const AppRoutes = () => {
           <Route path="/admincreation" element={<AdminCreation />} />
           <Route path="/contactmanagement" element={<ContactManagement />} />
           <Route path="/reviewsmanagement" element={<ReviewsManagement />} />
+          <Route path="/platformmanagement" element={<PlatformManagement />} />
 
         </Route>
       </Route>

@@ -291,6 +291,50 @@ export const AdminGetLowStock = async () => {
 };
 
 
+
+// ================= ADMIN PLATFORM MANAGEMENT =================
+
+export const AdminCreatePlatform = async (data) => {
+  return await api.post(Endpoints.Admin.ADMIN_CREATE_PLATFORM, data);
+};
+
+export const AdminGetAllPlatforms = async () => {
+  return await api.get(Endpoints.Admin.ADMIN_GET_PLATFORM);
+};
+
+export const AdminUpdatePlatform = async (id, data) => {
+  return await api.patch(Endpoints.Admin.ADMIN_UPDATE_PLATFORM(id), data);
+};
+
+export const AdminDeletePlatform = async (id) => {
+  return await api.delete(Endpoints.Admin.ADMIN_DELETE_PLATFORM(id));
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// .....................USER API'S.......................///////
+// .....................USER API'S.......................///////
+// .....................USER API'S.......................///////
 // .....................USER API'S.......................///////
 // .....................USER API'S.......................///////
 

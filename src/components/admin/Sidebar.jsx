@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaBars, FaUserShield, FaChartLine,
   FaTags, FaShoppingBag, FaBoxOpen, FaUsers, FaFileAlt,
-  FaImage, FaWarehouse, FaCalendarAlt, FaTruck, FaSignOutAlt, FaEnvelope, FaStar
+  FaImage, FaWarehouse, FaCalendarAlt, FaTruck, FaSignOutAlt, FaEnvelope, FaStar,
+  FaLayerGroup
 } from "react-icons/fa";
 
 import Logo from "../../assets/adminImg/logo.jpeg";
@@ -16,6 +17,7 @@ const menuItems = [
   { name: "Category Management", icon: <FaTags />, href: "/categorymanagement" },
   { name: "Orders Management", icon: <FaShoppingBag />, href: "/ordersmanagement" },
   { name: "Products Management", icon: <FaBoxOpen />, href: "/productmanagement" },
+  { name: "Platform Management", icon: <FaLayerGroup />, href: "/platformmanagement" },
   { name: "Users Management", icon: <FaUsers />, href: "/usersmanagement" },
   { name: "Blog Management", icon: <FaFileAlt />, href: "/blogmanagement" },
   { name: "Banner Management", icon: <FaImage />, href: "/Bannermanagement" },

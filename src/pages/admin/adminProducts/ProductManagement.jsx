@@ -12,12 +12,14 @@ import ProductTable from "./ProductTable";
 import ProductFormModal from "./ProductFormModal";
 import { userproduct } from "../../../store/slices/ProductSlice";
 import { adminGetCategories } from "../../../store/slices/adminSlice/AdminCategorySlice";
+import { getAllPlatforms } from "../../../store/slices/adminSlice/PlatformSlice";
 
 export const ProductManagement = () => {
     const dispatch = useDispatch();
 
     const { data: products, loading, error } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.adminCategory);
+    const { platform: platforms, loading: platformsLoading } = useSelector((state) => state.adminPlatform);
 
     const [Category, setCategory] = useState("all");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +30,7 @@ export const ProductManagement = () => {
     useEffect(() => {
         dispatch(userproduct());
         dispatch(adminGetCategories());
+        dispatch(getAllPlatforms());
     }, [dispatch]);
 
     // Get category name by ID
@@ -171,6 +174,8 @@ export const ProductManagement = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 categories={categories}
+                platforms={platforms}
+                platformsLoading={platformsLoading}
                 onSave={handleSave}
                 editData={editData}
             />

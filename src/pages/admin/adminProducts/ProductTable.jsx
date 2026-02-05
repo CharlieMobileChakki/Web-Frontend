@@ -118,6 +118,7 @@ const ProductTable = ({ products = [], categories = [], onEdit, onDelete }) => {
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price Range</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Stock</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                            <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Marketplaces</th>
                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                         </tr>
                     </thead>
@@ -197,6 +198,31 @@ const ProductTable = ({ products = [], categories = [], onEdit, onDelete }) => {
                                             </span>
                                         </td>
 
+                                        {/* Marketplaces */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-center gap-2">
+                                                {p.marketplaceOptions?.length > 0 ? (
+                                                    p.marketplaceOptions.map((opt, idx) => (
+                                                        <a
+                                                            key={opt._id || idx}
+                                                            href={opt.productUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className={`p-1 rounded-md transition-all ${opt.isActive ? 'hover:bg-blue-50 text-blue-500' : 'opacity-30 grayscale cursor-not-allowed'}`}
+                                                            title={`${opt.isActive ? 'Go to Marketplace' : 'Inactive Marketplace Link'}`}
+                                                            onClick={(e) => !opt.isActive && e.preventDefault()}
+                                                        >
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                            </svg>
+                                                        </a>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-gray-300 text-xs">-</span>
+                                                )}
+                                            </div>
+                                        </td>
+
                                         {/* Actions */}
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
@@ -225,7 +251,7 @@ const ProductTable = ({ products = [], categories = [], onEdit, onDelete }) => {
                                     {/* Expanded Variants Row */}
                                     {expandedVariants[p._id] && (
                                         <tr className="bg-gray-50/50">
-                                            <td colSpan="8" className="p-4 border-t border-gray-100 shadow-inner">
+                                            <td colSpan="9" className="p-4 border-t border-gray-100 shadow-inner">
                                                 <div className="pl-14">
                                                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Variants Breakdown</h4>
                                                     <div className="bg-white border rounded-lg overflow-hidden">

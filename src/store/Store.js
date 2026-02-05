@@ -23,7 +23,7 @@ import adminBannerReducer from './slices/adminSlice/AdminBannerSlice';
 import adminBookingReducer from './slices/adminSlice/AdminBookingSlice';
 import adminStockReducer from './slices/adminSlice/AdminStockSlice';
 import adminReviewReducer from './slices/adminSlice/AdminReviewSlice';
-
+import adminPlatformReducer from './slices/adminSlice/PlatformSlice';
 
 export const Store = configureStore({
   reducer: {
@@ -54,6 +54,7 @@ export const Store = configureStore({
     adminBooking: adminBookingReducer,
     adminStock: adminStockReducer,
     adminReview: adminReviewReducer,
+    adminPlatform: adminPlatformReducer,
 
   },
 });

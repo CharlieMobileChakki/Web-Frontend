@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import UploadToCloudinary from "../../../components/admin/UploadToCloudinary";
 import { adminProductSchema } from "../../../utils/validations/ValidationSchemas";
 
-const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => {
+const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platforms, platformsLoading }) => {
 
     const [form, setForm] = useState({
         name: "",
@@ -21,6 +21,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                 stock: "",
             }
         ],
+        marketplaceOptions: [],
     });
 
     const [errors, setErrors] = useState({});
@@ -55,6 +56,14 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                             stock: "",
                         }
                     ],
+                marketplaceOptions: editData.marketplaceOptions?.length > 0
+                    ? editData.marketplaceOptions.map(m => ({
+                        platform: m.platform?._id || m.platform || "",
+                        productUrl: m.productUrl || "",
+                        isActive: m.isActive ?? true,
+                        _id: m._id,
+                    }))
+                    : [],
             });
         } else {
             setForm({
@@ -147,6 +156,28 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
         }
     };
 
+    // MARKETPLACE OPTIONS HANDLERS
+    const handleMarketplaceChange = (index, field, value) => {
+        const updated = [...form.marketplaceOptions];
+        updated[index] = { ...updated[index], [field]: value };
+        setForm({ ...form, marketplaceOptions: updated });
+    };
+
+    const addMarketplaceOption = () => {
+        setForm({
+            ...form,
+            marketplaceOptions: [
+                ...form.marketplaceOptions,
+                { platform: "", productUrl: "", isActive: true }
+            ]
+        });
+    };
+
+    const removeMarketplaceOption = (index) => {
+        const updated = form.marketplaceOptions.filter((_, i) => i !== index);
+        setForm({ ...form, marketplaceOptions: updated });
+    };
+
 
 
     const resetForm = () => {
@@ -166,11 +197,20 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                     stock: "",
                 }
             ],
+            marketplaceOptions: [], // ✅ FIX
         });
     };
     const handleSubmit = async () => {
         try {
             setErrors({});
+
+            // Simple validation for marketplace options
+            const invalidMarketplace = form.marketplaceOptions.some(m => !m.platform || !m.productUrl);
+            if (invalidMarketplace) {
+                alert("Please fill both Platform and URL for all marketplace links.");
+                return;
+            }
+
             await adminProductSchema.validate(form, { abortEarly: false });
             await onSave(form);
             resetForm();
@@ -438,6 +478,80 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData }) => 
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* Marketplace Options Section */}
+                    <div className="mt-8">
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-800">Marketplace Links</h3>
+                            <button
+                                type="button"
+                                onClick={addMarketplaceOption}
+                                className="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition text-xs sm:text-sm font-medium border border-green-200"
+                            >
+                                + Add Link
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            {/* {form.marketplaceOptions.length || 0 === 0 ? ( */}
+                            {(form.marketplaceOptions?.length ?? 0) === 0 ? (
+                                <p className="text-gray-400 text-sm italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                    No marketplace links added yet.
+                                </p>
+                            ) : (
+                                form.marketplaceOptions.map((option, index) => (
+                                    <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 items-end">
+                                        <div className="md:col-span-3">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Platform</label>
+                                            <select
+                                                value={option.platform}
+                                                onChange={(e) => handleMarketplaceChange(index, 'platform', e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm bg-white"
+                                            >
+                                                <option value="">Select Platform</option>
+                                                {platforms?.map(p => (
+                                                    <option key={p._id} value={p._id}>{p.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="md:col-span-6">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Product URL</label>
+                                            <input
+                                                type="url"
+                                                value={option.productUrl}
+                                                onChange={(e) => handleMarketplaceChange(index, 'productUrl', e.target.value)}
+                                                placeholder="https://flipkart.com/..."
+                                                className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm bg-white"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2 flex items-center h-[38px] pb-2">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={option.isActive}
+                                                    onChange={(e) => handleMarketplaceChange(index, 'isActive', e.target.checked)}
+                                                    className="sr-only peer"
+                                                />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 relative"></div>
+                                                <span className="ml-2 text-xs font-medium text-gray-700">Active</span>
+                                            </label>
+                                        </div>
+                                        <div className="md:col-span-1 flex justify-end pb-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => removeMarketplaceOption(index)}
+                                                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>

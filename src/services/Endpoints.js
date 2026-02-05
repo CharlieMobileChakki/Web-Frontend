@@ -91,6 +91,15 @@ const Endpoints = {
           ADMIN_GET_REVIEWS: '/api/admin/reviews',                  // GET all reviews
           ADMIN_UPDATE_REVIEW: (id) => `/api/admin/reviews/${id}`,  // PUT update review
           ADMIN_DELETE_REVIEW: (id) => `/api/admin/reviews/${id}`,  // DELETE review
+
+
+
+
+          // ================= ADMIN PLATFORM MANAGEMENT =================
+          ADMIN_CREATE_PLATFORM: '/api/admin/platform/create-platform',  // POST create platform
+          ADMIN_GET_PLATFORM: '/api/admin/platform/get-all-platform',        // GET all platform
+          ADMIN_UPDATE_PLATFORM: (id) => `/api/admin/platform/update-platform/${id}`, // PATCH update platform
+          ADMIN_DELETE_PLATFORM: (id) => `/api/admin/platform/delete-platform/${id}`, // DELETE platform
      },
 
 

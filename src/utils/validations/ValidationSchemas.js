@@ -311,6 +311,27 @@ export const adminBookingCategorySchema = Yup.object().shape({
 });
 
 
+/* -------------------- 🔹 Admin Platform Schema -------------------- */
+
+
+export const platformSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Platform name is required")
+    .min(2, "Platform name must be at least 2 characters")
+    .max(60, "Platform name must not exceed 60 characters"),
+
+  logo: Yup.string()
+    .required("Platform logo is required")
+    .test(
+      "logo-format",
+      "Logo must be a valid image URL or uploaded image",
+      (value) =>
+        value?.startsWith("http") ||
+        value?.includes("cloudinary") ||
+        /\.(jpg|jpeg|png|webp|svg)$/i.test(value)
+    ),
+
+});
 
 
 

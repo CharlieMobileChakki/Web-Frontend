@@ -11,6 +11,7 @@ const SidebarTitle = () => {
         { name: "Category Management", href: "/categorymanagement" },
         { name: "Orders Management", href: "/ordersmanagement" },
         { name: "Products Management", href: "/productmanagement" },
+        { name: "Platform Management", href: "/platformmanagement" },
         { name: "Users Management", href: "/usersmanagement" },
         { name: "Blog Management", href: "/blogmanagement" },
         { name: "Banner Management", href: "/bannermanagement" }, // lowercase fix
