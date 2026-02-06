@@ -9,7 +9,7 @@ import { useraddwishlist, usergetwishlist, userremovewishlist } from "../../stor
 import { toast } from "react-toastify";
 import { checkAuth } from "../../utils/checkAuth";
 import MilletManImg from "../../assets/blog/10.jpeg";
-import { SiAmazon, SiFlipkart } from "react-icons/si";
+
 const ProductDetailCard = ({
     id,
     images = ["https://via.placeholder.com/400"],
@@ -23,6 +23,7 @@ const ProductDetailCard = ({
     selectedVariant,
     setSelectedVariant,
     relatedProducts = [], // Receive related products
+    marketplaceOptions = [], // Receive marketplace options
 }) => {
     const [mainImage, setMainImage] = useState(images[0]);
     const [isAdded, setIsAdded] = useState(false);
@@ -553,53 +554,60 @@ const ProductDetailCard = ({
                             </h3>
 
                             <div className="flex flex-col gap-3">
-                                {/* Flipkart Link */}
-                                <a
-                                    href="https://www.flipkart.com/food-products/flour-and-sooji/mobile-chakki~brand/pr?sid=eat,e6o&marketplace=FLIPKART&otracker=product_breadCrumbs_MOBILE+CHAKKI+Flour+and+Sooji"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-between p-3 bg-white rounded-xl border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all duration-300 group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-                                            <SiFlipkart className="w-7 h-7" />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-gray-900 text-sm">Flipkart</p>
-                                            <p className="text-xs text-green-600 font-semibold">✓ COD Available</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-semibold text-blue-600 group-hover:text-blue-700">View Product</span>
-                                        <svg className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </div>
-                                </a>
-
-                                {/* Amazon Link */}
-                                <a
-                                    href="https://www.amazon.in/stores/MobileChakki/page/5C11B840-BBE5-4281-B887-8B395C05BD06?lp_asin=B0FB3MD233&ref_=ast_bln&store_ref=bl_ast_dp_brandLogo_sto"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-200 hover:border-orange-400 hover:shadow-md transition-all duration-300 group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-[#FF9900] rounded-lg flex items-center justify-center">
-                                            <SiAmazon className="w-7 h-7" />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-gray-900 text-sm">Amazon</p>
-                                            <p className="text-xs text-green-600 font-semibold">✓ COD Available</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-semibold text-orange-600 group-hover:text-orange-700">View Product</span>
-                                        <svg className="w-4 h-4 text-orange-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </div>
-                                </a>
+                                {marketplaceOptions?.length > 0 ? (
+                                    marketplaceOptions
+                                        .filter(option => option.isActive)
+                                        .map((option) => (
+                                            <a
+                                                key={option._id}
+                                                href={option.productUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={`flex items-center justify-between p-3 bg-white rounded-xl border hover:shadow-md transition-all duration-300 group ${option.platform?.name?.toUpperCase().includes('FLIPKART')
+                                                    ? 'border-blue-200 hover:border-blue-400'
+                                                    : option.platform?.name?.toUpperCase().includes('AMAZON')
+                                                        ? 'border-orange-200 hover:border-orange-400'
+                                                        : 'border-gray-200 hover:border-gray-400'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-white shadow-sm border border-gray-100`}>
+                                                        {option.platform?.logo ? (
+                                                            <img
+                                                                src={option.platform.logo}
+                                                                alt={option.platform.name}
+                                                                className="w-full h-full object-contain p-1"
+                                                            />
+                                                        ) : (
+                                                            <span className="text-xs font-bold">{option.platform?.name?.charAt(0)}</span>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-gray-900 text-sm uppercase">{option.platform?.name}</p>
+                                                        <p className="text-xs text-green-600 font-semibold">✓ COD Available</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-xs font-semibold group-hover:underline ${option.platform?.name?.toUpperCase().includes('FLIPKART')
+                                                        ? 'text-blue-600'
+                                                        : option.platform?.name?.toUpperCase().includes('AMAZON')
+                                                            ? 'text-orange-600'
+                                                            : 'text-gray-600'
+                                                        }`}>View Product</span>
+                                                    <svg className={`w-4 h-4 group-hover:translate-x-1 transition-transform ${option.platform?.name?.toUpperCase().includes('FLIPKART')
+                                                        ? 'text-blue-600'
+                                                        : option.platform?.name?.toUpperCase().includes('AMAZON')
+                                                            ? 'text-orange-600'
+                                                            : 'text-gray-600'
+                                                        }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </div>
+                                            </a>
+                                        ))
+                                ) : (
+                                    <p className="text-sm text-gray-500 text-center py-2">No other buying options available currently.</p>
+                                )}
                             </div>
 
                             {/* Info Note */}

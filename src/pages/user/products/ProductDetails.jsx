@@ -73,6 +73,7 @@ const ProductDetails = () => {
                     selectedVariant={selectedVariant}
                     setSelectedVariant={handleVariantChange}
                     relatedProducts={relatedProducts}
+                    marketplaceOptions={selectedProduct?.marketplaceOptions || []}
                 />
             </div>
         </div>

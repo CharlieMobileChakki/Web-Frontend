@@ -369,8 +369,12 @@ export const UserCategory = async (data) => {
 };
 
 // get all product
-export const UserProduct = async () => {
-  return await api.get(Endpoints.User.USERGETPRODUCT);
+export const UserProduct = async (params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const url = queryParams
+    ? `${Endpoints.User.USERGETPRODUCT}?${queryParams}`
+    : Endpoints.User.USERGETPRODUCT;
+  return await api.get(url);
 };
 
 

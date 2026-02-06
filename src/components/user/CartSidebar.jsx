@@ -97,7 +97,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 ) : cartItems?.length > 0 ? (
                     cartItems?.map((item) => {
                         // Debug: log item structure
-                        console.log("Cart item:", item);
+                        // console.log("Cart item:", item);
 
                         return (
                             <div

@@ -1,13 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { UserProduct, UserProductDetails } from "../../services/NetworkServices";
 
-// ✅ Fetch all products
+// ✅ Fetch all products with filters and pagination
 export const userproduct = createAsyncThunk(
   "products/fetchAll",
-  async (_, { rejectWithValue }) => {
+  async (params = {}, { rejectWithValue }) => {
     try {
-      const response = await UserProduct();
-      return response.data.data.products;
+      const response = await UserProduct(params);
+      // Return both products and pagination data
+      return {
+        products: response.data.data.products,
+        pagination: response.data.data.pagination
+      };
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Something went wrong"
@@ -22,8 +26,7 @@ export const userproductbyid = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await UserProductDetails(id);
-      // console.log(response, "Fetched product by ID");
-      return response.data.data; // check your backend response key — it's usually 'product'
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Something went wrong"
@@ -37,8 +40,13 @@ const ProductSlice = createSlice({
   initialState: {
     data: [], // all products
     selectedProduct: null, // single product details
-    totalPages: 1, // pagination metadata
-    currentPage: 1, // pagination metadata
+    pagination: {
+      currentPage: 1,
+      totalPages: 1,
+      totalProducts: 0,
+      limit: 10,
+      hasMore: false,
+    },
     loading: false,
     error: null,
   },
@@ -52,8 +60,8 @@ const ProductSlice = createSlice({
       })
       .addCase(userproduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload || [];
-        // Note: pagination metadata is handled in the thunk
+        state.data = action.payload.products || [];
+        state.pagination = action.payload.pagination || state.pagination;
       })
       .addCase(userproduct.rejected, (state, action) => {
         state.loading = false;
