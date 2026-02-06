@@ -546,6 +546,28 @@ export const UserDeleteAddress = async (addressId) => {
   return await api.delete(Endpoints.User.USERDELETEADDRESS(addressId))
 }
 
+// ================= BOOKING ADDRESS MANAGEMENT =================
+
+// create booking address
+export const CreateBookingAddress = async (data) => {
+  return await api.post(Endpoints.User.CREATE_BOOKING_ADDRESS, data);
+};
+
+// get all booking addresses
+export const GetAllBookingAddresses = async () => {
+  return await api.get(Endpoints.User.GET_ALL_BOOKING_ADDRESS);
+};
+
+// update booking address
+export const UpdateBookingAddress = async (id, data) => {
+  return await api.patch(Endpoints.User.UPDATE_BOOKING_ADDRESS(id), data);
+};
+
+// delete booking address
+export const DeleteBookingAddress = async (id) => {
+  return await api.delete(Endpoints.User.DELETE_BOOKING_ADDRESS(id));
+};
+
 
 
 

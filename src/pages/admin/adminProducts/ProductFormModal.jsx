@@ -32,6 +32,7 @@ const ProductFormModal = ({ categories, isOpen, onClose, onSave, editData, platf
             setForm({
                 name: editData.name || "",
                 category: editData.category || "",
+                category: editData.category?._id || "",
                 status: editData.status || "active",
                 isFeatured: editData.isFeatured || false,
                 images: editData.images || [],     // ✅ FIX ADDED

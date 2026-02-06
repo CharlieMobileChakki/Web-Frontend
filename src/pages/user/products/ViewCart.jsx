@@ -131,24 +131,6 @@ const ViewCart = () => {
                         My Cart ({cartItems.length} items)
                     </h2>
 
-                    {userAddress && (
-                        <div className=" border-x-sky-300 mt-3 rounded-lg p-3 mb-4 bg-gray-50 flex justify-between items-start shadow-sm">
-                            <div>
-                                <p className="text-sm">
-                                    Deliver to:{" "}
-                                    <span className="font-semibold text-gray-900">
-                                        {userAddress?.name}
-                                    </span>
-                                    , {userAddress?.zipCode}
-                                </p>
-                                <p className="text-sm text-gray-700 mt-1">
-                                    {userAddress?.street}, {userAddress?.city},{" "}
-                                    {userAddress?.state}, {userAddress?.country}
-                                </p>
-                            </div>
-
-                        </div>
-                    )}
 
 
 

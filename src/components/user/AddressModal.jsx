@@ -1,650 +1,333 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    userGetProfile,
-    userAddAddress,
-    userUpdateAddress,
-    userDeleteAddress,
-} from "../../store/slices/ProfileSlice";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { toast } from "react-toastify";
 import {
-    getTempAddresses,
-    saveTempAddress,
-    updateTempAddress,
-    deleteTempAddress,
-    isTempAddress
-} from "../../utils/tempAddressHelper";
+    MapPin,
+    Phone,
+    User,
+    X,
+    Check,
+    Loader2,
+    Globe,
+    Flag
+} from "lucide-react";
+import {
+    addAddress,
+    updateAddress,
+} from "../../store/slices/AddressSlice";
 
-// Fix Leaflet marker icon issue
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-{/* <LocationMarker formData={formData} setFormData={setFormData} /> */ }
-
-const LocationMarker = ({ formData, setFormData }) => {
-    const map = useMapEvents({
-        click(e) {
-            const { lat, lng } = e.latlng;
-            setFormData(prev => ({
-                ...prev,
-                lat,
-                lng
-            }));
-            map.flyTo(e.latlng, map.getZoom());
-        },
-    });
-
-    if (!formData.lat || !formData.lng) return null;
-
-    return <Marker position={[formData.lat, formData.lng]} />;
-};
-
-const AddressModal = ({ onSelect, showStateField = false }) => {
+const AddressModal = ({ trigger, onSelect, editAddress: initialEditAddress }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.profile?.data);
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    const isLoggedIn = !!loggedInUser;
+    const isLoggedIn = useSelector((state) => !!state.auth?.user);
+    const { loading: addressLoading } = useSelector((state) => state.address);
 
-    const [tempAddresses, setTempAddresses] = useState([]);
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editAddress, setEditAddress] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isFetchingPincode, setIsFetchingPincode] = useState(false);
 
-    // Combine saved addresses and temporary addresses
-    const savedAddresses = user?.addresses || [];
-    const allAddresses = [...savedAddresses, ...tempAddresses];
-
-    const [formData, setFormData] = useState({
+    const emptyForm = {
+        label: "Home",
         name: "",
         phone: "",
         street: "",
-        city: "",
-        state: "Rajasthan",
-        zipCode: "",
-        country: "India", // Default
-        label: "Home",
         landmark: "",
-        isDefault: false,
-        lat: 26.9124, // Default Jaipur
-        lng: 75.7873
-    });
-
-    useEffect(() => {
-        const migrateTemporaryAddresses = async () => {
-            if (isLoggedIn) {
-                // Get temporary addresses from localStorage
-                const tempAddrs = getTempAddresses();
-
-                if (tempAddrs.length > 0) {
-                    // Migrate each temporary address to user profile
-                    for (const addr of tempAddrs) {
-                        try {
-                            const payload = {
-                                label: addr.label,
-                                name: addr.name,
-                                phone: addr.phone,
-                                street: addr.street,
-                                city: addr.city,
-                                state: addr.state,
-                                zipCode: addr.zipCode,
-                                country: addr.country,
-                                landmark: addr.landmark || "",
-                                isDefault: Boolean(addr.isDefault),
-                                lat: Number(addr.lat),
-                                lng: Number(addr.lng),
-                                formattedAddress: addr.formattedAddress || `${addr.street}, ${addr.city}, ${addr.state} - ${addr.zipCode}, ${addr.country}`,
-                            };
-
-                            await dispatch(userAddAddress(payload)).unwrap();
-                        } catch (err) {
-                            console.error("Failed to migrate address:", err);
-                        }
-                    }
-
-                    // Clear temporary addresses after migration
-                    localStorage.removeItem('tempAddresses');
-                    setTempAddresses([]);
-
-                    toast.success(`✅ ${tempAddrs.length} temporary address(es) saved to your profile!`);
-                }
-
-                // Fetch updated profile
-                dispatch(userGetProfile());
-            } else {
-                // Load temporary addresses from localStorage for guest users
-                setTempAddresses(getTempAddresses());
-            }
-        };
-
-        migrateTemporaryAddresses();
-    }, [dispatch, isLoggedIn]);
-
-    // open modal
-    const handleOpenModal = (address = null) => {
-        if (address) {
-            setEditAddress(address);
-            setFormData({
-                name: address.name || user?.name || "",
-                phone: address.phone || user?.phone || "",
-                street: address.street || "",
-                city: address.city || "",
-                state: address.state || "Rajasthan",
-                zipCode: address.zipCode || "",
-                country: address.country || "India",
-                label: address.label || "Home",
-                landmark: address.landmark || "",
-                isDefault: address.isDefault || false,
-                lat: address.lat || 26.9124,
-                lng: address.lng || 75.7873
-            });
-        } else {
-            setEditAddress(null);
-            setFormData({
-                name: user?.name || loggedInUser?.name || "",
-                phone: user?.phone || user?.mobile || loggedInUser?.phone || loggedInUser?.mobile || "",
-                street: "",
-                city: "",
-                state: "Rajasthan",
-                zipCode: "",
-                country: "India",
-                label: "Home",
-                landmark: "",
-                isDefault: false,
-                lat: 26.9124,
-                lng: 75.7873
-            });
-        }
-        setIsModalOpen(true);
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "India",
     };
 
-    // Auto-fetch City and State from Pincode
+    const [form, setForm] = useState(emptyForm);
+
+    // ==========================
+    // Lifecycle
+    // ==========================
     useEffect(() => {
-        if (formData.zipCode && formData.zipCode.length === 6) {
-            const fetchCityState = async () => {
-                try {
-                    toast.info("📍 Fetching city and state details...", { autoClose: 1500 });
-                    const response = await fetch(`https://api.postalpincode.in/pincode/${formData.zipCode}`);
-                    const data = await response.json();
-
-                    if (data && data[0] && data[0].Status === "Success") {
-                        const postOffice = data[0].PostOffice[0];
-                        const city = postOffice.District;
-                        const state = postOffice.State;
-
-                        setFormData((prev) => ({
-                            ...prev,
-                            city: city,
-                            state: state,
-                            country: "India" // Implicitly India for this API
-                        }));
-                        toast.success(`Found: ${city}, ${state}`);
-                    } else {
-                        toast.error("Invalid Pincode or data not found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching pincode details:", error);
-                    toast.error("Failed to fetch location details");
-                }
-            };
-
-            fetchCityState();
+        if (initialEditAddress && isOpen) {
+            setForm({
+                ...initialEditAddress,
+                label: initialEditAddress.label || "Home",
+                name: initialEditAddress.name || "",
+                phone: initialEditAddress.phone || "",
+                street: initialEditAddress.street || "",
+                landmark: initialEditAddress.landmark || "",
+                city: initialEditAddress.city || "",
+                state: initialEditAddress.state || "",
+                zipCode: initialEditAddress.zipCode || "",
+                country: initialEditAddress.country || "India",
+            });
+        } else if (!initialEditAddress && isOpen) {
+            setForm(emptyForm);
         }
-    }, [formData.zipCode]);
+    }, [initialEditAddress, isOpen]);
 
-    // input change
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-
-        // Prevent typing non-numeric in pincode (optional but good UX)
-        if (name === "zipCode" && !/^\d*$/.test(value)) return;
-        // Limit pincode to 6 digits
-        if (name === "zipCode" && value.length > 6) return;
-
-        // Limit mobile to 10 digits
-        if (name === "phone" && (!/^\d*$/.test(value) || value.length > 10)) return;
-
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
-
-    const handleGetLocation = () => {
-        if (!navigator.geolocation) {
-            alert("Geolocation not supported by your browser");
-            return;
+    // Pincode Auto-fill logic
+    useEffect(() => {
+        if (form.zipCode?.length === 6) {
+            fetchLocationByPincode(form.zipCode);
         }
+    }, [form.zipCode]);
 
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        };
+    const fetchLocationByPincode = async (pincode) => {
+        try {
+            setIsFetchingPincode(true);
+            const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+            const data = await res.json();
 
-        toast.info("📍 Fetching your location...", { autoClose: 2000 });
-
-        navigator.geolocation.getCurrentPosition(
-            async ({ coords }) => {
-                const { latitude, longitude } = coords;
-
-                // 1. Set Coordinates immediately
-                setFormData(prev => ({
+            if (data[0].Status === "Success") {
+                const postOffice = data[0].PostOffice[0];
+                setForm(prev => ({
                     ...prev,
-                    lat: latitude,
-                    lng: longitude
+                    city: postOffice.District || prev.city,
+                    state: postOffice.State || prev.state,
                 }));
-
-                // Center map
-                // Note: The map component will need to listed to lat/lng changes or use a re-center component. 
-                // In this current code, passing new props might not auto-fly unless we have a component observing it.
-                // However, the map click handler updates state, so state updates should re-render markers.
-
-                // 2. Reverse Geocode with proper headers
-                try {
-                    const res = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-                        {
-                            headers: {
-                                "User-Agent": "ATPL_MobileChakki_Web/1.0",
-                                "Accept-Language": "en-US,en;q=0.9"
-                            }
-                        }
-                    );
-
-                    if (!res.ok) throw new Error("Geocoding service unavailable");
-
-                    const data = await res.json();
-
-                    if (data?.address) {
-                        const a = data.address;
-
-                        // Construct address fields
-                        const newAddress = {
-                            street: a.road || a.pedestrian || a.suburb || "",
-                            city: a.city || a.town || a.village || a.county || "",
-                            state: a.state || "",
-                            zipCode: a.postcode || "",
-                            country: a.country || "India",
-                            landmark: a.neighbourhood || a.suburb || ""
-                        };
-
-                        setFormData(prev => ({
-                            ...prev,
-                            ...newAddress
-                        }));
-
-                        toast.success("Location fetched successfully! 🌍");
-                    } else {
-                        toast.warn("Location found, but address details unavailable. Please fill manually.");
-                    }
-                } catch (err) {
-                    console.error("Reverse geocode failed", err);
-                    toast.error("Could not fetch address details. Please fill manually.");
-                }
-            },
-            (error) => {
-                console.error("Geolocation error:", error);
-                let msg = "Location permission denied";
-                if (error.code === 2) msg = "Location unavailable";
-                if (error.code === 3) msg = "Location request timed out";
-                alert(msg);
-            },
-            options
-        );
+                toast.success(`Location found: ${postOffice.District}, ${postOffice.State}`);
+            } else {
+                // Keep existing values or don't alert to avoid annoyance if typing
+            }
+        } catch (error) {
+            console.error("Pincode fetch error:", error);
+        } finally {
+            setIsFetchingPincode(false);
+        }
     };
 
+    // ==========================
+    // Handlers
+    // ==========================
+    const openModal = () => setIsOpen(true);
+    const closeModal = () => {
+        setIsOpen(false);
+        setForm(emptyForm);
+    };
 
-    // add/update address
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        // Basic validation for numbers
+        if ((name === "phone" || name === "zipCode") && value !== "" && !/^\d+$/.test(value)) return;
 
-        // Construct formatted address if not provided or valid
-        const generatedFormattedAddress = `${formData.street}, ${formData.landmark ? formData.landmark + ", " : ""}${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`;
+        setForm({ ...form, [name]: value });
+    };
 
-        // Prepare base payload with required fields
+    const handleSave = async () => {
+        if (!form.name || !form.phone || !form.street || !form.city || !form.zipCode) {
+            return toast.error("Please fill all required fields ⚠️");
+        }
+        if (form.phone.length !== 10) {
+            return toast.error("Phone number must be 10 digits 📱");
+        }
+
         const payload = {
-            label: formData.label,
-            name: formData.name,
-            phone: formData.phone,
-            street: formData.street,
-            city: formData.city,
-            state: formData.state,
-            zipCode: formData.zipCode,
-            country: formData.country,
-            landmark: formData.landmark || "",
-            isDefault: Boolean(formData.isDefault),
-
-            // ✅ REQUIRED
-            lat: Number(formData.lat),
-            lng: Number(formData.lng),
-            formattedAddress: `${formData.street}, ${formData.city}, ${formData.state} - ${formData.zipCode}, ${formData.country}`,
+            ...form,
+            lat: 26.9124,
+            lng: 75.7873,
+            formattedAddress: `${form.street}, ${form.city}, ${form.state}${form.zipCode ? ` - ${form.zipCode}` : ""}, ${form.country}`,
+            isDefault: form.isDefault || false
         };
 
-
-        // Conditionally add optional fields
-        if (formData.landmark?.trim()) payload.landmark = formData.landmark;
-        if (formData.googlePlaceId?.trim()) payload.googlePlaceId = formData.googlePlaceId;
-
-        // Use provided formatted address or generated one
-        payload.formattedAddress = formData.formattedAddress || generatedFormattedAddress;
-
-        // Handle coordinates - only send if valid numbers
-        const lat = parseFloat(formData.lat);
-        const lng = parseFloat(formData.lng);
-        if (!isNaN(lat) && lat !== 0) payload.lat = lat;
-        if (!isNaN(lng) && lng !== 0) payload.lng = lng;
-
-        console.log("📤 Submitting Address Payload:", payload);
-
         try {
-            // Check if user is logged in
-            if (!isLoggedIn) {
-                // Guest user - save to localStorage
-                if (editAddress && isTempAddress(editAddress)) {
-                    // Update existing temporary address
-                    const updated = updateTempAddress(editAddress._id, payload);
-                    setTempAddresses(getTempAddresses());
-                    toast.success("✅ Address updated temporarily! Please login to save permanently.");
-                } else {
-                    // Save new temporary address
-                    const saved = saveTempAddress(payload);
-                    setTempAddresses(getTempAddresses());
-                    toast.success("✅ Address saved temporarily! Please login to save permanently.");
-                }
-            } else {
-                // Logged-in user - save to API
-                if (editAddress?._id && !isTempAddress(editAddress)) {
-                    await dispatch(
-                        userUpdateAddress({ addressId: editAddress._id, payload })
+            if (isLoggedIn) {
+                let savedData;
+                if (initialEditAddress?._id) {
+                    savedData = await dispatch(
+                        updateAddress({ addressId: initialEditAddress._id, payload })
                     ).unwrap();
-                    toast.success("✅ Address updated successfully!");
                 } else {
-                    await dispatch(userAddAddress(payload)).unwrap();
-                    toast.success("✅ Address saved successfully!");
+                    savedData = await dispatch(addAddress(payload)).unwrap();
                 }
-            }
-
-            setIsModalOpen(false);
-            // Reset form with reasonable defaults but keep lat/lng if user wants to add another nearby
-            setFormData({
-                name: user?.name || loggedInUser?.name || "",
-                phone: user?.phone || loggedInUser?.phone || "",
-                street: "",
-                city: "",
-                state: "Rajasthan",
-                zipCode: "",
-                country: "India",
-                label: "Home",
-                landmark: "",
-                isDefault: false,
-                lat: 26.9124,
-                lng: 75.7873
-            });
-        } catch (err) {
-            console.error("Save address error:", err);
-            toast.error(`Failed to save address: ${err?.message || "Unknown error"}`);
-        }
-    };
-
-    // delete address
-    const handleDelete = async (id) => {
-        try {
-            // Check if it's a temporary address
-            if (id.startsWith('temp_')) {
-                deleteTempAddress(id);
-                setTempAddresses(getTempAddresses());
-                toast.success("Temporary address deleted");
+                toast.success("Address saved successfully! ✅");
+                if (onSelect) onSelect(savedData); // Trigger parent update
+                closeModal();
             } else {
-                // Delete from API
-                await dispatch(userDeleteAddress(id)).unwrap();
-                await dispatch(userGetProfile());
-                toast.success("Address deleted successfully");
-            }
-
-            if (selectedAddress?._id === id) {
-                setSelectedAddress(null);
+                toast.error("Please login to save addresses");
             }
         } catch (err) {
-            console.error("Delete error:", err);
-            toast.error("Failed to delete address");
+            toast.error(err || "Failed to save address");
         }
     };
+
+    const inputClass = "w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:text-blue-600 text-gray-900 font-bold transition-all outline-none placeholder:font-normal placeholder:text-gray-400";
 
     return (
-        <div className="bg-white rounded-md border shadow-sm mb-5">
-            {/* Header */}
-            <div className="bg-[#2874F0] text-white px-5 py-3 flex justify-between items-center rounded-t-md">
-                <h2 className="font-medium text-base tracking-wide">
-                    DELIVERY ADDRESS
-                </h2>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="text-white underline text-sm hover:text-gray-100 cursor-pointer"
-                >
-                    + Add New Address
-                </button>
+        <>
+            <div onClick={openModal} className="inline-block">
+                {trigger}
             </div>
 
-            {/* Address List */}
-            <div className="p-5 space-y-4 max-h-60 overflow-y-auto">
-                {allAddresses.length > 0 ? (
-                    allAddresses.map((addr, idx) => (
-                        <div
-                            key={addr?._id || idx}
-                            className={`border rounded-md px-4 py-3 flex justify-between items-start transition-all ${selectedAddress?._id === addr?._id
-                                ? "border-[#2874F0] bg-blue-50"
-                                : "border-gray-300 bg-white"
-                                }`}
-                        >
-                            <div className="flex gap-3 items-start w-full">
-                                <input
-                                    type="radio"
-                                    name="address"
-                                    checked={selectedAddress?._id === addr?._id}
-                                    onChange={() => {
-                                        setSelectedAddress(addr);
-                                        onSelect && onSelect(addr); // ✅ informs Checkout
-                                    }}
-                                    className="accent-[#2874F0] mt-1"
-                                />
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                        <span className="font-semibold text-gray-800">{addr?.name}</span>
-                                        <span className="bg-gray-200 text-gray-600 text-[10px] px-1.5 py-0.5 rounded uppercase">{addr?.label}</span>
-                                        {isTempAddress(addr) && (
-                                            <span className="bg-orange-100 text-orange-600 text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
-                                                Temporary
-                                            </span>
-                                        )}
-                                        <span className="text-sm text-gray-800 ml-2">{addr?.phone}</span>
+            {isOpen && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+                    <div className="bg-white w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-300">
+
+                        {/* Header */}
+                        <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                    <MapPin className="text-blue-600" />
+                                    {initialEditAddress ? "Edit Address" : "Add New Address"}
+                                </h2>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Enter your delivery details below
+                                </p>
+                            </div>
+                            <button onClick={closeModal} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                                <X size={24} className="text-gray-500" />
+                            </button>
+                        </div>
+
+                        {/* Form Body */}
+                        <div className="p-8 space-y-5 overflow-y-auto max-h-[70vh]">
+                            <div className="flex gap-4 p-1 bg-gray-100 rounded-2xl w-fit mb-2">
+                                {["Home", "Work", "Other"].map((l) => (
+                                    <button
+                                        key={l}
+                                        onClick={() => setForm(p => ({ ...p, label: l }))}
+                                        className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${form.label === l ? "bg-white text-blue-600 shadow-md" : "text-gray-500 hover:text-gray-800"}`}
+                                    >
+                                        {l}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Full Name *</label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" size={18} />
+                                        <input
+                                            name="name"
+                                            value={form.name}
+                                            onChange={handleChange}
+                                            placeholder="Receiver Name"
+                                            className={inputClass}
+                                        />
                                     </div>
-                                    <p className="text-sm text-gray-600">
-                                        {addr?.street}, {addr?.city}, {addr?.state} - {addr?.zipCode}
-                                    </p>
-                                    {isTempAddress(addr) && (
-                                        <p className="text-xs text-orange-600 mt-1">
-                                            ⚠️ Login to save this address permanently
-                                        </p>
-                                    )}
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Phone Number *</label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                        <input
+                                            name="phone"
+                                            maxLength={10}
+                                            value={form.phone}
+                                            onChange={handleChange}
+                                            placeholder="10-digit mobile"
+                                            className={inputClass}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-end gap-1">
-                                <button
-                                    onClick={() => handleOpenModal(addr)}
-                                    className="text-[#2874F0] text-xs cursor-pointer font-medium hover:underline"
-                                >
-                                    EDIT
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(addr?._id)}
-                                    className="text-red-500 text-xs cursor-pointer font-medium hover:underline"
-                                >
-                                    DELETE
-                                </button>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Flat / House / Street *</label>
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                    <input
+                                        name="street"
+                                        value={form.street}
+                                        onChange={handleChange}
+                                        placeholder="Address line 1"
+                                        className={inputClass}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Zip Code *</label>
+                                    <div className="relative">
+                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                        <input
+                                            name="zipCode"
+                                            maxLength={6}
+                                            value={form.zipCode}
+                                            onChange={handleChange}
+                                            placeholder="302001"
+                                            className={`${inputClass} ${isFetchingPincode ? 'animate-pulse bg-blue-50/50' : ''}`}
+                                        />
+                                        {isFetchingPincode && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-blue-500" size={16} />}
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">City *</label>
+                                    <div className="relative">
+                                        <Flag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                        <input
+                                            name="city"
+                                            value={form.city}
+                                            onChange={handleChange}
+                                            placeholder="Jaipur"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">State</label>
+                                    <div className="relative">
+                                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                        <input
+                                            name="state"
+                                            value={form.state}
+                                            onChange={handleChange}
+                                            placeholder="Rajasthan"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Country</label>
+                                    <div className="relative">
+                                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            name="country"
+                                            value={form.country}
+                                            onChange={handleChange}
+                                            placeholder="India"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Landmark (Optional)</label>
+                                <div className="relative">
+                                    <X className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 opacity-0" size={18} /> {/* Space holder */}
+                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+                                    <input
+                                        name="landmark"
+                                        value={form.landmark}
+                                        onChange={handleChange}
+                                        placeholder="Near Bapu Bazaar"
+                                        className={inputClass}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    ))
-                ) : (
-                    <p className="text-gray-500">No addresses added yet.</p>
-                )}
-            </div>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-[#00000075] flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-lg font-semibold mb-4">
-                            {editAddress ? "Edit Address" : "Add New Address"}
-                        </h3>
-
-                        <form onSubmit={handleSubmit} className="space-y-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Left Side: Map */}
-                                <div className="h-64 md:h-full min-h-[300px] rounded-lg overflow-hidden border">
-                                    <MapContainer
-                                        center={[formData.lat, formData.lng]}
-                                        zoom={13}
-                                        style={{ height: "100%", width: "100%" }}
-                                    >
-                                        <TileLayer
-                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        />
-                                        <LocationMarker formData={formData} setFormData={setFormData} />
-                                    </MapContainer>
-                                    <p className="text-xs text-gray-500 mt-1 text-center">Click on map to set location</p>
-                                </div>
-
-                                {/* Right Side: Inputs */}
-                                <div className="space-y-3">
-                                    <button
-                                        type="button"
-                                        onClick={handleGetLocation}
-                                        className="mb-3 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium w-full justify-center border border-blue-200 rounded py-2 bg-blue-50"
-                                    >
-                                        📍 Use My Current Location
-                                    </button>
-
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            placeholder="Name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            className="w-full border px-3 py-2 rounded"
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="phone"
-                                            placeholder="Phone 10-digit"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            className="w-full border px-3 py-2 rounded"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <input
-                                            type="text"
-                                            name="zipCode"
-                                            placeholder="Pincode"
-                                            value={formData.zipCode}
-                                            onChange={handleChange}
-                                            className="w-full border px-3 py-2 rounded"
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="city"
-                                            placeholder="City"
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            className="w-full border px-3 py-2 rounded"
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Conditionally Show State Field */}
-                                    {showStateField && (
-                                        <input
-                                            type="text"
-                                            name="state"
-                                            placeholder="State"
-                                            value={formData.state}
-                                            onChange={handleChange}
-                                            className="w-full border px-3 py-2 rounded"
-                                            required
-                                        />
-                                    )}
-
-                                    <input
-                                        type="text"
-                                        name="street"
-                                        placeholder="Address (House No, Building, Street)"
-                                        value={formData.street}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                        required
-                                    />
-
-                                    <input
-                                        type="text"
-                                        name="landmark"
-                                        placeholder="Landmark (Optional)"
-                                        value={formData.landmark}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                    />
-
-                                    <div className="flex items-center gap-4">
-                                        <label className="text-sm text-gray-600 font-medium">Address Type:</label>
-                                        <label className="flex items-center gap-1 cursor-pointer">
-                                            <input type="radio" name="label" value="Home" checked={formData.label === 'Home'} onChange={handleChange} />
-                                            <span className="text-sm">Home</span>
-                                        </label>
-                                        <label className="flex items-center gap-1 cursor-pointer">
-                                            <input type="radio" name="label" value="Work" checked={formData.label === 'Work'} onChange={handleChange} />
-                                            <span className="text-sm">Work</span>
-                                        </label>
-                                    </div>
-
-                                    <div className="flex justify-end space-x-3 mt-5 pt-4 border-t">
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsModalOpen(false)}
-                                            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="px-4 py-2 bg-[#2874F0] text-white rounded hover:bg-[#1f5fd1]"
-                                        >
-                                            {editAddress ? "Update" : "Save"}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                        {/* Footer */}
+                        <div className="p-6 border-t bg-gray-50/50 flex justify-end gap-3">
+                            <button
+                                onClick={closeModal}
+                                className="px-6 py-3 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={addressLoading}
+                                className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                            >
+                                {addressLoading ? <Loader2 className="animate-spin" /> : <Check size={20} />}
+                                {initialEditAddress ? "Update Address" : "Save Address"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

@@ -8,6 +8,7 @@ import orderReducer from './slices/OrderSlice'; //order reducer slice
 import wishlistReducer from './slices/WishlistSlice'; //wishlist reducer slice
 import bookingReducer from './slices/BookingSlice'; //booking reducer slice
 import profileReducer from './slices/ProfileSlice';
+import bookingAddressReducer from './slices/BookingAddressSlice';
 
 
 // admin reducer
@@ -24,6 +25,7 @@ import adminBookingReducer from './slices/adminSlice/AdminBookingSlice';
 import adminStockReducer from './slices/adminSlice/AdminStockSlice';
 import adminReviewReducer from './slices/adminSlice/AdminReviewSlice';
 import adminPlatformReducer from './slices/adminSlice/PlatformSlice';
+import addressReducer from './slices/AddressSlice';
 
 export const Store = configureStore({
   reducer: {
@@ -38,6 +40,8 @@ export const Store = configureStore({
     wishlist: wishlistReducer,
     booking: bookingReducer,
     profile: profileReducer,
+    bookingAddress: bookingAddressReducer,
+    address: addressReducer,
 
 
 
@@ -55,6 +59,7 @@ export const Store = configureStore({
     adminStock: adminStockReducer,
     adminReview: adminReviewReducer,
     adminPlatform: adminPlatformReducer,
+
 
   },
 });

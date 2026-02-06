@@ -35,6 +35,7 @@ import { ProductsByCategory } from "../pages/user/products/ProductsByCategory";
 import CreateBooking from "../pages/user/booking/CreateBooking";
 import { MyBooking } from "../pages/user/booking/MyBooking";
 import MyProfile from "../pages/user/profile/MyProfile";
+// import BookingAddressManagement from "../pages/user/booking/BookingAddressManagement";
 import AdminLogin from "../pages/admin/AdminLogin";
 import CategoryAdmin from "../pages/admin/adminCategory/CategoryAdmin";
 import ProductManagement from "../pages/admin/adminProducts/ProductManagement";
@@ -53,6 +54,7 @@ import ContactManagement from "../pages/admin/adminContact/ContactManagement";
 import ReviewsManagement from "../pages/admin/adminReviews/ReviewsManagement";
 import PlatformManagement from "../pages/admin/adminPlatform/PlatformManagement";
 
+import NotFound from "../components/common/NotFound";
 
 
 const AppRoutes = () => {
@@ -90,7 +92,8 @@ const AppRoutes = () => {
       <Route path="/category/:id" element={<UserLayout> <ProductsByCategory />  </UserLayout>} />
       <Route path="/createbooking" element={<UserLayout> <CreateBooking />   </UserLayout>} />
       <Route path="/my-bookings/:userId" element={<UserLayout> <MyBooking />    </UserLayout>} />
-      <Route path="/myprofile" element={<UserLayout> <MyProfile />    </UserLayout>} />
+      <Route path="/my-profile" element={<UserLayout><MyProfile /></UserLayout>} />
+      {/* <Route path="/booking-address" element={<UserLayout><BookingAddressManagement /></UserLayout>} /> */}
 
 
 
@@ -126,6 +129,17 @@ const AppRoutes = () => {
 
         </Route>
       </Route>
+
+
+      {/* ❌ Invalid / Unavailable Routes */}
+      <Route
+        path="*"
+        element={
+
+          <NotFound />
+
+        }
+      />
 
 
     </Routes>

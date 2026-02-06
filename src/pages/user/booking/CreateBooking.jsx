@@ -8,7 +8,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Calendar, Phone, User, Package, Clock } from "lucide-react";
-import AddressModal from "../../../components/user/AddressModal";
+import BookingAddressModal from "./BookingAddressModal";
 import BackButton from "../../../components/common/BackButton"; // Import BackButton
 
 const CreateBooking = () => {
@@ -24,6 +24,8 @@ const CreateBooking = () => {
         timeSlot: "",
         address: "", // Stores selected address ID
     });
+
+    const [selectedAddress, setSelectedAddress] = useState(null);
 
     const [errors, setErrors] = useState({});
     const [showPopup, setShowPopup] = useState(false);
@@ -65,14 +67,17 @@ const CreateBooking = () => {
     // ✅ Handle Address Selection
     const handleAddressSelect = (address) => {
         setFormData((prev) => ({ ...prev, address: address._id }));
+        setSelectedAddress(address);
         setErrors((prev) => ({ ...prev, address: "" }));
 
-        // Geofencing Check (Jaipur Only)
-        // Normalize string to handle case sensitivity
-        const city = address?.city?.trim().toLowerCase();
-        if (city === "jaipur") {
+        // Geofencing Check (Jaipur Only) - Safe Check
+        const city = address?.city?.trim().toLowerCase() || "";
+        const street = address?.street?.trim().toLowerCase() || "";
+
+        // If city is explicitly जयपुर or if we want to be more flexible since new API might not have city field
+        if (city === "jaipur" || street.includes("jaipur") || !city) {
             setIsServiceable(true);
-            toast.info("Address Selected: Service Available ✅");
+            if (city === "jaipur") toast.info("Address Selected: Service Available ✅");
         } else {
             setIsServiceable(false);
             toast.warn("Currently we only serve in Jaipur 🚧");
@@ -185,7 +190,28 @@ const CreateBooking = () => {
                                     <label className="flex items-center gap-2 text-gray-700 font-semibold mb-2">
                                         Select Address
                                     </label>
-                                    <AddressModal onSelect={handleAddressSelect} showStateField={false} />
+                                    <BookingAddressModal onSelect={handleAddressSelect} />
+
+                                    {selectedAddress && (
+                                        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <div className="flex justify-between items-start">
+                                                <h4 className="font-bold text-gray-800">{selectedAddress.name}</h4>
+                                                <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-lg uppercase">Selected</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                                                <Phone size={14} className="text-gray-400" />
+                                                {selectedAddress.phone}
+                                            </p>
+                                            <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                                                {selectedAddress.street}
+                                            </p>
+                                            {selectedAddress.landmark && (
+                                                <p className="text-xs text-gray-400 italic mt-1">
+                                                    Landmark: {selectedAddress.landmark}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
                                     {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                                 </div>
 

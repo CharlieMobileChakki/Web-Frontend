@@ -172,9 +172,11 @@ const Endpoints = {
           USERGETBOOKING: '/api/booking/get-bookings', // get booking 
 
 
-          // profile 
-          USERGETMYPROFILE: '/api/user/profile', // get my profile
-          USERUPDATEMYPROFILE: '/api/user/profile', // update profile (supports name only)
+          // ================= BOOKING ADDRESS MANAGEMENT =================
+          CREATE_BOOKING_ADDRESS: '/api/booking/address/create-booking-address',
+          GET_ALL_BOOKING_ADDRESS: '/api/booking/address/get-all-booking-address',
+          UPDATE_BOOKING_ADDRESS: (id) => `/api/booking/address/update-booking-address/${id}`,
+          DELETE_BOOKING_ADDRESS: (id) => `/api/booking/address/delete-booking-address/${id}`,
 
           // ================= ADDRESS MANAGEMENT (SEPARATE API) =================
           USERADDNEWADDRESS: '/api/address/addresses', // POST - add new address
