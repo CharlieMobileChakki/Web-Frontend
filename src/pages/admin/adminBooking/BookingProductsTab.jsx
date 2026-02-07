@@ -108,6 +108,7 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
                         sellingPrice: v.sellingPrice || "",
                         purchasePrice: v.purchasePrice || "",
                         stock: v.stock || "",
+                        lowStockThreshold: v.lowStockThreshold || 0,
                         _id: v._id,
                     }))
                     : [
@@ -119,6 +120,7 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
                             sellingPrice: "",
                             purchasePrice: "",
                             stock: "",
+                            lowStockThreshold: 0,
                         },
                     ],
             });
@@ -139,6 +141,7 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
                         sellingPrice: "",
                         purchasePrice: "",
                         stock: "",
+                        lowStockThreshold: 0,
                     },
                 ],
             });
@@ -152,36 +155,43 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
     const [replaceImageIndex, setReplaceImageIndex] = useState(null);
 
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
 
         setUploading(true);
 
-        const url = await UploadToCloudinary(file);
+        try {
+            const uploadPromises = files.map((file) => UploadToCloudinary(file));
+            const urls = await Promise.all(uploadPromises);
 
-        if (url) {
-            setFormData((prev) => {
-                const updatedImages = [...prev.images];
+            const validUrls = urls.filter((url) => url !== null);
 
-                // ✅ Replace mode
-                if (replaceImageIndex !== null) {
-                    updatedImages[replaceImageIndex] = url;
-                } else {
-                    // ✅ Add mode
-                    updatedImages.push(url);
-                }
+            if (validUrls.length > 0) {
+                setFormData((prev) => {
+                    const updatedImages = [...prev.images];
 
-                return { ...prev, images: updatedImages };
-            });
+                    // ✅ Replace mode (only for single file if index is set, though UI supports multiple add)
+                    if (replaceImageIndex !== null) {
+                        // If replacing, we only take the first new image
+                        updatedImages[replaceImageIndex] = validUrls[0];
+                    } else {
+                        // ✅ Add mode
+                        updatedImages.push(...validUrls);
+                    }
 
-            toast.success(replaceImageIndex !== null ? "Image replaced" : "Image added");
+                    return { ...prev, images: updatedImages };
+                });
+
+                toast.success(replaceImageIndex !== null ? "Image replaced" : "Images added");
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            toast.error("Failed to upload images");
+        } finally {
+            setUploading(false);
+            setReplaceImageIndex(null);
+            e.target.value = ""; // reset input
         }
-
-        setUploading(false);
-
-        // reset
-        setReplaceImageIndex(null);
-        e.target.value = ""; // important (same file select issue fix)
     };
 
 
@@ -217,7 +227,7 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
                     sellingPrice: "",
                     purchasePrice: "",
                     stock: "",
-                    lowStockThreshold: "",
+                    lowStockThreshold: 0,
                 },
             ],
         }));
@@ -529,6 +539,7 @@ const BookingProductsTab = ({ searchParams, setSearchParams }) => {
                                     </span>
                                     <input
                                         type="file"
+                                        multiple
                                         className="hidden"
                                         onChange={handleImageUpload}
                                     />

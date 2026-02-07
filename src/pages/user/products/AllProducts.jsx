@@ -90,6 +90,29 @@ const AllProducts = () => {
 
     const getReviewCount = (productId) => (reviewsByProduct[productId] || []).length;
 
+    // Client-side Sorting & Pagination Logic
+    const { sortedProducts, totalPages } = useMemo(() => {
+        if (!products) return { sortedProducts: [], totalPages: 1 };
+
+        // 1. Sort globally
+        const sorted = [...products].sort((a, b) => {
+            const getPriority = (product) => {
+                const name = product.name?.toLowerCase() || "";
+                if (name.includes("sugar") || name.includes("gluten")) return 2;
+                if (product.isFeatured) return 1;
+                return 0;
+            };
+            return getPriority(b) - getPriority(a);
+        });
+
+        // 2. Pagination
+        const total = Math.ceil(sorted.length / filters.limit);
+        const startIndex = (filters.page - 1) * filters.limit;
+        const paginated = sorted.slice(startIndex, startIndex + filters.limit);
+
+        return { sortedProducts: paginated, totalPages: total };
+    }, [products, filters.page, filters.limit]);
+
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
             <BannerSection
@@ -201,8 +224,8 @@ const AllProducts = () => {
                     )}
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        {products?.length > 0 ? (
-                            products.map((item) => (
+                        {sortedProducts?.length > 0 ? (
+                            sortedProducts.map((item) => (
                                 <Product
                                     key={item._id}
                                     id={item._id}
@@ -230,7 +253,7 @@ const AllProducts = () => {
                     </div>
 
                     {/* Pagination */}
-                    {pagination.totalPages > 1 && (
+                    {totalPages > 1 && (
                         <div className="mt-16 flex items-center justify-center gap-4">
                             <button
                                 onClick={() => handlePageChange(filters.page - 1)}
@@ -241,7 +264,7 @@ const AllProducts = () => {
                             </button>
 
                             <div className="flex items-center gap-2">
-                                {[...Array(pagination.totalPages)].map((_, i) => (
+                                {[...Array(totalPages)].map((_, i) => (
                                     <button
                                         key={i + 1}
                                         onClick={() => handlePageChange(i + 1)}
@@ -257,7 +280,7 @@ const AllProducts = () => {
 
                             <button
                                 onClick={() => handlePageChange(filters.page + 1)}
-                                disabled={filters.page === pagination.totalPages}
+                                disabled={filters.page === totalPages}
                                 className="w-12 h-12 rounded-2xl flex items-center justify-center border-2 border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-all shadow-sm"
                             >
                                 <ChevronRight size={24} />

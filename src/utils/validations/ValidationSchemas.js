@@ -278,9 +278,10 @@ export const adminBookingProductSchema = Yup.object().shape({
           .min(0, "Stock cannot be negative"),
 
         lowStockThreshold: Yup.number()
+          .transform((value) => (Number.isNaN(value) ? null : value))
+          .nullable()
           .typeError("Low stock threshold must be a number")
-          .min(0, "Low stock threshold cannot be negative")
-          .nullable(),
+          .min(0, "Low stock threshold cannot be negative"),
       })
     )
     .min(1, "At least one variant is required"),
