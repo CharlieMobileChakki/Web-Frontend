@@ -50,15 +50,19 @@ const DownloadAppSection = () => {
     useEffect(() => {
         const handleResize = () => {
             const w = window.innerWidth;
-            // 1024 to 1280 ke beech hide side images
-            setHideSideImages(w >= 1024 && w < 1280);
-            setHideSideImages(w >= 300 && w < 500);
+
+            const shouldHide =
+                (w >= 300 && w < 500) ||
+                (w >= 1024 && w < 1280);
+
+            setHideSideImages(shouldHide);
         };
 
         handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);

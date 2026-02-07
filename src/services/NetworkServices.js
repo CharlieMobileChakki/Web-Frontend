@@ -505,9 +505,25 @@ export const UserCancelBooking = async (id) => {
 }
 
 
+// get booking 
 export const UserGetBooking = async () => {
   return await api.get(Endpoints.User.USERGETBOOKING)
 }
+
+// Get All Booking Categories
+export const UserGetAllBookingCategories = async () => {
+  return await api.get(Endpoints.User.USER_GET_ALL_BOOKING_CATEGORIES);
+};
+
+// Get All Booking Products
+export const UserGetAllBookingProducts = async () => {
+  return await api.get(Endpoints.User.USER_GET_ALL_BOOKING_PRODUCTS);
+};
+
+// Get Booking Products by Category
+export const UserGetBookingProductsByCategory = async (id) => {
+  return await api.get(Endpoints.User.USER_GET_BOOKING_PRODUCTS_BY_CATEGORY(id));
+};
 
 
 

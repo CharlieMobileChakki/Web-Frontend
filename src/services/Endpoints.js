@@ -171,6 +171,11 @@ const Endpoints = {
           USERCANCELBOOKING: (id) => `/api/booking/cancel/${id}`, // cancel booking
           USERGETBOOKING: '/api/booking/get-bookings', // get booking 
 
+          // New Booking APIs
+          USER_GET_ALL_BOOKING_CATEGORIES: '/api/booking/get-all-booking-categories',
+          USER_GET_ALL_BOOKING_PRODUCTS: '/api/booking/get-all-booking-products',
+          USER_GET_BOOKING_PRODUCTS_BY_CATEGORY: (id) => `/api/booking/get-all-booking-products-by-category/${id}`,
+
 
           // My Profile
           USERGETMYPROFILE: '/api/user/profile',
