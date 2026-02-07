@@ -172,6 +172,11 @@ const Endpoints = {
           USERGETBOOKING: '/api/booking/get-bookings', // get booking 
 
 
+          // My Profile
+          USERGETMYPROFILE: '/api/user/profile',
+          USERUPDATEMYPROFILE: '/api/user/profile',
+
+
           // ================= BOOKING ADDRESS MANAGEMENT =================
           CREATE_BOOKING_ADDRESS: '/api/booking/address/create-booking-address',
           GET_ALL_BOOKING_ADDRESS: '/api/booking/address/get-all-booking-address',

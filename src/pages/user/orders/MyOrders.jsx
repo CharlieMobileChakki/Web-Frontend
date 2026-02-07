@@ -247,7 +247,7 @@ const MyOrders = () => {
                                     : `You don't have any ${filterStatus.toLowerCase()} orders.`}
                             </p>
                             <button
-                                onClick={() => navigate("/products")}
+                                onClick={() => navigate("/allproducts")}
                                 className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all hover:-translate-y-1"
                             >
                                 Start Shopping

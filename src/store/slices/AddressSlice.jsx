@@ -77,6 +77,7 @@ const addressSlice = createSlice({
     name: "address",
     initialState: {
         list: [],
+        addresses: [],
         loading: false,
         error: null,
     },

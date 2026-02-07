@@ -92,7 +92,7 @@ const AppRoutes = () => {
       <Route path="/category/:id" element={<UserLayout> <ProductsByCategory />  </UserLayout>} />
       <Route path="/createbooking" element={<UserLayout> <CreateBooking />   </UserLayout>} />
       <Route path="/my-bookings/:userId" element={<UserLayout> <MyBooking />    </UserLayout>} />
-      <Route path="/my-profile" element={<UserLayout><MyProfile /></UserLayout>} />
+      <Route path="/myprofile" element={<UserLayout><MyProfile /></UserLayout>} />
       {/* <Route path="/booking-address" element={<UserLayout><BookingAddressManagement /></UserLayout>} /> */}
 
 
